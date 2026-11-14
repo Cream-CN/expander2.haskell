@@ -1,0 +1,114 @@
+-1y-(n+1)ss	(-1)Y-(n+1)SS 负一 Y 序列系统
+1-bm-bhm	1BM-BHM
+1-mn	1MN
+2-pps4	2-pps4
+2-bm-bhm	2BM-BHM
+2-mn	2MN
+3-bm-bhm	3BM-BHM
+3-mn	3MN
+abs-bm1ynss	AbsB(n+1)SS 绝对分支负一 Y 序列系统
+a-omega2-mn-2	Aω2MN2
+a-omega2-mn-3	Aω2MN3
+bms-v1	BMS v1.0
+bms-v2	BMS v2.0
+bms-v21	BMS v2.1
+bms-v22	BMS v2.2
+bms-v23	BMS v2.3
+bms-v3	BMS v3.0
+bms-v31	BMS v3.1
+bms-v32	BMS v3.2
+bms-v33	BMS v3.3
+bms-v4	BMS v4.0
+bsm	BSM
+bhm	BHM
+blm	BLM
+btbm	BTBM Bubby3 超限巴斯丘矩阵
+btbm-weak	BTBM-weak 弱版 Bubby3 超限巴斯丘矩阵
+bbm	BBM 分支巴斯丘矩阵
+bt1ynss	BT*(n+1)SS v1 超限星负一 Y 序列系统
+btlynss	BTL(n+1)SS 带标记超限星负一 Y 序列系统
+cms	CMS
+dsm	DSM
+den1	DEN1
+ewpps4	Ex. Weak PPS4
+gms-gbms-omega-p	GMS GBMS ω-P
+gms-gbms-pqss	GMS GBMS pQSS
+gms-gbms-qss	GMS GBMS QSS
+gms-gbms-full	GMS GBMS Full
+gms-gbms-weird	GMS GBMS Weirdly Full
+gms-upms-omega-p	GMS UPMS ω-P
+gms-upms-pqss	GMS UPMS pQSS
+gms-upms-qss	GMS UPMS QSS
+gms-upms-full	GMS UPMS Full
+gms-upms-weird	GMS UPMS Weirdly Full
+gms-lpms2-omega-p	GMS LPMS2 ω-P
+gms-lpms2-pqss	GMS LPMS2 pQSS
+gms-lpms2-qss	GMS LPMS2 QSS
+gms-lpms2-full	GMS LPMS2 Full
+gms-lpms2-weird	GMS LPMS2 Weirdly Full
+g-y	G-Y
+lpms	LPMS
+lptss	LPTSS
+mrss121	MrSS1.2.1
+prss	PrSS
+pps	PPS
+pps4	PPS4
+pcf-omega-mn	PCF's ωMN
+rel-bm1ynss	RelB(n+1)SS 相对分支负一 Y 序列系统
+spps4	Second PPS4
+s-omega2-mn	Sω2MN
+sa-omega2-mn	SAω2MN
+s-omega-pow-omega-mn	Sω^ωMN
+s1dbms	S1DBMS
+s2dbms	S2DBMS
+s-omega-dbms	SωDBMS v1
+s-omega-dbms-v2	SωDBMS v2
+s-omega-dbms-v3	SωDBMS v3
+s-omega-p1-dbms	Sω+1DBMS
+s-omega2-dbms	Sω2DBMS
+s-omega-square-dbms	Sω^2DBMS
+tpps4	Third PPS4
+tbm	TBM 超限巴斯丘矩阵
+tupms	TUPMS 超限 UPMS
+t--1y-(n+1)ss	T(n+1)SS 超限负一 Y 序列系统
+ton-m	TON
+ton-i	TON_I
+ton-dr	TON_DoR
+ton-drc	TON_DRC
+ton-drp	TON_DRP
+ton-drpc	TON_DRPC
+ton-ibp	TON_IBP
+ton-mc	TON_MC
+ton-mpc	TON_MPC
+t-omega-mn	TωMN
+ts-2-dbms	TS2DBMS
+ts-omega-dbms	TSωDBMS
+upms	UPMS
+up1mn	UP1MN
+up2mn-v1a	UP2MN v1A
+up2mn-v1b	UP2MN v1B
+up2mn-v1b-plus	UP2MN v1B+
+up1dbms	UP1DBMS
+up2dbms-v1	UP2DBMS v1
+up2dbms-v1b-plus	UP2DBMS v1B+
+up2dbms-v1c	UP2DBMS v1C
+up2dbms-v2	UP2DBMS v2
+wpps4	Weak PPS4
+xy-v1	X-Y V1
+xy-v2	X-Y V2
+xy-v3	X-Y V3
+blp	blp
+e0mn	e0MN
+iblp	iblp
+bt2ynss	strong BT*(n+1)SS v2 超限星负一 Y 序列系统
+strong-e0mn	strong e0MN
+wmm	wMM
+bt3ynss	weak BT*(n+1)SS v3 超限星负一 Y 序列系统
+weak-a-omega2-mn-2	wAω2MN2
+weak-a-omega2-mn-3	wAω2MN3
+epsilon-y	ε-Y
+omega-y-medium	ω-Y (medium)
+omega-y-strong	ω-Y (strong)
+omega-y-sequence	ω-Y sequence
+omega-mn	ωMN
+empty	空记号
