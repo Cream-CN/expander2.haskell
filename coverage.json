@@ -1,0 +1,690 @@
+{
+ "good": [
+  "-1y-(n+1)ss",
+  "1-bm-bhm",
+  "1-mn",
+  "2-bm-bhm",
+  "2-mn",
+  "2-pps4",
+  "3-bm-bhm",
+  "3-mn",
+  "a-omega2-mn-2",
+  "a-omega2-mn-3",
+  "abs-bm1ynss",
+  "bbm",
+  "bhm",
+  "blm",
+  "blp",
+  "bms-v1",
+  "bms-v2",
+  "bms-v21",
+  "bms-v22",
+  "bms-v23",
+  "bms-v3",
+  "bms-v31",
+  "bms-v32",
+  "bms-v33",
+  "bms-v4",
+  "bsm",
+  "bt1ynss",
+  "bt2ynss",
+  "bt3ynss",
+  "btbm",
+  "btbm-weak",
+  "btlynss",
+  "cms",
+  "den1",
+  "dsm",
+  "e0mn",
+  "empty",
+  "epsilon-y",
+  "ewpps4",
+  "g-y",
+  "gms-gbms-full",
+  "gms-gbms-omega-p",
+  "gms-gbms-pqss",
+  "gms-gbms-qss",
+  "gms-gbms-weird",
+  "gms-lpms2-full",
+  "gms-lpms2-omega-p",
+  "gms-lpms2-pqss",
+  "gms-lpms2-qss",
+  "gms-lpms2-weird",
+  "gms-upms-full",
+  "gms-upms-omega-p",
+  "gms-upms-pqss",
+  "gms-upms-qss",
+  "gms-upms-weird",
+  "iblp",
+  "lpms",
+  "lptss",
+  "mrss121",
+  "omega-mn",
+  "omega-y-medium",
+  "omega-y-sequence",
+  "omega-y-strong",
+  "pcf-omega-mn",
+  "pps",
+  "pps4",
+  "prss",
+  "rel-bm1ynss",
+  "s-omega-dbms",
+  "s-omega-dbms-v2",
+  "s-omega-dbms-v3",
+  "s-omega-p1-dbms",
+  "s-omega-pow-omega-mn",
+  "s-omega-square-dbms",
+  "s-omega2-dbms",
+  "s-omega2-mn",
+  "s1dbms",
+  "s2dbms",
+  "sa-omega2-mn",
+  "spps4",
+  "strong-e0mn",
+  "t--1y-(n+1)ss",
+  "t-omega-mn",
+  "tbm",
+  "ton-dr",
+  "ton-drc",
+  "ton-drp",
+  "ton-drpc",
+  "ton-i",
+  "ton-ibp",
+  "ton-m",
+  "ton-mc",
+  "ton-mpc",
+  "tpps4",
+  "ts-2-dbms",
+  "ts-omega-dbms",
+  "tupms",
+  "up1dbms",
+  "up1mn",
+  "up2dbms-v1",
+  "up2dbms-v1b-plus",
+  "up2dbms-v1c",
+  "up2dbms-v2",
+  "up2mn-v1a",
+  "up2mn-v1b",
+  "up2mn-v1b-plus",
+  "upms",
+  "weak-a-omega2-mn-2",
+  "weak-a-omega2-mn-3",
+  "wmm",
+  "wpps4",
+  "xy-v1",
+  "xy-v2",
+  "xy-v3"
+ ],
+ "detail": {
+  "-1y-(n+1)ss": {
+   "ok": 1480,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "1-bm-bhm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "2-bm-bhm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "2-pps4": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "3-bm-bhm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "a-omega2-mn-2": {
+   "ok": 872,
+   "bad": 0,
+   "skipped_ub": 64
+  },
+  "a-omega2-mn-3": {
+   "ok": 872,
+   "bad": 0,
+   "skipped_ub": 64
+  },
+  "abs-bm1ynss": {
+   "ok": 1480,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bbm": {
+   "ok": 1648,
+   "bad": 0,
+   "skipped_ub": 16
+  },
+  "bhm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "blm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "blp": {
+   "ok": 960,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v1": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v2": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v21": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v22": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v23": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v3": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v31": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v32": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v33": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bms-v4": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bsm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bt1ynss": {
+   "ok": 1480,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bt2ynss": {
+   "ok": 1480,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "bt3ynss": {
+   "ok": 1408,
+   "bad": 0,
+   "skipped_ub": 72
+  },
+  "btbm": {
+   "ok": 1648,
+   "bad": 0,
+   "skipped_ub": 16
+  },
+  "btbm-weak": {
+   "ok": 1648,
+   "bad": 0,
+   "skipped_ub": 16
+  },
+  "btlynss": {
+   "ok": 1480,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "cms": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "den1": {
+   "ok": 960,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "dsm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "e0mn": {
+   "ok": 792,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "empty": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "epsilon-y": {
+   "ok": 450,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ewpps4": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "g-y": {
+   "ok": 424,
+   "bad": 0,
+   "skipped_ub": 26
+  },
+  "gms-gbms-full": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-gbms-omega-p": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-gbms-pqss": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-gbms-qss": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-gbms-weird": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-lpms2-full": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-lpms2-omega-p": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-lpms2-pqss": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-lpms2-qss": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-lpms2-weird": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-upms-full": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-upms-omega-p": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-upms-pqss": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-upms-qss": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "gms-upms-weird": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "iblp": {
+   "ok": 960,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "lpms": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "lptss": {
+   "ok": 536,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "mrss121": {
+   "ok": 696,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "omega-y-medium": {
+   "ok": 696,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "omega-y-sequence": {
+   "ok": 696,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "omega-y-strong": {
+   "ok": 696,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "pps": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "pps4": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "prss": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "rel-bm1ynss": {
+   "ok": 1480,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s-omega-dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s-omega-dbms-v2": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s-omega-dbms-v3": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s-omega-p1-dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s-omega-square-dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s-omega2-dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s1dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s2dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "spps4": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "strong-e0mn": {
+   "ok": 792,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "t--1y-(n+1)ss": {
+   "ok": 1480,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "tbm": {
+   "ok": 1632,
+   "bad": 0,
+   "skipped_ub": 32
+  },
+  "ton-dr": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-drc": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-drp": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-drpc": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-i": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-ibp": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-m": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-mc": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ton-mpc": {
+   "ok": 168,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "tpps4": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "ts-2-dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "ts-omega-dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "tupms": {
+   "ok": 1632,
+   "bad": 0,
+   "skipped_ub": 32
+  },
+  "up1dbms": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up1mn": {
+   "ok": 1192,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up2dbms-v1": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up2dbms-v1b-plus": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up2dbms-v1c": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up2dbms-v2": {
+   "ok": 1376,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up2mn-v1a": {
+   "ok": 1192,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up2mn-v1b": {
+   "ok": 1192,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "up2mn-v1b-plus": {
+   "ok": 1192,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "upms": {
+   "ok": 2368,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "weak-a-omega2-mn-2": {
+   "ok": 872,
+   "bad": 0,
+   "skipped_ub": 64
+  },
+  "weak-a-omega2-mn-3": {
+   "ok": 872,
+   "bad": 0,
+   "skipped_ub": 64
+  },
+  "wmm": {
+   "ok": 320,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "wpps4": {
+   "ok": 3716,
+   "bad": 0,
+   "skipped_ub": 12
+  },
+  "xy-v1": {
+   "ok": 450,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "xy-v2": {
+   "ok": 1524,
+   "bad": 0,
+   "skipped_ub": 0
+  },
+  "s-omega-pow-omega-mn": {
+   "ok": 228,
+   "bad": 0,
+   "skipped_ub": 76
+  },
+  "t-omega-mn": {
+   "ok": 376,
+   "bad": 0,
+   "skipped_ub": 80
+  },
+  "xy-v3": {
+   "ok": 9192,
+   "bad": 0,
+   "skipped_ub": 1392
+  },
+  "s-omega2-mn": {
+   "ok": 192,
+   "bad": 0,
+   "skipped_ub": 152
+  },
+  "pcf-omega-mn": {
+   "ok": 152,
+   "bad": 0,
+   "skipped_ub": 88
+  },
+  "1-mn": {
+   "ok": 680,
+   "bad": 0,
+   "skipped_ub": 112
+  },
+  "2-mn": {
+   "ok": 680,
+   "bad": 0,
+   "skipped_ub": 112
+  },
+  "3-mn": {
+   "ok": 680,
+   "bad": 0,
+   "skipped_ub": 112
+  },
+  "omega-mn": {
+   "ok": 672,
+   "bad": 0,
+   "skipped_ub": 120
+  },
+  "sa-omega2-mn": {
+   "ok": 316,
+   "bad": 0,
+   "skipped_ub": 228
+  }
+ }
+}
