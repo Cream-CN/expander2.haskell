@@ -23,19 +23,8 @@ data RKeyCol = RKeyCol { kLow :: [(Bool, Int)], kSub :: [RKeyCol] }
 
 brIsLimit :: Node -> Bool
 brIsLimit e =
-  isInfinity e || (not (null (nCols e)) && not (isZeroColumn (Prelude.last (nCols e))))
+  not (null (nCols e)) && not (isZeroColumn (Prelude.last (nCols e)))
 
-brInfinityFs :: Int -> Int -> Node
-brInfinityFs index n =
-  let zero = Column (replicate n 0) makeNode
-   in if index <= 0
-        then Node False [zero]
-        else Node False [zero, Column (replicate n 1) (inner 2)]
-  where
-    inner i =
-      if i > index
-        then makeNode
-        else Node False [Column (replicate n i) (inner (i + 1))]
 
 nextLayer :: Node -> Node
 nextLayer e = cStep (Prelude.last (nCols e))
@@ -246,7 +235,7 @@ brFillTop e pt n outerParrs keys outer =
       let iS = length opStack
           extParrs = opStack ++ [bpArr (pt !! i)]
           oneTree =
-            brThresholds (Node False [col]) (Just [pt !! i]) (Just iS) n (replicate iS Nothing)
+            brThresholds (Node [col]) (Just [pt !! i]) (Just iS) n (replicate iS Nothing)
           at = case oneTree of
             (ACol _ s : _) -> s
             [] -> []
@@ -322,10 +311,10 @@ brAscensionVector e r b tailLayer =
 
 cloneSlice :: Node -> Int -> Node
 cloneSlice e from =
-  Node (nInf e) [nCols e !! i | i <- [from .. length (nCols e) - 1]]
+  Node [nCols e !! i | i <- [from .. length (nCols e) - 1]]
 
 brPopLast :: Node -> Node
-brPopLast e = Node (nInf e) (if null (nCols e) then [] else init (nCols e))
+brPopLast e = Node (if null (nCols e) then [] else init (nCols e))
 
 aSlice :: [ACol] -> Int -> [ACol]
 aSlice aTree from = [aTree !! i | i <- [from .. length aTree - 1]]
@@ -335,7 +324,7 @@ aPopLast aTree = if null aTree then [] else init aTree
 
 brAscendReplace :: Node -> Node -> Maybe Int -> Maybe [ACol] -> [Int] -> Int -> Node
 brAscendReplace e tail tl aTree vVec w =
-  Node (nInf e) (concatMap process (zip [0 ..] (nCols e)))
+  Node (concatMap process (zip [0 ..] (nCols e)))
   where
     ncols = nCols e
     process (i, col)
@@ -375,7 +364,6 @@ skipLayerA aTree k = skipLayerA (aSub (Prelude.last aTree)) (k - 1)
 
 brFs :: Node -> Int -> Int -> Bool -> Node
 brFs e index n rel
-  | isInfinity e = brInfinityFs index n
   | null (nCols e) = e
   | not (brIsLimit e) = brPopLast e
   | otherwise =
@@ -435,7 +423,6 @@ brColumnDisplay c =
 
 brRender :: Node -> Bool -> String
 brRender e topLevel
-  | isInfinity e = "Limit"
   | not topLevel =
       let cols = nCols e
           allZero = all isZeroColumn cols
@@ -467,12 +454,9 @@ expandBm rel text term n0 =
         Left _ -> kParseError
         Right (m, _) ->
           let lnz e idx =
-                if isInfinity e
-                  then brInfinityFs idx n
-                  else
-                    if not (brIsLimit e)
-                      then brFs e 0 n rel
-                      else brFs e idx n rel
+                if not (brIsLimit e)
+                  then brFs e 0 n rel
+                  else brFs e idx n rel
            in brRender (lnz m term') True
 
 expandAbs :: String -> Int -> Int -> String

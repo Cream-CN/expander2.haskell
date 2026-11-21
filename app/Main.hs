@@ -1,9 +1,12 @@
 -- | 命令行入口：与 C++ 侧对照程序同构。
 --
+--   @expander2-hs@                       零参数 -> 直接进入交互会话（REPL）
+--   @expander2-hs -i@ / @--interactive@  显式进入交互会话
 --   @expander2-hs --list@
 --   @expander2-hs <id> <fs|alter> <term> [param]@ ，表达式从 stdin 读入
 module Main (main) where
 
+import qualified OmegaY.Shell as Shell (repl)
 import OmegaY.Notation.Types (Caps (..), ExpandMode (..), Notation (..), expandNotation, uiExpand)
 import OmegaY.Registry (allNotations, byId, missingIds)
 import System.Environment (getArgs)
@@ -14,6 +17,9 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
+    [] -> Shell.repl
+    ["-i"] -> Shell.repl
+    ["--interactive"] -> Shell.repl
     ["--list"] ->
       mapM_ (\n -> putStrLn (nId n ++ "\t" ++ nName n)) allNotations
     ["--missing"] ->
@@ -43,7 +49,9 @@ main = do
             Left err -> putStrLn ("ERR:" ++ err)
             Right out -> putStrLn out
     _ -> do
-      hPutStrLn stderr "usage: expander2-hs <id> <fs|alter> <term> [param]  (text on stdin)"
+      hPutStrLn stderr "usage: expander2-hs                                   (无参数 = 交互会话)"
+      hPutStrLn stderr "       expander2-hs -i | --interactive               (显式进交互会话)"
+      hPutStrLn stderr "       expander2-hs <id> <fs|alter> <term> [param]  (text on stdin)"
       hPutStrLn stderr "       expander2-hs --ui <id> <fs|alter> <termRaw> [paramRaw]"
       hPutStrLn stderr "       expander2-hs --list"
       exitFailure

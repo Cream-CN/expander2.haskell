@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 -- | up2mn-v1a（UP2MN v1A）。移植 up2mn_v1a.hpp。
--- 使用 0-based Expr（与 MnUp2 一致），infinity_value 对应 1-based [[],[(1,1)],[(2,1)]]
--- = 0-based [[],[(0,1)],[(1,1)]]。
+-- 使用 0-based Expr（与 MnUp2 一致）。
 module OmegaY.Fam.Upmn.Up2MnV1a (expandText, expandAlter) where
 
 import OmegaY.Fam.Dbms.Common
@@ -10,8 +9,6 @@ import OmegaY.Fam.Upmn.SmnShare (smnExpand)
 
 errP = errParse
 
-infinityValue :: Expr
-infinityValue = [[], [(0, 1)], [(1, 1)]]
 
 hasInfinite :: Col -> Bool
 hasInfinite col = not (null col) && snd (last col) > 0
@@ -50,15 +47,11 @@ mountainCompare a b = go 0
           let c = colCompare (a !! k) (b !! k)
            in if c /= 0 then c else go (k + 1)
 
-isInfinity :: Expr -> Bool
-isInfinity m = mountainCompare m infinityValue == 0
 
 -- subtract_1 for v1a infinite branch (0-based: value -= 1)
 subtract1 :: Expr -> Expr
 subtract1 = map (map (\(v, sep) -> (v - 1, sep)))
 
-v1aInfinityFs :: Int -> Expr
-v1aInfinityFs index = smnExpand infinityValue index False
 
 copyColumnV1a :: Col -> Int -> Int -> Int -> Bool -> Int -> Col
 copyColumnV1a col ri rj offset up yOffset =
@@ -152,7 +145,6 @@ expandInfinite m index shorter = result
 
 expand :: Expr -> Int -> Bool -> Expr
 expand m index shorter
-  | isInfinity m = v1aInfinityFs index
   | null m = m
   | null (last m) = init m
   | not (hasInfinite (last m)) = smnExpand m index shorter
@@ -161,11 +153,7 @@ expand m index shorter
 expandTextImpl :: String -> Int -> Bool -> String
 expandTextImpl text term longer =
   let term' = if term < 1 then 1 else term
-      isInf = text == "Limit" || text == "limit" || text == "LIMIT"
-   in if isInf
-        then displayExpr (expand infinityValue term' (not longer))
-        else
-          case parseExpr text of
+   in case parseExpr text of
             Nothing -> errP
             Just e ->
               if null e then ""

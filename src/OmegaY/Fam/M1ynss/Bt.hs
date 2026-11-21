@@ -4,7 +4,6 @@ module OmegaY.Fam.M1ynss.Bt
   ( BtNode(..)
   , BtColumn(..)
   , btMakeNode
-  , btIsInfinity
   , btIsZeroColumn
   , btIsLimit
   , btNumberCmp
@@ -44,8 +43,7 @@ import OmegaY.Fam.M1ynss.PP
 -- ---------------------------------------------------------------------------
 
 data BtNode = BtNode
-  { btInf :: Bool
-  , btCols :: [BtColumn]
+  { btCols :: [BtColumn]
   } deriving (Eq, Show)
 
 data BtColumn = BtColumn
@@ -54,10 +52,8 @@ data BtColumn = BtColumn
   } deriving (Eq, Show)
 
 btMakeNode :: BtNode
-btMakeNode = BtNode False []
+btMakeNode = BtNode []
 
-btIsInfinity :: BtNode -> Bool
-btIsInfinity = btInf
 
 btIsZeroColumn :: BtColumn -> Bool
 btIsZeroColumn c = all (== 0) (bArr c) && null (bHigher c)
@@ -119,9 +115,7 @@ btTopDisplay e
   | otherwise = "*^" ++ btDisplay e
 
 btDisplay :: BtNode -> String
-btDisplay e
-  | btIsInfinity e = "Limit"
-  | otherwise = concatMap btColumnDisplay (btCols e)
+btDisplay e = concatMap btColumnDisplay (btCols e)
 
 -- ---------------------------------------------------------------------------
 -- 去基 / 特判
@@ -129,7 +123,7 @@ btDisplay e
 
 btRemoveBase :: BtNode -> Int -> BtNode
 btRemoveBase a base =
-  BtNode (btInf a) (map fixCol (btCols a))
+  BtNode (map fixCol (btCols a))
   where
     fixCol col =
       let arr = bArr col
@@ -246,11 +240,11 @@ btThresholds e pm ropt b stk =
 
 btCloneSlice :: BtNode -> Int -> BtNode
 btCloneSlice e from =
-  BtNode (btInf e) [btCols e !! i | i <- [from .. length (btCols e) - 1]]
+  BtNode [btCols e !! i | i <- [from .. length (btCols e) - 1]]
 
 btPopLast :: BtNode -> BtNode
 btPopLast e =
-  BtNode (btInf e) (if null (btCols e) then [] else init (btCols e))
+  BtNode (if null (btCols e) then [] else init (btCols e))
 
 btASlice :: BtANode -> Int -> BtANode
 btASlice (BtANode cols) from = BtANode [cols !! i | i <- [from .. length cols - 1]]
@@ -261,7 +255,7 @@ btAscendVector v ai vv w =
 
 btAscendReplace :: BtNode -> BtNode -> Maybe Int -> Maybe BtANode -> [Int] -> Int -> BtNode
 btAscendReplace e tail tl aTree vVec w =
-  BtNode (btInf e) (concatMap process (zip [0 ..] (btCols e)))
+  BtNode (concatMap process (zip [0 ..] (btCols e)))
   where
     ncols = btCols e
     process (i, col)
@@ -373,7 +367,7 @@ btFsSpecial e tailLayer index =
                 newVert' = newVert { btCols = take vr (btCols newVert) }
              in keptHigher ++ replicate index newVert'
           else keptHigher ++ [btFsSpecial (bHigher col !! hr) (tailLayer - 1) index]
-   in BtNode (btInf e) (keptCols ++ [BtColumn (bArr col) newHigher])
+   in BtNode (keptCols ++ [BtColumn (bArr col) newHigher])
 
 -- ---------------------------------------------------------------------------
 -- FS
@@ -381,15 +375,9 @@ btFsSpecial e tailLayer index =
 
 data BtVariant = Bt1 | Bt2 | Bt3 | Btl
 
-btInfinityFs :: Int -> Int -> BtNode
-btInfinityFs index n =
-  let chain = foldl (\ch i -> BtNode False [BtColumn (replicate n i) [ch]]) btMakeNode [index, index - 1 .. 1]
-      full = BtNode False (BtColumn (replicate n 0) [] : btCols chain)
-   in full
 
 btFs :: BtNode -> Int -> Int -> BtVariant -> BtNode
 btFs e index n variant
-  | btIsInfinity e = btInfinityFs index n
   | null (btCols e) = e
   | not (btIsLimit e) = btPopLast e
   | otherwise =
@@ -421,7 +409,7 @@ btFs e index n variant
                             let c0 = btCols res1 !! 0
                                 c0' = c0
                                   { bHigher =
-                                      [ btAscendReplace t (BtNode False []) Nothing (Just ta) vVec (w - 1)
+                                      [ btAscendReplace t (BtNode []) Nothing (Just ta) vVec (w - 1)
                                       | (t, ta) <- zip tailTop tailTopA
                                       ]
                                   }
@@ -432,7 +420,7 @@ btFs e index n variant
 
 btIsLimit :: BtNode -> Bool
 btIsLimit e =
-  btIsInfinity e || (not (null (btCols e)) && not (btIsZeroColumn (Prelude.last (btCols e))))
+  not (null (btCols e)) && not (btIsZeroColumn (Prelude.last (btCols e)))
 
 btSkipLayer :: BtNode -> Int -> BtNode
 btSkipLayer e k = iterate nextLayer e !! k
@@ -639,7 +627,7 @@ bt2FillTop e pt n = fst (go e pt [] [])
           let iS = length ps
               parr = bpnParr (ptCols !! i)
               ps' = ps ++ [parr]
-              oneTree = btThresholds (BtNode False [col]) (Just (BtPNode [ptCols !! i])) (Just iS) n (replicate iS Nothing)
+              oneTree = btThresholds (BtNode [col]) (Just (BtPNode [ptCols !! i])) (Just iS) n (replicate iS Nothing)
               atSubs = case oneTree of
                 BtANode (ac : _) -> baSubs ac
                 _ -> []
@@ -682,14 +670,7 @@ expandBt variant text term n =
 parseNode :: Int -> P BtNode
 parseNode n = do
   sp
-  isLimit <- startsWith "Limit"
-  if isLimit
-    then do
-      advanceN 5
-      sp
-      end <- atEnd
-      if end then return (BtNode True []) else err
-    else do
+  do
       e <- parseExpr n
       sp
       end <- atEnd
@@ -701,7 +682,7 @@ parseExpr :: Int -> P BtNode
 parseExpr n = do
   sp
   cols <- parseCols
-  return (BtNode False cols)
+  return (BtNode cols)
   where
     parseCols = do
       sp

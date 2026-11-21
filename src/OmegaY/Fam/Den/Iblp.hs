@@ -15,17 +15,14 @@ import OmegaY.Fam.Den.Share
 type Den3Row = [DenEntry]
 
 data Den3Expr = Den3Expr
-  { d3Infinity :: !Bool
-  , d3Rows :: [Den3Row]
+  { d3Rows :: [Den3Row]
   }
 
 entryStr :: DenEntry -> String
 entryStr e = (if deMarked e then "*" else "") ++ show (deValue e)
 
 toString :: Den3Expr -> String
-toString e
-  | d3Infinity e = "Limit"
-  | otherwise = concatMap rowStr (d3Rows e)
+toString e = concatMap rowStr (d3Rows e)
  where
   rowStr row =
     "(" ++ joinComma (map entryStr (drop 1 row)) ++ ")" ++ show (deValue (head row))
@@ -40,16 +37,12 @@ toString e
 parse :: String -> Maybe Den3Expr
 parse s0 = do
   let s1 = skipSpaces s0
-  case matchLit "Limit" s1 of
-    Just rest ->
-      let s2 = skipSpaces rest
-       in if null s2 then Just (Den3Expr True []) else Nothing
-    Nothing -> loop s1 []
+  loop s1 []
  where
   loop s acc =
     let s1 = skipSpaces s
      in if null s1
-          then Just (Den3Expr False acc)
+          then Just (Den3Expr acc)
           else
             if peek s1 /= '('
               then Nothing
@@ -81,7 +74,7 @@ parse s0 = do
 cut :: Den3Expr -> Den3Expr
 cut raw
   | null (d3Rows raw) = raw
-  | otherwise = Den3Expr (d3Infinity raw) (init (d3Rows raw))
+  | otherwise = Den3Expr (init (d3Rows raw))
 
 data SeqItem = SeqItem
   { siRow :: !Int
@@ -160,7 +153,7 @@ copy raw flag =
           )
           rows1
           [begin - 1 .. end - 2]
-   in Den3Expr (d3Infinity raw) rows2
+   in Den3Expr rows2
  where
   setAt idx v xs = [ if k == idx then v else x | (k, x) <- zip [0 ..] xs ]
   setMarked row j =
@@ -174,7 +167,7 @@ copy raw flag =
       if not (deMarked e)
         then acc
         else
-          case seqFrom (Den3Expr False rows) iTarget j of
+          case seqFrom (Den3Expr rows) iTarget j of
             Nothing -> acc
             Just seq ->
               let nomove =
@@ -242,7 +235,7 @@ compTo raw r rec =
    in setRow r nrow raw
  where
   setRow idx nrow expr =
-    Den3Expr (d3Infinity expr)
+    Den3Expr
       [ if k == idx then nrow else r | (k, r) <- zip [0 ..] (d3Rows expr) ]
 
 -- | compFrom：以第 r 行为模板、T 为系数构造 q+1 行并平移后续行。
@@ -295,7 +288,7 @@ compFrom raw r t =
                            | e <- drop 1 src
                            ]
              ]
-   in Den3Expr (d3Infinity raw) rows3
+   in Den3Expr rows3
  where
   setAt idx v xs = [ if k == idx then v else x | (k, x) <- zip [0 ..] xs ]
   markUpTo row from upTo =
@@ -364,7 +357,7 @@ expand raw fsTerm longer
                   (expr2, _) = loop (expr1, []) (length (d3Rows raw) - 1)
                   final =
                     if longer && len0 >= 0
-                      then Den3Expr (d3Infinity expr2) (take len0 (d3Rows expr2))
+                      then Den3Expr (take len0 (d3Rows expr2))
                       else expr2
                in final
  where
@@ -382,15 +375,6 @@ expand raw fsTerm longer
 -- 极限
 -- ---------------------------------------------------------------------
 
-limit :: Int -> Den3Expr
-limit n =
-  Den3Expr
-    False
-    ( [ [DenEntry 1 False, DenEntry 1 False, DenEntry 0 False]
-      , [DenEntry 1 False, DenEntry 2 False, DenEntry 1 False, DenEntry 0 False]
-      ]
-        ++ [limitRowEntries (1 + i) | i <- [0 .. n - 1]]
-    )
 
 -- ---------------------------------------------------------------------
 -- 公共入口
@@ -402,8 +386,7 @@ expandTextImpl text term longer =
    in case parse text of
         Nothing -> "解析失败，请确认你没有使用全角括号，逗号"
         Just e
-          | d3Infinity e -> toString (limit term')
-          | null (d3Rows e) -> toString (Den3Expr False [])
+          | null (d3Rows e) -> toString (Den3Expr [])
           | otherwise -> toString (expand e term' longer)
 
 expandText :: String -> Int -> String

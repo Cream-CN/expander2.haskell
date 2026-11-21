@@ -4,13 +4,11 @@ module OmegaY.Fam.M1ynss.Tm1
   ( Node(..)
   , Column(..)
   , makeNode
-  , isInfinity
   , numberCmp
   , compareNode
   , isZeroColumn
   , isOneColumn
   , isLimit
-  , infinityFs
   , PCol(..)
   , parents
   , root
@@ -30,13 +28,11 @@ import OmegaY.Fam.M1ynss.PP
 
 -- | 列：arr 长度 n；step 为递归子表达式。
 data Column = Column { cArr :: [Int], cStep :: Node }
-data Node = Node { nInf :: Bool, nCols :: [Column] }
+data Node = Node { nCols :: [Column] }
 
 makeNode :: Node
-makeNode = Node False []
+makeNode = Node []
 
-isInfinity :: Node -> Bool
-isInfinity e = nInf e
 
 numberCmp :: Int -> Int -> Int
 numberCmp a b = if a < b then -1 else if a > b then 1 else 0
@@ -53,15 +49,10 @@ lexNum a b = go 0
 
 compareNode :: Node -> Node -> Int
 compareNode a b =
-  let ai = isInfinity a
-      bi = isInfinity b
-   in if ai || bi
-        then numberCmp (if ai then 1 else 0) (if bi then 1 else 0)
-        else
-          let ca = nCols a
-              cb = nCols b
-              m = min (length ca) (length cb)
-           in case go 0 of
+  let ca = nCols a
+      cb = nCols b
+      m = min (length ca) (length cb)
+   in case go 0 of
                 0 -> numberCmp (length ca) (length cb)
                 c -> c
   where
@@ -92,7 +83,6 @@ isOneColumn c =
 
 isLimit :: Node -> Int -> Bool
 isLimit e n
-  | isInfinity e = True
   | null (nCols e) = False
   | otherwise =
       let lc = Prelude.last (nCols e)
@@ -100,12 +90,6 @@ isLimit e n
             then not (null (nCols (cStep lc)))
             else not (null (cArr lc)) && cArr lc !! 0 > 0
 
-infinityFs :: Int -> Int -> Node
-infinityFs index n =
-  let c0 = Column (replicate n 0) makeNode
-   in if index > 0
-        then Node False [c0, Column (replicate n 1) (infinityFs (index - 1) n)]
-        else Node False [c0]
 
 -- | 父表：每列 arr 存父列下标，step 存一个下标。
 data PCol = PCol { pArr :: [Int], pStep :: Int }
@@ -119,9 +103,7 @@ indexOfLastNonneg v = go (length v - 1)
       | otherwise = go (i - 1)
 
 parents :: Node -> Int -> [PCol]
-parents e n
-  | isInfinity e = []
-  | otherwise = reverse built
+parents e n = reverse built
   where
     cols = nCols e
     built = foldl addCol [] (zip [0 ..] cols)
@@ -203,18 +185,17 @@ ascend col delta b w =
    in Column newArr (cStep col)
 
 popLast :: Node -> Node
-popLast e = Node (nInf e) (init (nCols e))
+popLast e = Node (init (nCols e))
 
 fs :: Node -> Int -> Int -> Node
 fs e index n
-  | isInfinity e = infinityFs index n
   | null (nCols e) = e
   | otherwise =
       let cols = nCols e
           right = length cols - 1
        in if isLimit (cStep (cols !! right)) n
             then
-              Node False
+              Node
                 ([cols !! i | i <- [0 .. right - 1]]
                    ++ [Column (cArr (cols !! right)) (fs (cStep (cols !! right)) index n)])
             else
@@ -226,7 +207,7 @@ fs e index n
                           v = ascensionVector e r0 b
                           a = ascensionThresholds pcols r0 b
                           baseCols = [cols !! i | i <- [0 .. right - 1]]
-                          result0 = Node False baseCols
+                          result0 = Node baseCols
                           result = foldl (addWave width r0 b v a) result0 [1 .. index]
                        in result
   where
@@ -248,7 +229,6 @@ fs e index n
 
 lnz :: Node -> Int -> Int -> Node
 lnz e index n
-  | isInfinity e = infinityFs index n
   | not (isLimit e n) = fs e 0 n
   | otherwise = fs e index n
 
@@ -257,7 +237,6 @@ omegaChar = "\x03C9"
 
 render :: Node -> Bool -> String
 render e topLevel
-  | isInfinity e = "Limit"
   | not topLevel =
       let cols = nCols e
           allZero = all isZeroColumn cols
@@ -283,14 +262,7 @@ columnDisplay c =
 parseNode :: Bool -> Int -> P Node
 parseNode topLevel n = do
   sp
-  isLim <- startsWith "Limit"
-  if isLim
-    then do
-      sequence_ (replicate 5 advance)
-      sp
-      end <- atEnd
-      if end then return (Node True []) else err
-    else do
+  do
       early <-
         if not topLevel
           then bareNumber
@@ -306,19 +278,19 @@ parseNode topLevel n = do
       case mb of
         Just c | c >= '0' && c <= '9' -> do
           cnt <- numTok
-          return $ Just $ Node False [Column (replicate n 0) makeNode | _ <- [1 .. cnt]]
+          return $ Just $ Node [Column (replicate n 0) makeNode | _ <- [1 .. cnt]]
         _ -> do
           isOmega <- startsWith "\xCF\x89"
           if isOmega
             then do
               advance >> advance
-              return $ Just $ Node False [Column (replicate n 0) makeNode, oneColumn n]
+              return $ Just $ Node [Column (replicate n 0) makeNode, oneColumn n]
             else do
               mb2 <- peek
               case mb2 of
                 Just 'w' -> do
                   advance
-                  return $ Just $ Node False [Column (replicate n 0) makeNode, oneColumn n]
+                  return $ Just $ Node [Column (replicate n 0) makeNode, oneColumn n]
                 _ -> return Nothing
     parseCols = do
       sp
@@ -328,12 +300,12 @@ parseNode topLevel n = do
           c <- parseColumn n
           rest <- parseCols
           return (rest { nCols = c : nCols rest })
-        _ -> return (Node False [])
+        _ -> return (Node [])
 
 oneColumn :: Int -> Column
 oneColumn n =
   if n == 0
-    then Column [] (Node False [Column [] makeNode])
+    then Column [] (Node [Column [] makeNode])
     else
       let arr = replicate n 0
        in Column (repAt 0 1 arr) makeNode

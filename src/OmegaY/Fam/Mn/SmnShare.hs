@@ -32,7 +32,6 @@ module OmegaY.Fam.Mn.SmnShare
   , subtract1
   , copyColumn
   , extend
-  , ntInfinityFs
   , expand
   ) where
 
@@ -114,9 +113,7 @@ mountainDisplay m simple =
 -- ---------------------------------------------------------------------
 
 fromDisplay :: String -> Maybe Mountain
-fromDisplay s0 =
-  if s0 == "Limit" then Nothing
-  else go s0 0
+fromDisplay s0 = go s0 0
   where
     go s i
       | i >= length s = Just []
@@ -402,11 +399,6 @@ extend m0 =
             let col = copyColumn (m0 !! i) (mi0 !! i) (m' !! right) (mi !! right) p offset
              in go (i + 1) (m' ++ [col])
    in go (pI p + 1) m
-
-ntInfinityFs :: Int -> Int -> Mountain
-ntInfinityFs n index =
-  let col = [Entry 1 (n - 1) | _ <- [1 .. index]]
-   in [ [], col ]
 
 expand :: Mountain -> Int -> Bool -> Mountain
 expand m index shorter

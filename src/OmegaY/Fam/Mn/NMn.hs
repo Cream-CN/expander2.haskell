@@ -13,9 +13,7 @@ errText = "解析失败，请确认你没有使用全角括号，逗号，分号
 expandImpl :: Int -> Bool -> String -> Int -> String
 expandImpl n longer text term0 =
   let term = max 1 term0
-   in if text == "Limit"
-        then mountainDisplay (ntInfinityFs n term) False
-        else case fromDisplay text of
+   in case fromDisplay text of
                Nothing -> errText
                Just m
                  | null m -> ""

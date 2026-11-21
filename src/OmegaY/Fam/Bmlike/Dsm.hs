@@ -19,7 +19,6 @@ run text term shorter =
   case parseBm text of
     Nothing -> kParseError
     Just e
-      | beInfinity e -> matrixToBmString (triangularInfinityFs term)
       | matCols m == 0 -> ""
       | not (isLimit m) -> matrixToBmString (dropLastColumn m)
       | otherwise ->

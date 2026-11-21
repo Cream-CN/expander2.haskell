@@ -15,8 +15,7 @@ import Data.Char (isDigit)
 -- ---------------------------------------------------------------------------
 
 data Expr = Expr
-  { eInf :: Bool
-  , eCols :: [Column]
+  { eCols :: [Column]
   } deriving (Eq)
 
 type Column = [Entry]
@@ -37,13 +36,7 @@ data HEntry = HEntry
 type Vertical = [HExpr]
 
 emptyHeight :: Expr
-emptyHeight = Expr False []
-
-makeInf :: Expr
-makeInf = Expr True []
-
-isInfinity :: Expr -> Bool
-isInfinity = eInf
+emptyHeight = Expr []
 
 kParseError :: String
 kParseError = "解析失败，请确认你没有使用全角括号，逗号"
@@ -65,24 +58,13 @@ booleanCmp a b = (if a then 1 else 0) - (if b then 1 else 0)
 -- 极限基本列
 -- ---------------------------------------------------------------------------
 
-infinityFs :: Int -> Expr
-infinityFs index
-  | index == 0 = Expr False [[]]
-  | otherwise = Expr False [[], tower]
- where
-  tower = loop (index - 1) [Entry (index - 1) emptyHeight]
-  loop i col
-    | i <= 0 = col
-    | otherwise =
-      let next = [Entry (i - 1) (Expr False [col])]
-      in loop (i - 1) next
 
 -- ---------------------------------------------------------------------------
 -- to_height / from_height
 -- ---------------------------------------------------------------------------
 
 toHeight :: Expr -> Int -> HExpr
-toHeight (Expr inf cols) r = HExpr (map hcol cols)
+toHeight (Expr cols) r = HExpr (map hcol cols)
  where
   hcol col = map hentry col
   hentry en =
@@ -91,7 +73,7 @@ toHeight (Expr inf cols) r = HExpr (map hcol cols)
     in HEntry mark (if mark then p - r else p) (toHeight (enHeight en) r)
 
 fromHeight :: HExpr -> Int -> Expr
-fromHeight (HExpr cols) r = Expr False (map fcol cols)
+fromHeight (HExpr cols) r = Expr (map fcol cols)
  where
   fcol col = map fentry col
   fentry he =
@@ -177,8 +159,8 @@ rootLayer eIn r = go eIn 0 0
 -- ---------------------------------------------------------------------------
 
 ascendReplace :: Expr -> Int -> Int -> Maybe Int -> Expr -> Expr
-ascendReplace (Expr _ cols) r diff tl newTail =
-  Expr False (concatMap buildCol [0 .. length cols - 1])
+ascendReplace (Expr cols) r diff tl newTail =
+  Expr (concatMap buildCol [0 .. length cols - 1])
  where
   lastCol = length cols - 1
   buildCol i =
@@ -213,7 +195,7 @@ isSpecial eIn tLayer
     | otherwise = walk (nextLayer cur) (left + length (eCols cur)) (i + 1)
 
 expandSpecial :: Expr -> Int -> Int -> Expr
-expandSpecial (Expr _ cols) tLayer index = Expr False (init cols ++ [resultCol])
+expandSpecial (Expr cols) tLayer index = Expr (init cols ++ [resultCol])
  where
   col = last cols
   prefix = take (length col - 1) col
@@ -222,7 +204,7 @@ expandSpecial (Expr _ cols) tLayer index = Expr False (init cols ++ [resultCol])
     | tLayer > 1 =
       [Entry (enValue entry) (expandSpecial (enHeight entry) (tLayer - 1) index)]
     | otherwise =
-      let h = Expr False (init (eCols (enHeight entry)))
+      let h = Expr (init (eCols (enHeight entry)))
           base = Entry (enValue entry) h
       in (if null prefix then [base] else []) ++ replicate index base
   resultCol = prefix ++ added
@@ -268,9 +250,7 @@ entryPlainCmp a b =
     c -> c
 
 plainCmp :: Expr -> Expr -> Int
-plainCmp a b
-  | eInf a || eInf b = booleanCmp (eInf a) (eInf b)
-  | otherwise = goCols 0
+plainCmp a b = goCols 0
  where
   ca = eCols a
   cb = eCols b
@@ -293,16 +273,15 @@ plainCmp a b
 
 isLimit :: Expr -> Bool
 isLimit e =
-  isInfinity e || (not (null (eCols e)) && not (null (last (eCols e))))
+  not (null (eCols e)) && not (null (last (eCols e)))
 
 fsCoreWith :: (Expr -> Int -> Bool) -> (Expr -> Int -> Int -> Expr) -> Expr -> Int -> Expr
 fsCoreWith isSpecialF expandSpecialF e index
-  | isInfinity e = infinityFs index
   | null (eCols e) = e
   | otherwise =
     let tLayer = tailLayer e
     in if tLayer < 0
-         then Expr False (init (eCols e))
+         then Expr (init (eCols e))
          else if isSpecialF e tLayer
            then expandSpecialF e tLayer index
            else standardCase e tLayer index
@@ -321,7 +300,7 @@ standardCase e tLayer index =
   appending = rootAppendingStart colRoot r colTail t
 
   newTail = buildTail newTail0 index
-  newTail0 = Expr False []
+  newTail0 = Expr []
 
   buildTail nt j
     | j < 1 = nt
@@ -330,30 +309,30 @@ standardCase e tLayer index =
             if ri /= length (eCols exprRoot) - 1
               then
                 let tail1 =
-                      Expr False (drop (ri + 1) (eCols exprRoot))
+                      Expr (drop (ri + 1) (eCols exprRoot))
                     replaced1 =
                       ascendReplace tail1 r (j * (t - r))
                         (Just (tLayer - rLayer)) nt
                     tailPrefix = take (length colTail - 1) colTail
-                    prefixExpr = Expr False [tailPrefix]
+                    prefixExpr = Expr [tailPrefix]
                     newCol0 =
                       ascendReplace prefixExpr r ((j - 1) * (t - r)) Nothing
-                        (Expr False [])
+                        (Expr [])
                     newCol =
                       head (eCols newCol0)
                       ++ [ Entry (enValue (colRoot !! k))
                            (ascendReplace (enHeight (colRoot !! k)) r
-                              (j * (t - r)) Nothing (Expr False []))
+                              (j * (t - r)) Nothing (Expr []))
                          | k <- [appending .. length colRoot - 1] ]
-                    combined = Expr False [newCol]
+                    combined = Expr [newCol]
                     combined' = combined { eCols = eCols combined ++ eCols replaced1 }
                 in combined'
               else
                 let tailPrefix = take (length colTail - 1) colTail
-                    prefixExpr = Expr False [tailPrefix]
+                    prefixExpr = Expr [tailPrefix]
                     newCol0 =
                       ascendReplace prefixExpr r ((j - 1) * (t - r)) Nothing
-                        (Expr False [])
+                        (Expr [])
                     newCol =
                       head (eCols newCol0)
                       ++ [ Entry (enValue (colRoot !! k))
@@ -364,12 +343,11 @@ standardCase e tLayer index =
                                  else Nothing)
                               nt)
                          | k <- [appending .. length colRoot - 1] ]
-                in Expr False [newCol]
+                in Expr [newCol]
       in buildTail nt' (j - 1)
 
 fs :: (Expr -> Int -> Bool) -> (Expr -> Int -> Int -> Expr) -> Expr -> Int -> Expr
 fs isSF exSF e index
-  | isInfinity e = infinityFs index
   | not (isLimit e) = fsCoreWith isSF exSF e 0
   | otherwise = fsCoreWith isSF exSF e index
 
@@ -378,8 +356,8 @@ fs isSF exSF e index
 -- ---------------------------------------------------------------------------
 
 wAscendReplace :: Expr -> Int -> Int -> Int -> Maybe Int -> Expr -> Vertical -> Expr
-wAscendReplace (Expr _ cols) startIndex r diff tl newTail critical =
-  Expr False (concatMap buildCol [0 .. length cols - 1])
+wAscendReplace (Expr cols) startIndex r diff tl newTail critical =
+  Expr (concatMap buildCol [0 .. length cols - 1])
  where
   lastCol = length cols - 1
   buildCol i =
@@ -438,12 +416,11 @@ wAscendReplace (Expr _ cols) startIndex r diff tl newTail critical =
 
 wFs :: Expr -> Int -> Expr
 wFs e index
-  | isInfinity e = infinityFs index
   | null (eCols e) = e
   | otherwise =
     let tLayer = tailLayer e
     in if tLayer < 0
-         then Expr False (init (eCols e))
+         then Expr (init (eCols e))
          else if isSpecial e tLayer
            then expandSpecial e tLayer index
            else weakCase e tLayer index
@@ -465,7 +442,7 @@ weakCase e tLayer index =
   criticalVert = foldl verticalIncrease [] criticalHeights
 
   newTail = buildTail newTail0 index
-  newTail0 = Expr False []
+  newTail0 = Expr []
 
   buildTail nt j
     | j < 1 = nt
@@ -473,7 +450,7 @@ weakCase e tLayer index =
       let nt' =
             if ri /= length (eCols exprRoot) - 1
               then
-                let tail1 = Expr False (drop (ri + 1) (eCols exprRoot))
+                let tail1 = Expr (drop (ri + 1) (eCols exprRoot))
                     replaced1 =
                       wAscendReplace tail1 (r + 1) r (j * (t - r))
                         (Just (tLayer - rLayer)) nt criticalVert
@@ -485,9 +462,9 @@ weakCase e tLayer index =
                       newCol0
                       ++ [ Entry (enValue (colRoot !! k))
                            (wAscendReplace (enHeight (colRoot !! k)) (r + 1) r
-                              (j * (t - r)) Nothing (Expr False []) criticalVert)
+                              (j * (t - r)) Nothing (Expr []) criticalVert)
                          | k <- [appending .. length colRoot - 1] ]
-                    combined = Expr False [newCol]
+                    combined = Expr [newCol]
                     combined' = combined { eCols = eCols combined ++ eCols replaced1 }
                 in combined'
               else
@@ -505,7 +482,7 @@ weakCase e tLayer index =
                                  else Nothing)
                               nt criticalVert)
                          | k <- [appending .. length colRoot - 1] ]
-                in Expr False [newCol]
+                in Expr [newCol]
       in buildTail nt' (j - 1)
 
 -- ---------------------------------------------------------------------------
@@ -524,7 +501,7 @@ bIsSpecial e tLayer
            in not (null (eCols nxt)) && null (last (eCols nxt))
 
 bExpandSpecial :: Expr -> Int -> Int -> Expr
-bExpandSpecial (Expr _ cols) tLayer index = Expr False (init cols ++ [resultCol])
+bExpandSpecial (Expr cols) tLayer index = Expr (init cols ++ [resultCol])
  where
   col = last cols
   prefix = take (length col - 1) col
@@ -533,7 +510,7 @@ bExpandSpecial (Expr _ cols) tLayer index = Expr False (init cols ++ [resultCol]
     | tLayer > 0 =
       [Entry (enValue entry) (bExpandSpecial (enHeight entry) (tLayer - 1) index)]
     | otherwise =
-      let h = Expr False (init (eCols (enHeight entry)))
+      let h = Expr (init (eCols (enHeight entry)))
           base = Entry (enValue entry) h
       in (if null prefix then [base] else []) ++ replicate index base
   resultCol = prefix ++ added
@@ -543,9 +520,7 @@ bExpandSpecial (Expr _ cols) tLayer index = Expr False (init cols ++ [resultCol]
 -- ---------------------------------------------------------------------------
 
 display :: Expr -> String
-display e
-  | eInf e = "Limit"
-  | otherwise = concatMap displayColumn (eCols e)
+display e = concatMap displayColumn (eCols e)
  where
   displayColumn c
     | null c = "(0)"
@@ -651,20 +626,14 @@ pExpr s0 = do
       ('(' : _) -> do
         (col, s'') <- pColumn s'
         ((), s''') <- pSp s''
-        (Expr _ cols, rest) <- go s'''
-        Just (Expr False (col : cols), rest)
-      _ -> Just (Expr False [], s)
+        (Expr cols, rest) <- go s'''
+        Just (Expr (col : cols), rest)
+      _ -> Just (Expr [], s)
 
 pParse :: P Expr
 pParse s0 = do
   ((), s1) <- pSp s0
-  case s1 of
-    ('L' : 'i' : 'm' : 'i' : 't' : s2) -> do
-      ((), s3) <- pSp s2
-      if null s3
-        then Just (makeInf, s3)
-        else Nothing
-    _ -> do
+  do
       (e, s2) <- pExpr s1
       ((), s3) <- pSp s2
       if null s3

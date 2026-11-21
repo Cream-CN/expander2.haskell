@@ -110,8 +110,6 @@ fromDisplayOmega s0 = go s0 0
 isLimitMountain :: Mountain -> Bool
 isLimitMountain m = not (null m) && not (null (last m))
 
-infinityFs :: Int -> Mountain
-infinityFs n = [[], [Entry 1 n]]
 
 -- | omega_mn_detail::expand。
 expandOmega :: Mountain -> Int -> Bool -> Mountain
@@ -245,9 +243,7 @@ expandImpl :: Bool -> String -> Int -> String
 expandImpl longer text term0 =
   let term = max 1 term0
       raw = trimWS text
-   in if raw == "Limit" || raw == "limit" || raw == "LIMIT"
-        then mountainDisplay (infinityFs term) False
-        else if null raw || raw == "0" || raw == "∅"
+   in if null raw || raw == "0" || raw == "∅"
           then ""
           else case fromDisplayOmega raw of
                  Nothing -> errText

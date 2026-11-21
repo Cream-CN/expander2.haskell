@@ -202,10 +202,6 @@ expand a0 index shorter =
                       result = stepN 1 a3
                    in if shorter then init result else result
 
-infinityFs :: Int -> TExpr
-infinityFs n
-  | n <= 0 = [[]]
-  | otherwise = [[], [TE 1 (infinityFs (n - 1))]]
 
 -- ---------- 解析 ----------
 skipSpaces :: String -> Int -> Int
@@ -288,9 +284,7 @@ expandImpl :: Bool -> String -> Int -> String
 expandImpl longer text term0 =
   let term = max 1 term0
       raw = trimWS text
-   in if raw == "Limit" || raw == "limit" || raw == "LIMIT"
-        then mountainDisplay' (infinityFs term) False
-        else if null raw || raw == "0" || raw == "∅"
+   in if null raw || raw == "0" || raw == "∅"
           then ""
           else case fromDisplayT raw of
             Nothing -> errText

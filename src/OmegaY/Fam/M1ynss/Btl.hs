@@ -8,8 +8,7 @@ import System.IO.Unsafe (unsafePerformIO)
 import OmegaY.Fam.M1ynss.PP
 
 data BNode = BNode
-  { bInf :: Bool
-  , bCols :: [BColumn]
+  { bCols :: [BColumn]
   } deriving (Eq, Show)
 
 data BColumn = BColumn
@@ -19,7 +18,7 @@ data BColumn = BColumn
   } deriving (Eq, Show)
 
 makeNode :: BNode
-makeNode = BNode False []
+makeNode = BNode []
 
 -- ---------------------------------------------------------------------------
 -- 显示
@@ -47,9 +46,7 @@ columnDisplay c
           | otherwise = go (i - 1)
 
 display :: BNode -> String
-display e
-  | bInf e = "Limit"
-  | otherwise = concatMap columnDisplay (bCols e)
+display e = concatMap columnDisplay (bCols e)
 
 -- ---------------------------------------------------------------------------
 -- 比较
@@ -95,7 +92,7 @@ colCmp a b = goL 0
 
 removeBase :: BNode -> Int -> BNode
 removeBase e base =
-  BNode (bInf e)
+  BNode
     [ col { cLower = if null (cLower col) then [] else repIdx 0 (head (cLower col) - base) (cLower col)
           , cHigher = map (`removeBase` base) (cHigher col) }
     | col <- bCols e ]
@@ -310,10 +307,10 @@ thresholds e (PNode pcols) ropt b stk =
 -- ---------------------------------------------------------------------------
 
 cloneSlice :: BNode -> Int -> BNode
-cloneSlice e from = BNode (bInf e) [bCols e !! i | i <- [from .. length (bCols e) - 1]]
+cloneSlice e from = BNode [bCols e !! i | i <- [from .. length (bCols e) - 1]]
 
 popLast :: BNode -> BNode
-popLast e = BNode (bInf e) (if null (bCols e) then [] else init (bCols e))
+popLast e = BNode (if null (bCols e) then [] else init (bCols e))
 
 aSlice :: ANode -> Int -> ANode
 aSlice (ANode cols) from = ANode [cols !! i | i <- [from .. length cols - 1]]
@@ -332,7 +329,7 @@ skipLayerA a k = iterate nextLayerA a !! k
 
 ascendReplace :: BNode -> BNode -> Maybe Int -> Maybe ANode -> [Int] -> Int -> BNode
 ascendReplace e tail tl aTree vv w =
-  BNode (bInf e) (concatMap process (zip [0 ..] (bCols e)))
+  BNode (concatMap process (zip [0 ..] (bCols e)))
   where
     ncols = bCols e
     process (i, col)
@@ -372,25 +369,19 @@ fsStar e tLayer index =
           then
             let h = cHigher col !! hr
                 vertRight = length (bCols h) - 1
-                newVert = BNode False [bCols h !! k | k <- [0 .. vertRight - 1]]
+                newVert = BNode [bCols h !! k | k <- [0 .. vertRight - 1]]
                 mark = if hr == 0 && index == 0 then 0 else cMark col
              in (mark, keptHigher ++ replicate index newVert)
           else (cMark col, keptHigher ++ [fsStar (cHigher col !! hr) (tLayer - 1) index])
       (mark, higher) = newHigher
-   in BNode (bInf e) (keptCols ++ [BColumn (cLower col) mark higher])
+   in BNode (keptCols ++ [BColumn (cLower col) mark higher])
 
 -- ---------------------------------------------------------------------------
--- infinity fs
 -- ---------------------------------------------------------------------------
 
-infinityFs :: Int -> Int -> BNode
-infinityFs index n =
-  let chain = foldl (\ch i -> BNode False [BColumn (replicate n i) i [ch]]) makeNode [index, index - 1 .. 1]
-      full = BNode False (BColumn (replicate n 0) 0 [] : bCols chain)
-   in full
 
 isLimit :: BNode -> Bool
-isLimit e = bInf e || (not (null (bCols e)) && not (isZeroCol (last (bCols e))))
+isLimit e = not (null (bCols e)) && not (isZeroCol (last (bCols e)))
 
 -- ---------------------------------------------------------------------------
 -- fs
@@ -398,7 +389,6 @@ isLimit e = bInf e || (not (null (bCols e)) && not (isZeroCol (last (bCols e))))
 
 fs :: BNode -> Int -> Int -> BNode
 fs e index n
-  | bInf e = infinityFs index n
   | null (bCols e) = e
   | not (isLimit e) = popLast e
   | otherwise =
@@ -422,7 +412,7 @@ fs e index n
                           let higherRight = length (cHigher (bCols copyPart0 !! 0)) - 1
                               c0 = BColumn (cLower (bCols copyPart0 !! 0)) 0 []
                               innerCols = bCols (cHigher (bCols copyPart0 !! 0) !! higherRight)
-                              newCp = BNode (bInf copyPart0) (c0 : innerCols)
+                              newCp = BNode (c0 : innerCols)
                               a0 = ACol (Just b) []
                               innerA = case copyPartA0 of ANode (ac : _) -> aHigherA ac !! higherRight
                               newCpA = ANode (a0 : case innerA of ANode acs -> acs)
@@ -453,7 +443,6 @@ fs e index n
 
 lnz :: BNode -> Int -> Int -> BNode
 lnz e index n
-  | bInf e = infinityFs index n
   | not (isLimit e) = fs e 0 n
   | otherwise = fs e index n
 
@@ -483,14 +472,7 @@ safeRun action = unsafePerformIO $ do
 parseNode :: Int -> P BNode
 parseNode n = do
   sp
-  isLimit <- startsWith "Limit"
-  if isLimit
-    then do
-      advanceN 5
-      sp
-      end <- atEnd
-      if end then return (BNode True []) else err
-    else do
+  do
       e <- parseExpr n
       sp
       end <- atEnd
@@ -502,7 +484,7 @@ parseExpr :: Int -> P BNode
 parseExpr n = do
   sp
   cols <- parseCols
-  return (BNode False cols)
+  return (BNode cols)
   where
     parseCols = do
       sp

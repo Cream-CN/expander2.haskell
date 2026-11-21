@@ -306,8 +306,6 @@ fromDisplayPcf raw = go (skipSpaces s 0) []
           Nothing -> Nothing
           Just (col, j) -> go (skipSpaces s j) (acc ++ [col])
 
-infinityFs :: Int -> PExpr
-infinityFs index = [[], [PE 0 (replicate index 0 ++ [1])]]
 
 trimWS :: String -> String
 trimWS = reverse . dropWhile (`elem` " \t") . reverse . dropWhile (`elem` " \t")
@@ -316,9 +314,7 @@ expandImpl :: Bool -> String -> Int -> String
 expandImpl longer text term0 =
   let term = max 1 term0
       raw = trimWS text
-   in if raw == "Limit" || raw == "limit" || raw == "LIMIT"
-        then displayExpr (infinityFs term)
-        else if null raw || raw == "0" || raw == "∅"
+   in if null raw || raw == "0" || raw == "∅"
           then ""
           else case fromDisplayPcf raw of
             Nothing -> errText

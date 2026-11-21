@@ -20,8 +20,6 @@ parseIntExpr text = do
 displayIntExpr :: IExpr -> String
 displayIntExpr e = displayExpr [ [(v, 0) | v <- col] | col <- e ]
 
-infinityFs :: Int -> IExpr
-infinityFs index = [[]] ++ [ replicate (if index < 0 then 0 else index + 1) 0 ]
 
 computeUp :: IExpr -> Int -> Int -> [Int]
 computeUp expr r b = result
@@ -125,10 +123,7 @@ expand expr index shorter
 expandTextImpl :: String -> Int -> Bool -> String
 expandTextImpl text term longer =
   let term' = if term < 1 then 1 else term
-   in if text == "Limit" || text == "limit" || text == "LIMIT"
-        then displayIntExpr (infinityFs term')
-        else
-          case parseIntExpr text of
+   in case parseIntExpr text of
             Nothing -> errP
             Just e ->
               if null e then ""

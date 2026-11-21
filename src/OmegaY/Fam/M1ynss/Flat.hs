@@ -8,7 +8,7 @@ import OmegaY.Fam.M1ynss.PP
 
 -- | 列：arr 长度恒为 n（解析时补零）；step 为整数步长。
 data Column = Column { cArr :: [Int], cStep :: Int }
-data Expr = Expr { eInf :: Bool, eCols :: [Column] }
+data Expr = Expr { eCols :: [Column] }
 
 numberCmp :: Int -> Int -> Int
 numberCmp a b = if a < b then -1 else if a > b then 1 else 0
@@ -26,9 +26,7 @@ data PCol = PCol { pArr :: [Int], pStep :: Int }
 
 -- | 逐列从左到右构建父表；构建第 i 列时只能引用 i 之前已建好的列。
 parents :: Expr -> Int -> [PCol]
-parents e n
-  | eInf e = []
-  | otherwise = reverse built
+parents e n = reverse built
   where
     cols = eCols e
     built = foldl addCol [] (zip [0 ..] cols)
@@ -110,15 +108,9 @@ ascend col delta b w =
       newArr = [if j < b then arr !! j + delta !! j * w else arr !! j | j <- [0 .. length arr - 1]]
    in Column newArr (cStep col)
 
-infinityFs :: Int -> Int -> Expr
-infinityFs index n =
-  let c0 = Column (replicate n 0) 0
-      c1 = Column (replicate n 1) index
-   in Expr False [c0, c1]
 
 fs :: Expr -> Int -> Int -> Expr
 fs e index n
-  | eInf e = infinityFs index n
   | null (eCols e) = e
   | otherwise =
       let pcols = parents e n
@@ -151,26 +143,17 @@ columnDisplay c =
     uncommas xs = foldr (\x acc -> show x ++ (if null acc then "" else "," ++ acc)) "" xs
 
 display :: Expr -> String
-display e
-  | eInf e = "Limit"
-  | otherwise = concatMap columnDisplay (eCols e)
+display e = concatMap columnDisplay (eCols e)
 
 parseExpr :: Int -> P Expr
 parseExpr n = do
   sp
-  isLim <- startsWith "Limit"
-  if isLim
-    then do
-      sequence_ (replicate 5 advance)
-      sp
-      end <- atEnd
-      if end then return (Expr True []) else err
-    else do
+  do
       sp
       cols <- manyCols
       sp
       end <- atEnd
-      if end then return (Expr False cols) else err
+      if end then return (Expr cols) else err
   where
     manyCols = do
       sp

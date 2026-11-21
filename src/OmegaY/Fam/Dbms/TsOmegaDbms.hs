@@ -672,7 +672,7 @@ parseIndex text =
 parseOrdinal :: String -> Either String OrdO
 parseOrdinal raw =
   let source = stripWs raw
-   in if null source || "Limit" `elem` splitTopPure source '+' then Left "bad ordinal"
+   in if null source then Left "bad ordinal"
       else do
         sum <- splitTop source '+'
         if length sum > 1
@@ -707,7 +707,6 @@ parseOrdinal raw =
                       '{' -> Left "bad"
                       _ -> Left "bad"
   where
-    splitTopPure s sep = either (const []) id (splitTop s sep)
 
 matchEntry :: String -> Either String (Int, String)
 matchEntry entry =

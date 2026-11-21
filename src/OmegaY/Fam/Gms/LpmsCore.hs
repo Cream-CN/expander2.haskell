@@ -701,13 +701,6 @@ runLpms isLptss text term =
   case parseBmExpr text of
     Nothing -> kParseError
     Just e ->
-      if beInfinity e
-        then
-          let b = if isLptss
-                   then [ [ i, i, i ] | i <- [0 .. term] ]
-                   else [ zeroCol term, onesCol term ]
-           in fmatToString b
-        else
           let m = beMat e
            in if matCols m == 0
                 then ""

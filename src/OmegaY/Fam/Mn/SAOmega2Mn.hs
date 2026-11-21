@@ -291,8 +291,6 @@ extend m0 =
              in go (i + 1) (mAcc ++ [copied])
    in go (ri + 1) m1
 
-infinityFs :: Int -> AMountain
-infinityFs index = [[], [AEntry 1 [index, 1] False]]
 
 expandA :: AMountain -> Int -> Bool -> AMountain
 expandA m index shorter
@@ -311,9 +309,7 @@ isDigitC :: Char -> Bool
 isDigitC c = c >= '0' && c <= '9'
 
 fromDisplayA :: String -> Maybe AMountain
-fromDisplayA s0
-  | s0 == "Limit" = Nothing
-  | otherwise = go 0 []
+fromDisplayA s0 = go 0 []
   where
     s = s0
     n = length s
@@ -350,9 +346,7 @@ fromDisplayA s0
 expandImpl :: Bool -> String -> Int -> String
 expandImpl longer text term0 =
   let term = max 1 term0
-   in if text == "Limit" || text == "limit" || text == "LIMIT"
-        then mountainDisplay (infinityFs term)
-        else case fromDisplayA text of
+   in case fromDisplayA text of
           Nothing -> errText
           Just m
             | null m -> ""

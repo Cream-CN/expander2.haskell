@@ -16,10 +16,8 @@ expandImpl strong longer text term0 =
   let term = max 1 term0
    in case parseExpr text of
         Nothing -> errText
-        Just pr
-          | prInfinity pr -> exprToPlain (infinityFS term)
-          | otherwise ->
-              let e = prExpr pr
+        Just pr ->
+              let e = pr
                in if null e
                     then ""
                     else if not (isLimitExpr e)

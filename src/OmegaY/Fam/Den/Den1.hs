@@ -15,8 +15,7 @@ import OmegaY.Fam.Den.Share
 -- ---------------------------------------------------------------------
 
 data Den1Expr = Den1Expr
-  { d1Infinity :: !Bool
-  , d1Rows :: [[Int]]
+  { d1Rows :: [[Int]]
   }
 
 -- | TS: toShort —— 主行 slice(1, -step) 再补最后一个值。
@@ -27,7 +26,6 @@ toShortRow row =
 
 toString :: Den1Expr -> String
 toString e
-  | d1Infinity e = "Limit"
   | otherwise =
       concatMap rowStr (drop 1 (d1Rows e))
         ++ ";"
@@ -75,11 +73,7 @@ parseRow s0 = do
 parse :: String -> Maybe Den1Expr
 parse s0 = do
   let s1 = skipSpaces s0
-  case matchLit "Limit" s1 of
-    Just rest ->
-      let s2 = skipSpaces rest
-       in if null s2 then Just (Den1Expr True []) else Nothing
-    Nothing -> do
+  do
       (rows, s2) <- parseBody s1 []
       let s3 = skipSpaces s2
       if null s3 || peek s3 /= ';'
@@ -88,7 +82,7 @@ parse s0 = do
           let s4 = skipSpaces (drop 1 s3)
           (parents, s5) <- parseParents s4 []
           if null s5
-            then Just (Den1Expr False (parents : rows))
+            then Just (Den1Expr (parents : rows))
             else Nothing
  where
   parseBody s acc
@@ -116,13 +110,13 @@ parse s0 = do
 -- | 删除最后一行，并弹出父标号列表最后一个元素。
 cut :: Den1Expr -> Den1Expr
 cut raw
-  | null (d1Rows raw) = Den1Expr False []
+  | null (d1Rows raw) = Den1Expr []
   | otherwise =
       let rows = init (d1Rows raw)
           parents = if null rows then [] else initRow (head rows)
           initRow p = if null p then [] else init p
           rows' = if null rows then [] else [parents] ++ drop 1 rows
-       in Den1Expr False rows'
+       in Den1Expr rows'
 
 -- | isAncestor(R, i, j)：R 为父标号列表，j 为 1 起主行下标。
 isAncestor :: [Int] -> Int -> Int -> Bool
@@ -172,7 +166,7 @@ copy raw flag
             | rowIdx <- [begin .. end - 1]
             ]
           rows' = d1Rows expr ++ copied
-       in Den1Expr False (applyParents rows' parentsNew)
+       in Den1Expr (applyParents rows' parentsNew)
  where
   applyParents rows parents =
     if null rows then parents : [] else [head rows ++ parents] ++ drop 1 rows
@@ -193,7 +187,7 @@ extend raw
             | rowIdx <- [begin .. length (d1Rows raw) - 1]
             ]
           rows' = d1Rows expr ++ copied
-       in Den1Expr False (applyParents rows' parentsNew)
+       in Den1Expr (applyParents rows' parentsNew)
  where
   applyParents rows parents =
     if null rows then parents : [] else [head rows ++ parents] ++ drop 1 rows
@@ -266,7 +260,7 @@ comp raw i t =
         if null placed
           then [parentsFinal]
           else setRow0 placed parentsFinal
-   in Den1Expr False rows1
+   in Den1Expr rows1
  where
   sortDesc xs = map fst (sortOn (\(x, k) -> (Down x, k)) (zip xs [0 ..]))
   setAt idx v xs = [ if k == idx then v else x | (k, x) <- zip [0 ..] xs ]
@@ -334,24 +328,8 @@ expand raw fsTerm longer
 -- 极限
 -- ---------------------------------------------------------------------
 
-limitR :: Int -> [Int]
-limitR n
-  | n == 0 = [0, 0]
-  | otherwise = [0, 0, 0] ++ [3 + nn | nn <- [0 .. n - 2]]
 
-limitRow :: Int -> [Int]
-limitRow n = reverse ([0 .. n + 2] ++ [2])
 
-limit :: Int -> Den1Expr
-limit n =
-  Den1Expr
-    False
-    ( [ limitR n
-      , [1, 1, 0]
-      , [1, 2, 1, 0]
-      ]
-        ++ [limitRow (1 + nn) | nn <- [0 .. n - 1]]
-    )
 
 -- ---------------------------------------------------------------------
 -- 公共入口
@@ -363,8 +341,7 @@ expandTextImpl text term longer =
    in case parse text of
         Nothing -> "解析失败，请确认你没有使用全角括号，逗号，分号"
         Just e
-          | d1Infinity e -> toString (limit term')
-          | length (d1Rows e) <= 1 -> toString (Den1Expr False [[]])
+          | length (d1Rows e) <= 1 -> toString (Den1Expr [[]])
           | otherwise -> toString (expand e term' longer)
 
 expandText :: String -> Int -> String

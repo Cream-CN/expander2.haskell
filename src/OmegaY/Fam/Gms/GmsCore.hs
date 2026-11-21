@@ -518,9 +518,6 @@ runGms system proj text term =
   case parseBmExpr text of
     Nothing -> kParseError
     Just e ->
-      if beInfinity e
-        then fmatToString (limitBuilder proj term)
-        else
           let m = beMat e
            in if matCols m == 0
                 then ""

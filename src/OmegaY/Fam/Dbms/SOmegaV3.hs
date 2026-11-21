@@ -13,8 +13,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-isLimitWord :: String -> Bool
-isLimitWord s = s == "Limit" || s == "limit" || s == "LIMIT"
 
 cmpHE :: HE -> HE -> Int
 cmpHE (HE v1 p1) (HE v2 p2) =
@@ -145,17 +143,15 @@ entryP t = do
       Just (E v' h, t3)
     _ -> Just (E v' [], t2)
 
-parse :: String -> Maybe (Bool, Expr)
-parse s
-  | isLimitWord s = Just (True, [])
-  | otherwise =
+parse :: String -> Maybe Expr
+parse s =
       let s1 = skipSp s
        in case s1 of
             ('(' : _) -> do
               (cs, s2) <- cols [] s1
               let s3 = skipSp s2
-              if null s3 then Just (False, cs) else Nothing
-            _ -> if null s1 then Just (False, []) else Nothing
+              if null s3 then Just (cs) else Nothing
+            _ -> if null s1 then Just ([]) else Nothing
   where
     cols acc t =
       case skipSp t of
@@ -175,8 +171,6 @@ display = concatMap colD
       show (v + 1) ++ "^(" ++ concat [ (if k > 0 then "," else "") ++ show (hv (h !! k) + 1) ++ "@" ++ show (hp (h !! k)) | k <- [0 .. length h - 1] ] ++ ")"
       where hv (HE x _) = x; hp (HE _ x) = x
 
-infinityFs :: Int -> Expr
-infinityFs index = [[]] ++ [[E 0 [HE 0 index]]]
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter
@@ -215,10 +209,7 @@ expandTextImpl text term longer =
   let term' = if term < 1 then 1 else term
    in case parse text of
         Nothing -> errParse
-        Just (inf, expr) ->
-          if inf
-            then display (infinityFs term')
-            else
+        Just expr ->
               if null expr
                 then ""
                 else

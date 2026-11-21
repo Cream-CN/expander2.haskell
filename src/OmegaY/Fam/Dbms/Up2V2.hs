@@ -65,20 +65,12 @@ entryP t = do
       Just (E v' h, t3)
     _ -> Just (E v' (H 0 (-1)), t2)
 
-data Parsed = Parsed Bool Expr
-
-parse :: String -> Maybe Parsed
+parse :: String -> Maybe Expr
 parse text =
   let s1 = skipSp text
-   in case s1 of
-        ('L' : 'i' : 'm' : 'i' : 't' : rest) ->
-          if null (skipSp rest) then Just (Parsed True []) else Nothing
-        _ ->
-          if s1 == "limit" || s1 == "LIMIT"
-            then Just (Parsed True [])
-            else do
-              (cs, s2) <- cols [] s1
-              if null (skipSp s2) then Just (Parsed False cs) else Nothing
+   in do
+        (cs, s2) <- cols [] s1
+        if null (skipSp s2) then Just cs else Nothing
   where
     cols acc t =
       case skipSp t of
@@ -268,9 +260,6 @@ computeUp expr r hh@(H _ h1) = build
                     then (True, setAt xStart (c > 0) rs)
                     else loopUp xStart yStart (k + 1) rs
 
-infinityFs :: Int -> Expr
-infinityFs index =
-  [] : [ [E i (H i (i + 1))] | i <- [0 .. index - 1] ]
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter
@@ -310,10 +299,7 @@ expandTextImpl text term longer =
   let term' = if term < 1 then 1 else term
    in case parse text of
         Nothing -> errParse
-        Just (Parsed inf expr) ->
-          if inf
-            then display (infinityFs term')
-            else
+        Just expr ->
               if null expr
                 then ""
                 else

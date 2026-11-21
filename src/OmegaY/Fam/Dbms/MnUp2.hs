@@ -7,9 +7,7 @@ module OmegaY.Fam.Dbms.MnUp2
   , parseExpr
   , displayExpr
   , exprValid
-  , infinityFs
   , dbmsExpand
-  , up2mnInfinityFs
   , up2mnExpand
   , exprVert
   , parents
@@ -33,9 +31,7 @@ type Pos = (Int, Int)
 -- ---------------------------------------------------------------- smnshare 片段
 -- from_display（非 simple）
 smnFromDisplay :: String -> Maybe Expr
-smnFromDisplay s
-  | s == "Limit" = Nothing
-  | otherwise = go (skipSp s)
+smnFromDisplay s = go (skipSp s)
   where
     go t =
       case t of
@@ -376,11 +372,6 @@ copyCol col (ri, rj) offset yOffset up v1flag =
            in head' ++ tail
         else result
 
--- infinity_fs
-infinityFs :: Int -> Expr
-infinityFs index =
-  [] : [ [ (i - 1, 0) | _ <- [1 .. i] ] ++ [ (i - 1, 1) ] | i <- [1 .. index] ]
-
 -- dbmsExpand
 dbmsExpand :: Expr -> Int -> Bool -> Bool -> Bool -> Expr
 dbmsExpand expr index shorter v1flag v1c
@@ -421,15 +412,6 @@ dbmsExpand expr index shorter v1flag v1c
 -- =====================================================================
 -- up2mn 专用（v1b / v1b-plus）
 -- =====================================================================
-
-up2mnInfinityFs :: Int -> Bool -> Expr
-up2mnInfinityFs index plus =
-  [[]] ++ [ oneCol i | i <- [1 .. index] ]
-  where
-    oneCol i =
-      if plus
-        then [(i - 1, 1)]
-        else [ (i - 1, 0) | _ <- [1 .. i - 1] ] ++ [(0, 1)]
 
 up2mnCopyCol :: Col -> Pos -> Int -> Int -> Bool -> Col
 up2mnCopyCol col (ri, rj) offset yOffset up =

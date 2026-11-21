@@ -16,17 +16,14 @@ data DenRow = DenRow
   }
 
 data DenExpr = DenExpr
-  { deInfinity :: !Bool
-  , deRows :: [DenRow]
+  { deRows :: [DenRow]
   }
 
 entryStr :: DenEntry -> String
 entryStr e = (if deMarked e then "*" else "") ++ show (deValue e)
 
 toString :: DenExpr -> String
-toString e
-  | deInfinity e = "Limit"
-  | otherwise = concatMap rowStr (deRows e)
+toString e = concatMap rowStr (deRows e)
  where
   rowStr row =
     "(" ++ joinComma (map entryStr (drEntries row)) ++ ")" ++ show (drStep row)
@@ -41,16 +38,12 @@ toString e
 parse :: String -> Maybe DenExpr
 parse s0 = do
   let s1 = skipSpaces s0
-  case matchLit "Limit" s1 of
-    Just rest ->
-      let s2 = skipSpaces rest
-       in if null s2 then Just (DenExpr True []) else Nothing
-    Nothing -> loop s1 []
+  loop s1 []
  where
   loop s acc =
     let s1 = skipSpaces s
      in if null s1
-          then Just (DenExpr False acc)
+          then Just (DenExpr acc)
           else
             if peek s1 /= '('
               then Nothing
@@ -86,7 +79,7 @@ parse s0 = do
 cut :: DenExpr -> DenExpr
 cut raw
   | null (deRows raw) = raw
-  | otherwise = DenExpr (deInfinity raw) (init (deRows raw))
+  | otherwise = DenExpr (init (deRows raw))
 
 data SeqItem = SeqItem
   { siRow :: !Int
@@ -156,7 +149,7 @@ copy raw flag =
           )
           rows1
           [begin - 1 .. end - 2]
-   in DenExpr (deInfinity raw) rows2
+   in DenExpr rows2
  where
   setAt idx v xs = [ if k == idx then v else x | (k, x) <- zip [0 ..] xs ]
   migrate newRows begin offset lastActive es targetEs targetStep i =
@@ -228,7 +221,7 @@ compTo raw r already =
    in setRow r row { drStep = drStep row + added, drEntries = newEs } raw
  where
   setRow idx row expr =
-    DenExpr (deInfinity expr)
+    DenExpr
       [ if k == idx then row else r | (k, r) <- zip [0 ..] (deRows expr) ]
 
 -- | compFrom：以第 r 行为模板、T 为系数构造 q+1 行并平移后续行。
@@ -281,7 +274,7 @@ compFrom raw r t =
                        | e <- drEntries src
                        ]
              ]
-   in DenExpr (deInfinity raw) rows3
+   in DenExpr rows3
  where
   setAt idx v xs = [ if k == idx then v else x | (k, x) <- zip [0 ..] xs ]
   markUpTo es from upTo =
@@ -372,20 +365,10 @@ limitRow n =
   DenRow 2
     [ DenEntry nn (3 <= nn && nn < 2 + n) | nn <- [2 + n, 2 + n - 1 .. 0] ]
 
-infinityFs :: Int -> DenExpr
-infinityFs n =
-  DenExpr
-    False
-    ( [ DenRow 1 [DenEntry 1 False, DenEntry 0 False]
-      , DenRow 1 [DenEntry 2 False, DenEntry 1 False, DenEntry 0 False]
-      ]
-        ++ [limitRow (1 + i) | i <- [0 .. n - 1]]
-    )
 
 -- | 极限判定。
 isLimit :: DenExpr -> Bool
 isLimit e
-  | deInfinity e = True
   | null (deRows e) = False
   | otherwise =
       let active = last (deRows e)
@@ -411,8 +394,7 @@ expandTextImpl text term shorter =
    in case parse text of
         Nothing -> "解析失败，请确认你没有使用全角括号，逗号"
         Just e
-          | deInfinity e -> toString (infinityFs term')
-          | null (deRows e) -> toString (DenExpr False [])
+          | null (deRows e) -> toString (DenExpr [])
           | not (isLimit e) -> toString (cut e)
           | otherwise -> toString (expand e term' shorter)
 

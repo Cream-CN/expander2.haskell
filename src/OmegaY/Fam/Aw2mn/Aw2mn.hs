@@ -11,9 +11,7 @@ expandImpl weak kind longer text term0 =
   let term = max 1 term0
    in case parse text of
         Nothing -> kParseFail
-        Just parsed
-          | pInfinity parsed -> mountainDisplay (infinityFs term)
-          | otherwise ->
+        Just parsed ->
               let e = pExpr parsed
                in if null e
                     then ""

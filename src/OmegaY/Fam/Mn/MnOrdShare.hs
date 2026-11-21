@@ -6,7 +6,6 @@ module OmegaY.Fam.Mn.MnOrdShare
   , Entry(..)
   , Column
   , Expr
-  , ParseResult(..)
   -- * 构造与判定
   , ordNat
   , ordOne
@@ -30,8 +29,6 @@ module OmegaY.Fam.Mn.MnOrdShare
   , parseExpr
   , colToPlain
   , exprToPlain
-  , infinityDisplay
-  , infinityFS
   -- * 基本列机制
   , down
   , rfl
@@ -60,12 +57,6 @@ data Entry = Entry { eA :: Int, eX :: Ordinal }
 
 type Column = [Entry]
 type Expr = [Column]
-
-data ParseResult = ParseResult
-  { prInfinity :: Bool
-  , prExpr :: Expr
-  }
-  deriving (Eq, Show)
 
 -- ---------------------------------------------------------------------
 -- 基础构造与判定
@@ -372,12 +363,6 @@ colToPlain c
 exprToPlain :: Expr -> String
 exprToPlain e = concatMap colToPlain e
 
-infinityDisplay :: String
-infinityDisplay = "Limit"
-
-infinityFS :: Int -> Expr
-infinityFS index = [[], [Entry 1 (omegaTower index)]]
-
 -- | 顶层按 sep 切分（括号深度 0）。
 splitTop :: String -> Char -> [String]
 splitTop s sep = go 0 0 0 0
@@ -438,38 +423,22 @@ parseColumn s0 =
                                  Nothing -> Nothing
                                  Just x -> (Entry a x :) <$> go rest
 
-parseExpr :: String -> Maybe ParseResult
+parseExpr :: String -> Maybe Expr
 parseExpr text =
   let raw = trimWS text
    in if null raw || raw == "0" || raw == "∅"
-        then Just (ParseResult False [])
-        else if raw == "Limit" || raw == "limit" || raw == "LIMIT"
-          then Just (ParseResult True [])
-          else case limitBracket raw of
-                 Just n -> Just (ParseResult False [[], [Entry 1 (omegaTower n)]])
-                 Nothing -> go raw
+        then Just []
+        else go raw
   where
-    limitBracket raw =
-      case raw of
-        (c:_) | c == 'L' || c == 'l' ->
-          let lower = map toLower raw
-           in if take 6 lower == "limit[" && not (null lower) && last lower == ']'
-                then let digits = take (length lower - 7) (drop 6 lower)
-                      in if null digits || not (all isDigit digits)
-                           then Nothing
-                           else let n = foldl' (\a d -> a * 10 + (fromEnum d - fromEnum '0')) 0 digits
-                                 in if n > 1000000 then Nothing else Just n
-                else Nothing
-        _ -> Nothing
     go raw = scan raw 0 []
       where
         nRaw = length raw
         scan s i acc
-          | i >= nRaw = Just (ParseResult False (reverse acc))
+          | i >= nRaw = Just (reverse acc)
           | otherwise =
               let i1 = skipWS s i
                in if i1 >= nRaw
-                    then Just (ParseResult False (reverse acc))
+                    then Just (reverse acc)
                     else if s !! i1 /= '('
                       then Nothing
                       else

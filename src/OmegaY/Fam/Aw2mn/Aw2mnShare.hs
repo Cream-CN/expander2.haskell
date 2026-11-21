@@ -12,7 +12,6 @@ module OmegaY.Fam.Aw2mn.Aw2mnShare
   , mountainDisplay
   , parse
   , expand
-  , infinityFs
   , mountainIsLimit
   , mountainIsOne
   , validValueRange
@@ -37,8 +36,7 @@ type Vertical = [Sep]
 type VV = [[Vertical]]
 
 data Parsed = Parsed
-  { pInfinity :: Bool
-  , pExpr :: Expr
+  { pExpr :: Expr
   } deriving (Eq, Show)
 
 data SubtractKind = V2 | V3
@@ -126,10 +124,8 @@ omegaSep :: Sep
 omegaSep = [[], [Entry 1 [[]] False]]
 
 parse :: String -> Maybe Parsed
-parse s0
-  | s0 == "Limit" || s0 == "limit" || s0 == "LIMIT" = Just (Parsed True [])
-  | otherwise = case go s0 0 of
-      Just (cols, _) -> Just (Parsed False cols)
+parse s0 = case go s0 0 of
+      Just (cols, _) -> Just (Parsed cols)
       Nothing -> Nothing
   where
     go s i =
@@ -587,14 +583,6 @@ expand a0 index shorter weak kind =
         then take (length a1 - 1) a1
         else extend a1 True weak kind
 
--- ---------------------------------------------------------------------
--- infinity
--- ---------------------------------------------------------------------
-
-infinityFs :: Int -> Expr
-infinityFs n =
-  let sep = [[], [Entry 1 [[]] False]] ++ replicate n []
-   in [ [], [Entry 1 sep False] ]
 
 -- ---------------------------------------------------------------------
 -- 值域校验

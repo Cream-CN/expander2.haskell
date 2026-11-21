@@ -174,14 +174,12 @@ rConfig a b
 
 displayNoraise :: TonNode -> String
 displayNoraise (TLeaf v)
-  | v == kInf = "Limit"
   | v < 0 = "0"
   | otherwise = "Ω"
 displayNoraise (TNode l r) = displayNoraise l ++ displayNoraise r ++ "C"
 
 displayMain :: TonNode -> String
 displayMain (TLeaf v)
-  | v == kInf = "Limit"
   | v < 0 = "0"
   | otherwise = "Ω<" ++ fmtVal v ++ ">"
 displayMain (TNode l r) = displayMain l ++ displayMain r ++ "C"
@@ -203,7 +201,6 @@ parseImpl s0 mainStyle =
       _ -> Nothing
     go s st =
       case s of
-        ('L':'i':'m':'i':'t':rest) -> go rest (TLeaf kInf : st)
         ('0':rest) -> go rest (TLeaf (-1) : st)
         ('\x3A9':rest) ->
           if mainStyle
@@ -586,7 +583,7 @@ tonExpandText :: TonConfig -> String -> Int -> String
 tonExpandText cfg text term0 =
   let term = if term0 < 0 then 0 else term0
   in case parseImpl text (tcMainStyle cfg) of
-       Nothing -> "解析失败，请确认输入是 TON 文本（Limit / 0 / Ω / Ω<n> / C 后缀），且不是全角字符"
+       Nothing -> "解析失败，请确认输入是 TON 文本（0 / Ω / Ω<n> / C 后缀），且不是全角字符"
        Just t -> evalState (expand cfg t term) initialTonState
 
 expand :: TonConfig -> TonNode -> Int -> State TonState String

@@ -40,7 +40,6 @@ module OmegaY.Fam.Mn.SOmega2Share
   , computeStretch
   , copyColumn
   , extend
-  , infinityFs
   , expand
   ) where
 
@@ -131,8 +130,7 @@ mountainDisplay m = concatMap columnDisplay m
 -- ---------------------------------------------------------------------
 
 fromDisplay :: String -> Maybe Mountain
-fromDisplay s =
-  if s == "Limit" then Nothing else go s 0
+fromDisplay s = go s 0
   where
     go str i =
       let skipSpaces j = while (< length str) (\k -> str !! k == ' ') (j + 1)
@@ -372,9 +370,6 @@ extend m0 =
             let newCol = copyColumn (m0 !! i) (mi0 !! i) (v0 !! i) (m !! right) (mi !! right) p sd0 offset ((v0 !! right) !! top)
              in loop (i + 1) (curA ++ [newCol])
    in loop (pI p + 1) m
-
-infinityFs :: Int -> Mountain
-infinityFs index = [[], [Entry 1 [index, 1]]]
 
 expand :: Mountain -> Int -> Bool -> Mountain
 expand m index shorter

@@ -18,7 +18,6 @@ expandText text term =
   case parseBm text of
     Nothing -> kParseError
     Just e
-      | beInfinity e -> matrixToBmString (infinityFs term)
       | matCols (beMat e) == 0 -> ""
       | otherwise ->
           colsToString (normalizeCols (expand (standardizeMatrix 0 (beMat e)) term))

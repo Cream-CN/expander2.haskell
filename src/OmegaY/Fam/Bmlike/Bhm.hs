@@ -15,7 +15,6 @@ fsWith text term shorter core =
   case parseBm text of
     Nothing -> kParseError
     Just e
-      | beInfinity e -> matrixToBmString (infinityFs term)
       | matCols m == 0 -> ""
       | not (isLimit m) -> matrixToBmString (dropLastColumn m)
       | otherwise -> matrixToBmString (normalizeMatrix (core m term shorter))

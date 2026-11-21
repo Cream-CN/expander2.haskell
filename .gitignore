@@ -1,11 +1,83 @@
+# ---- build outputs ----
 .build/
 .build-*/
 .build-*//
+build-cmake/
+out/
+dist-newstyle/
+.stack-work/
+
+# ---- GHC intermediates ----
 *.hi
 *.o
+*.dyn_hi
+*.dyn_o
+*.p_hi
+*.hie
+*.hp
+*.prof
+*.eventlog
+.hie/
+.ghc.environment.*
+
+# ---- C / linker artifacts ----
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+*.dll.a
+*.exe
+
+# ---- CMake leftovers (when configured in-tree) ----
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+build.ninja
+.ninja_deps
+.ninja_log
+compile_commands.json
+.cmake/
+
+# ---- probe workspace (experimental DLL dumps) ----
+.probe-dll/
+
+# ---- Visual Studio ----
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ---- editors & OS junk ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---- python ----
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# ---- logs & temp ----
+*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# ---- test oracles (generated) ----
 test/oracle/ref
 test/oracle/ref.exe
-# stale duplicate restore left in the repo root
+
+# ---- stale duplicate restore left in the repo root ----
 expander2-hs/
 .layers.json
 commit-layers.bat

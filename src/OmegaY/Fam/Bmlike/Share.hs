@@ -1,9 +1,9 @@
 -- | BM-like 公共骨架，逐行对齐 C++ @Header/notation/bmlike_share.hpp@。
 --
---   * 'BmExpr' = 记号极限 / 普通矩阵；
+--   * 'BmExpr' = 普通矩阵；
 --   * 单元格越界读 0（复用 'OmegaY.Matrix.matAt'）；
 --   * parents / 字典序比较 / 极限判定 / 极限基本列 / bm4 核心展开；
---   * BM 文本解析与序列化（含空列 @(0)@、@Limit@、解析错误文本）。
+--   * BM 文本解析与序列化（含空列 @(0)@、解析错误文本）。
 module OmegaY.Fam.Bmlike.Share
   ( BmExpr (..)
   , kParseError
@@ -19,8 +19,6 @@ module OmegaY.Fam.Bmlike.Share
   , columnCompare
   , compareMat
   , isLimit
-  , infinityFs
-  , triangularInfinityFs
   , dropLastColumn
   , ascendingThreshold
   , bm4Expand
@@ -33,9 +31,9 @@ import Data.Char (isDigit, isSpace)
 import OmegaY.Matrix
 
 -- | BM-like 表达式。
+-- | BM-like 表达式。
 data BmExpr = BmExpr
-  { beInfinity :: !Bool
-  , beMat :: !Matrix
+  { beMat :: !Matrix
   } deriving (Eq, Show)
 
 -- | 解析失败统一提示（与 C++ @kParseError@ 逐字一致）。
@@ -152,28 +150,6 @@ isLimit :: Matrix -> Bool
 isLimit m =
   matCols m > 0 && matRows m > 0 && matAt m 0 (matCols m - 1) > 0
 
--- | 极限 FS 第 n 个基本列：[[], [1,...,1]]（n+1 行 2 列）。
-infinityFs :: Int -> Matrix
-infinityFs n0 =
-  let n = max 0 n0
-      rows = n + 1
-      cols = 2
-   in Matrix rows cols
-        [ [ 0 | _r <- [0 .. rows - 1] ]
-        , [ 1 | _r <- [0 .. rows - 1] ]
-        ]
-
--- | 三角 BMS 极限基本列：[[], [1], [2,1], ..., [n,...,1]]。
-triangularInfinityFs :: Int -> Matrix
-triangularInfinityFs n0 =
-  let n = max 0 n0
-      rows = n
-      cols = n + 1
-      colVals c = [ if c >= 1 && r < c then c - r else 0
-                  | r <- [0 .. rows - 1]
-                  ]
-   in Matrix rows cols [ colVals c | c <- [0 .. cols - 1] ]
-
 -- | 删除最后一列。
 dropLastColumn :: Matrix -> Matrix
 dropLastColumn m
@@ -253,12 +229,9 @@ packColumns cols =
 parseBm :: String -> Maybe BmExpr
 parseBm text0 =
   let s = trimSpaces text0
-   in if s == "Limit"
-        then Just (BmExpr True emptyMatrix)
-        else
-          if null s
-            then Just (BmExpr False emptyMatrix)
-            else do
+   in if null s
+        then Just (BmExpr emptyMatrix)
+        else do
               cols <- parseCols s
               let heights = [ trimmedHeight c | c <- cols ]
                   rows = maximum (0 : heights)
@@ -268,7 +241,7 @@ parseBm text0 =
                       ]
                     | c <- [0 .. length cols - 1]
                     ]
-              Just (BmExpr False mat)
+              Just (BmExpr mat)
  where
   trimSpaces = reverse . dropWhile isSpace . reverse . dropWhile isSpace
 
@@ -327,6 +300,4 @@ matrixToBmString m =
   joinComma (x : xs) = x ++ "," ++ joinComma xs
 
 exprToString :: BmExpr -> String
-exprToString e
-  | beInfinity e = "Limit"
-  | otherwise = matrixToBmString (beMat e)
+exprToString = matrixToBmString . beMat

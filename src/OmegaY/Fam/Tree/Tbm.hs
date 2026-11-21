@@ -7,11 +7,9 @@ module OmegaY.Fam.Tree.Tbm
   ( Expr (..)
   , Entry (..)
   , Column
-  , kInfinity
   , oneExpr
   , makeOmega
   , isOne
-  , isInfinity
   , cmpInt
   , exprCmp
   , entryCmp
@@ -29,7 +27,6 @@ module OmegaY.Fam.Tree.Tbm
   , columnTruncate
   , columnMul
   , copyColumn
-  , infinityFs
   , isLimit
   , tbmFs
   , display
@@ -48,9 +45,6 @@ data Expr = Expr { cols :: [Column] } deriving (Eq)
 type Column = [Entry]
 data Entry = Entry { eValue :: Int, eHeight :: Expr } deriving (Eq)
 
-kInfinity :: Int
-kInfinity = 2 ^ 30
-
 -- | 高度为 1：单列且该列为空。
 oneExpr :: Expr
 oneExpr = Expr [[]]
@@ -62,11 +56,6 @@ isOne :: Expr -> Bool
 isOne (Expr [[]]) = True
 isOne _ = False
 
-isInfinity :: Expr -> Bool
-isInfinity (Expr (c : _)) = case c of
-  (e : _) -> eValue e == kInfinity
-  [] -> False
-isInfinity _ = False
 
 kParseError :: String
 kParseError = "解析失败，请确认你没有使用全角括号，逗号"
@@ -298,14 +287,9 @@ copyColumn colI offset ai w =
 -- 展开
 -- ---------------------------------------------------------------------------
 
-infinityFs :: Int -> Expr
-infinityFs index
-  | index == 0 = Expr [[]]
-  | otherwise = Expr [[], [Entry 1 (infinityFs (index - 1))]]
 
 isLimit :: Expr -> Bool
 isLimit e
-  | isInfinity e = True
   | otherwise = case cols e of
     [] -> False
     cs -> not (null (last cs))
@@ -357,7 +341,6 @@ expand m@(Expr mcols) index = case mcols of
 
 tbmFs :: Expr -> Int -> Expr
 tbmFs m index
-  | isInfinity m = infinityFs index
   | not (isLimit m) = expand m 0
   | otherwise = expand m index
 
@@ -366,9 +349,7 @@ tbmFs m index
 -- ---------------------------------------------------------------------------
 
 display :: Expr -> String
-display e
-  | isInfinity e = "Limit"
-  | otherwise = concatMap columnDisplay (cols e)
+display e = concatMap columnDisplay (cols e)
  where
   columnDisplay c = "(" ++ intercalateComma (map entryDisplay c) ++ ")"
 
@@ -483,13 +464,7 @@ pEntry s0 = do
 pParse :: P Expr
 pParse s0 = do
   ((), s1) <- pSp s0
-  case s1 of
-    ('L' : 'i' : 'm' : 'i' : 't' : s2) -> do
-      ((), s3) <- pSp s2
-      if null s3
-        then Just (Expr [[Entry kInfinity (Expr [])]], s3)
-        else Nothing
-    _ -> do
+  do
       (e, s2) <- pExpr s1
       ((), s3) <- pSp s2
       if null s3

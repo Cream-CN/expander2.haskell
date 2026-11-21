@@ -22,9 +22,7 @@ import OmegaY.Fam.Tree.Tbm
   , columnTruncate
   , ascensionThreshold
   , copyColumn
-  , infinityFs
   , isOne
-  , isInfinity
   , oneExpr
   , display
   , parseExprText
@@ -273,7 +271,6 @@ tuExpand m@(Expr mcols) index = case mcols of
 
 tupmsFs :: Expr -> Int -> Expr
 tupmsFs m index
-  | isInfinity m = infinityFs index
   | otherwise = tuExpand m index
 
 expandText :: String -> Int -> String

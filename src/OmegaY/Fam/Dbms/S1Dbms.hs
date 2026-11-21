@@ -11,20 +11,16 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-isLimitWord :: String -> Bool
-isLimitWord s = s == "Limit" || s == "limit" || s == "LIMIT"
 
-parse :: String -> Maybe (Bool, Expr)
-parse s
-  | isLimitWord s = Just (True, [])
-  | otherwise =
+parse :: String -> Maybe Expr
+parse s =
       let s1 = skipSp s
        in case s1 of
             ('(' : _) -> do
               (cs, s2) <- cols [] s1
               let s3 = skipSp s2
-              if null s3 then Just (False, cs) else Nothing
-            _ -> if null s1 then Just (False, []) else Nothing
+              if null s3 then Just (cs) else Nothing
+            _ -> if null s1 then Just ([]) else Nothing
   where
     cols acc t =
       case skipSp t of
@@ -67,8 +63,6 @@ copyVal v r off = if v >= r then v + off else v
 copyCol :: Col -> Int -> Int -> Col
 copyCol col r off = [E (copyVal v r off) (copyVal h r off) | E v h <- col]
 
-infinityFs :: Int -> Expr
-infinityFs index = [] : [ [E i i] | i <- [0 .. index - 1] ]
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter
@@ -107,10 +101,7 @@ expandTextImpl text term longer =
   let term' = if term < 1 then 1 else term
    in case parse text of
         Nothing -> errParse
-        Just (inf, expr) ->
-          if inf
-            then display (infinityFs term')
-            else
+        Just expr ->
               if null expr
                 then ""
                 else
