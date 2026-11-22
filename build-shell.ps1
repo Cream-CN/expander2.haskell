@@ -1,6 +1,4 @@
 ﻿<#
-  expander2.haskell - 壳子构建入口（保留旧名字，等价于 .\build.ps1 -Target shell）
-  参数与产物路径全部交给 build.ps1，这里不重复定义优化档位。
 #>
 param(
   [string]$Profile = '',

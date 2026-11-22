@@ -9,14 +9,9 @@
     .\build-dll.ps1 -Example            # 建完后再编译并跑一遍 C 示例（dll\example）
     .\build-dll.ps1 -Info               # 只打印将要执行的命令
     .\build-dll.ps1 -Clean              # 清掉 .build-dll* 后退出
+    .\build-dll.ps1 -NoDeploy           # 只构建，不往 .\Release\ 拷贝
 
-  与 build.ps1 的关系：优化档位和 GHC 位置同样读 ghc-flags.mk（唯一真源），
-  区别只在于这里是 -shared 造 DLL，并且：
-    * 导出由 .def 文件精确控制（GHC 的 -shared 默认会把上万个符号全导出去）；
-    * 正常版必须用 -fllvm（注意不是 -llvm：后者会被原样传给链接器当 -lvm 用）；
-    * 每个记号两个入口：<SYM> 与 <SYM>_ALTER，符号名由 tools/GenDll.hs 生成。
-
-  按项目要求：不启用 -march=native / -mcpu=native。
+  构建成功后产物（dll / 导入库 .a / expander2.h / example-*.exe）会直接拷贝到 .\Release\。
 #>
 param(
   [ValidateSet('all', 'normal', 'compat')]
@@ -27,7 +22,8 @@ param(
   [switch]$NoProbe,
   [switch]$Example,
   [switch]$Clean,
-  [switch]$Info
+  [switch]$Info,
+  [switch]$NoDeploy
 )
 
 $ErrorActionPreference = 'Stop'
@@ -491,5 +487,27 @@ if ($Example) {
       Pop-Location
     }
     if ($runExit -ne 0) { Fail "C 示例运行失败（$($p.Name)，退出码 $runExit）" }
+  }
+}
+
+# --- 发布到 .\Release -----------------------------------------------------
+
+if (-not $NoDeploy) {
+  $deployDir = Resolve-Inside 'Release'
+  if (-not (Test-Path -LiteralPath $deployDir)) { New-Item -ItemType Directory -Path $deployDir -Force | Out-Null }
+  foreach ($p in $plan) {
+    $files = @(
+      $p.Dll,
+      ($p.Dll + '.a'),
+      (Join-Path $p.Dir 'expander2.h'),
+      (Join-Path $p.Dir ('example-' + $p.Name + '.exe'))
+    )
+    foreach ($f in $files) {
+      if (Test-Path -LiteralPath $f) {
+        $leaf = Split-Path -Leaf $f
+        Copy-Item -LiteralPath $f -Destination (Join-Path $deployDir $leaf) -Force
+        Write-Host ('[deploy] {0} -> Release\{0}' -f $leaf)
+      }
+    }
   }
 }

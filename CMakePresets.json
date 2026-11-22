@@ -1,0 +1,60 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 16,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "ghc",
+      "hidden": true,
+      "displayName": "GHC + Ninja (+ llc/opt if present)",
+      "description": "No C/C++ toolchain: project() declares LANGUAGES NONE, GHC is the only compiler.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-cmake",
+      "cacheVariables": {
+        "CMAKE_MAKE_PROGRAM": "D:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe"
+      }
+    },
+    {
+      "name": "ghc-extreme",
+      "inherits": "ghc",
+      "displayName": "GHC / extreme (default)",
+      "cacheVariables": {
+        "EXPANDER2_PROFILE": "extreme"
+      }
+    },
+    {
+      "name": "ghc-fast",
+      "inherits": "ghc",
+      "displayName": "GHC / fast",
+      "cacheVariables": {
+        "EXPANDER2_PROFILE": "fast"
+      }
+    },
+    {
+      "name": "ghc-compat",
+      "inherits": "ghc",
+      "displayName": "GHC / compat (NCG only, no LLVM)",
+      "cacheVariables": {
+        "EXPANDER2_PROFILE": "compat",
+        "EXPANDER2_LLVM": "off"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ghc-extreme",
+      "configurePreset": "ghc-extreme"
+    },
+    {
+      "name": "ghc-fast",
+      "configurePreset": "ghc-fast"
+    },
+    {
+      "name": "ghc-compat",
+      "configurePreset": "ghc-compat"
+    }
+  ]
+}

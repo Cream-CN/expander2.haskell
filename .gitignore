@@ -4,6 +4,8 @@
 .build-*//
 build-cmake/
 out/
+Debug/
+Release/
 dist-newstyle/
 .stack-work/
 

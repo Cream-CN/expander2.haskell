@@ -1,19 +1,10 @@
-# =============================================================================
-# expander2.haskell - CMake front end for GHC (no C/C++ toolchain involved)
-#
-#   cmake -B build-cmake                       # 默认 profile = extreme（最强劲）
+#   cmake -B build-cmake                              # 默认 profile = extreme（最强劲）
 #   cmake --build build-cmake
-#   cmake --build build-cmake --target shell   # 交互壳子
+#   cmake --build build-cmake --target shell          # 交互壳子
 #   cmake -B build-cmake -DEXPANDER2_PROFILE=strong   # 降档
-#
-# Optimisation flags and the GHC location are read from ghc-flags.mk, the same
-# file used by build.ps1 and the Makefile. No -march=native / -mcpu=native.
-# =============================================================================
 cmake_minimum_required(VERSION 3.16)
 
 project(expander2_hs LANGUAGES NONE)
-
-# ---- flags: single source of truth -----------------------------------------
 set(_mk "${CMAKE_CURRENT_SOURCE_DIR}/ghc-flags.mk")
 file(STRINGS "${_mk}" _mk_lines)
 set(DEFAULT_PROFILE "extreme")
@@ -29,7 +20,6 @@ foreach(_line IN LISTS _mk_lines)
 endforeach()
 string(TOUPPER "${DEFAULT_PROFILE}" _default_upper)
 
-# ---- options ---------------------------------------------------------------
 set(EXPANDER2_PROFILE "${_default_upper}" CACHE STRING "fast | strong | extreme | compat")
 set_property(CACHE EXPANDER2_PROFILE PROPERTY STRINGS fast strong extreme compat)
 set(EXPANDER2_LLVM "auto" CACHE STRING "auto | on | off")
@@ -38,8 +28,6 @@ set(EXPANDER2_RTSOPTS "-A64m" CACHE STRING "default RTS options (-with-rtsopts)"
 set(EXPANDER2_JOBS "auto" CACHE STRING "ghc -j<N>; 0 = no -j, auto = cores-1")
 set(EXPANDER2_GHC "" CACHE FILEPATH "explicit path to the ghc executable")
 set(EXPANDER2_OUT_DIR "" CACHE PATH "executable output dir; default <build>/bin")
-
-# ---- toolchain -------------------------------------------------------------
 if(EXPANDER2_GHC)
   set(GHC_EXECUTABLE "${EXPANDER2_GHC}")
 elseif(WIN32 AND GHC_HOME AND EXISTS "${GHC_HOME}/ghc.exe")
@@ -55,8 +43,6 @@ endif()
 execute_process(COMMAND "${GHC_EXECUTABLE}" --version
                 OUTPUT_VARIABLE _ghc_version OUTPUT_STRIP_TRAILING_WHITESPACE)
 message(STATUS "GHC: ${_ghc_version}  (${GHC_EXECUTABLE})")
-
-# ---- profile ---------------------------------------------------------------
 string(TOUPPER "${EXPANDER2_PROFILE}" _pname)
 if(NOT DEFINED PROFILE_${_pname})
   message(FATAL_ERROR "unknown EXPANDER2_PROFILE='${EXPANDER2_PROFILE}' (fast|strong|extreme|compat)")
@@ -68,8 +54,6 @@ separate_arguments(_profile_flag_list UNIX_COMMAND "${_profile_flags}")
 if("${_profile_flags}" MATCHES "(march|mcpu)=native")
   message(FATAL_ERROR "native tuning is disabled for this project (${_profile_flags})")
 endif()
-
-# ---- LLVM backend ----------------------------------------------------------
 set(_llvm_flags "")
 if(EXPANDER2_LLVM STREQUAL "on")
   find_program(LLC_EXECUTABLE NAMES llc)
@@ -93,9 +77,6 @@ elseif(EXPANDER2_LLVM STREQUAL "off")
 else()
   message(FATAL_ERROR "EXPANDER2_LLVM must be auto|on|off, got '${EXPANDER2_LLVM}'")
 endif()
-
-# ---- base flags ------------------------------------------------------------
-# 兼容模式：只用 GHC 内置 NCG 后端，LLVM 一律关闭（不依赖 llc/opt 与外部工具链）
 if(EXPANDER2_PROFILE STREQUAL "compat" AND NOT _llvm_flags STREQUAL "")
   message(STATUS "compat profile -> GHC NCG backend only (LLVM forced off)")
   set(_llvm_flags "")
@@ -105,9 +86,6 @@ set(_base_flags -isrc -iapp -rtsopts)
 if(NOT EXPANDER2_RTSOPTS STREQUAL "")
   list(APPEND _base_flags "-with-rtsopts=${EXPANDER2_RTSOPTS}")
 endif()
-
-# 并行度：默认 cores-1，且每个 job 预留约 1.5 GB 内存（与 build.ps1 同一口径）；
-# -j 不影响 .hi/.o 内容，因此不参与下面的 flags 比较
 set(_jobs "${EXPANDER2_JOBS}")
 if(_jobs STREQUAL "auto")
   cmake_host_system_information(RESULT _nproc QUERY NUMBER_OF_LOGICAL_CORES)
@@ -131,8 +109,6 @@ list(APPEND _base_flags --make)
 
 set(GHC_FLAGS ${_profile_flag_list} ${_llvm_flags} ${_base_flags})
 message(STATUS "GHC flags: ${GHC_FLAGS}")
-
-# ---- output layout ---------------------------------------------------------
 set(OBJ_MAIN "${CMAKE_BINARY_DIR}/obj-main")
 set(OBJ_SHELL "${CMAKE_BINARY_DIR}/obj-shell")
 if(EXPANDER2_OUT_DIR)
@@ -145,10 +121,6 @@ if(WIN32)
 else()
   set(EXE_SUFFIX "")
 endif()
-
-# Reproducibility: .hi/.o are flag-sensitive. If the optimisation flag string
-# changed since the last configure, drop the object dirs (and stale executables)
-# so GHC never links objects produced with a different optimisation set.
 string(REPLACE ";" " " _flags_str "${_profile_flag_list} ${_llvm_flags}")
 if(DEFINED EXPANDER2_LAST_FLAGS AND NOT EXPANDER2_LAST_FLAGS STREQUAL _flags_str)
   message(STATUS "GHC flags changed -> dropping stale objects")
@@ -158,8 +130,6 @@ endif()
 set(EXPANDER2_LAST_FLAGS "${_flags_str}" CACHE INTERNAL "flags used at last configure" FORCE)
 
 file(GLOB_RECURSE EXPANDER2_SRC CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hs")
-
-# ---- targets ---------------------------------------------------------------
 add_custom_command(
   OUTPUT "${BIN_DIR}/expander2-hs${EXE_SUFFIX}"
   COMMAND "${CMAKE_COMMAND}" -E make_directory "${BIN_DIR}" "${OBJ_MAIN}"

@@ -6,18 +6,16 @@
     .\build.ps1 -Target shell                 # 交互壳子 -> .build-shell\expander2-shell.exe
     .\build.ps1 -Target all                   # 两个都建
     .\build.ps1 -Profile strong               # 降档（日常增量编译更快）
+    .\build.ps1 -Profile fast                 # 快档产物 -> .\Debug\
+                                              # 默认 extreme 档产物 -> .\Release\
+    .\build.ps1 -NoDeploy                     # 只编译，不往 Debug/Release 拷贝
     .\build.ps1 -Compat                       # 兼容模式：-O2 + 强制 GHC 内置 NCG 后端（不走 LLVM）
     .\build.ps1 -Jobs 6                       # 指定并行度（默认按 CPU/内存自动算）
     .\build.ps1 -Llvm on                      # 强制 LLVM 后端（PATH 里没有 llc/opt 直接报错）
     .\build.ps1 -Llvm off                     # 只走原生代码生成器 NCG
     .\build.ps1 -Info                         # 只打印将要执行的命令，不编译
     .\build.ps1 -Clean                        # 清掉 .build* / build-cmake 后退出
-
-  GHC 默认取 ghc-flags.mk 里的 GHC_HOME（D:/sdk/ghc/ghcup/bin/ghc.exe）；
-  找不到才退回 PATH 里的 ghc，也可以用 -Ghc 'D:\path\to\ghc.exe' 指定。
-
-  优化档位定义在 ghc-flags.mk，Makefile / CMakeLists.txt 读的是同一份，不要在本脚本里改。
-  按项目要求不启用 -march=native / -mcpu=native（本脚本会主动拦截）。
+    .\build-interactive.ps1                   # 不想记参数就走菜单（内部调用本脚本）
 #>
 param(
   [ValidateSet('main', 'shell', 'all')]
@@ -32,7 +30,8 @@ param(
   [switch]$Compat,
   [switch]$Clean,
   [switch]$Info,
-  [switch]$NoProbe
+  [switch]$NoProbe,
+  [switch]$NoDeploy
 )
 
 $ErrorActionPreference = 'Stop'
@@ -206,6 +205,20 @@ if ($Profile -eq 'compat') {
 $suffix = ''
 if ($Profile -ne $defs.Default) { $suffix = '-' + $Profile }
 
+# --- 产物发布目录 ---------------------------------------------------------
+# fast 档（日常快速编译）产物进 .\Debug，其余档（strong/extreme/compat）进 .\Release
+
+$deployDirName = if ($Profile -eq 'fast') { 'Debug' } else { 'Release' }
+
+function Publish-One([string]$file) {
+  if ($NoDeploy) { return }
+  $dstDir = Resolve-Inside $deployDirName
+  if (-not (Test-Path -LiteralPath $dstDir)) { New-Item -ItemType Directory -Path $dstDir -Force | Out-Null }
+  $dst = Join-Path $dstDir (Split-Path -Leaf $file)
+  Copy-Item -LiteralPath $file -Destination $dst -Force
+  Write-Host ('[deploy] {0} -> {1}' -f (Split-Path -Leaf $file), (Join-Path $deployDirName (Split-Path -Leaf $file)))
+}
+
 # --- 清理模式 -------------------------------------------------------------
 
 if ($Clean) {
@@ -323,6 +336,8 @@ function Build-One {
   $sw.Stop()
   if ($exit -ne 0) { Fail "ghc 退出码 $exit（命令行见上）" }
   if (-not (Test-Path -LiteralPath $exe)) { Fail "没有产出 $exe" }
+
+  Publish-One -file $exe
 
   $mb = (Get-Item -LiteralPath $exe).Length / 1MB
   Write-Host ('[done] {0}  {1:N2} MB  {2:N1} s' -f $exe, $mb, $sw.Elapsed.TotalSeconds)
