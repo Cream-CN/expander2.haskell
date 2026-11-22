@@ -1,9 +1,4 @@
--- | GMS / LPMS 族共享底层工具。对齐 C++ @gms_detail@ / @lpms_detail@ 中的
---   FMat（列向量表）操作、BM 文本解析与序列化。
---
---   * FMat = 列的列表（每列可能等长为 rows，或在 LPMS 引擎里 ragged）；
---   * 越界单元格一律读 0（对齐 TS 的 @m[r][c] ?? 0@）；
---   * 解析复用 BM-like 公共解析（与 C++ @bmlike::parse@ 同一实现）。
+-- | GMS / LPMS 族共享底层工具。
 module OmegaY.Fam.Gms.Common
   ( FMat
   , Col

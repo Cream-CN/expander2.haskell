@@ -84,7 +84,6 @@ columnCompare a b = lexCompare a b entryCompare
 mountainCompare :: Mountain -> Mountain -> Int
 mountainCompare a b = lexCompare a b columnCompare
 
--- | 显示（simple=false，括号列）。
 sepDisplay :: Int -> Bool -> String
 sepDisplay sep simple
   | simple && sep == 0 = ""
@@ -108,9 +107,7 @@ mountainDisplay :: Mountain -> Bool -> String
 mountainDisplay m simple =
   concatMap (\(i, c) -> (if i > 0 && simple then " " else "") ++ columnDisplay c simple) (zip [0..] m)
 
--- ---------------------------------------------------------------------
 -- 解析（smnshare::from_display，非 simple 语法）
--- ---------------------------------------------------------------------
 
 fromDisplay :: String -> Maybe Mountain
 fromDisplay s0 = go s0 0
@@ -210,9 +207,7 @@ fromDisplay s0 = go s0 0
                                   Nothing -> Nothing
                                   Just (rest, end) -> Just (Entry v sep : rest, end)
 
--- ---------------------------------------------------------------------
 -- 山结构辅助
--- ---------------------------------------------------------------------
 
 verticalIncrease :: Vertical -> Int -> Vertical
 verticalIncrease v s =

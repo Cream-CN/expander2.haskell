@@ -1,8 +1,4 @@
 -- | 列主序整数矩阵，语义对齐 C++ 侧 omegay::common::Matrix。
---
---   * 维度在构造时确定，行数固定；越界读取一律返回 0（对齐各记号里
---     @at(m, r, c)@ / @m[r][c] ?? 0@ 的防御语义）。
---   * 内部以「列的列表」存储，每列长度恰好为行数。
 module OmegaY.Matrix
   ( Matrix (..)
   , emptyMatrix
@@ -20,7 +16,6 @@ module OmegaY.Matrix
 
 import Prelude
 
--- | 行数、列数、列向量列表（每列长度 = 行数）。
 data Matrix = Matrix
   { matRows :: !Int
   , matCols :: !Int
@@ -44,7 +39,6 @@ fromColumns cols0 =
       cols = [ take rows (c ++ repeat 0) | c <- cols0 ]
    in Matrix rows (length cols) cols
 
--- | 取列列表（每列长度 = 行数）。
 toColumns :: Matrix -> [[Int]]
 toColumns = matData
 
@@ -68,7 +62,6 @@ matSet m r c v
           col' = take r col ++ [v] ++ drop (r + 1) col
        in m { matData = before ++ [col'] ++ after }
 
--- | 改变列数（保留已有列，新列以 0 填充）。
 matResizeCols :: Int -> Matrix -> Matrix
 matResizeCols newCols m
   | newCols < 0 = m

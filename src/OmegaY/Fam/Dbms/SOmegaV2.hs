@@ -13,7 +13,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 cmpUndef :: Bool -> Int -> Bool -> Int -> Int
 cmpUndef aDef a bDef b
   | aDef && bDef = cmpI a b
@@ -200,7 +199,6 @@ display = concatMap colD
         pVal (HEntry _ x _ _) = x
         vDef (HEntry _ _ x _) = x
         vVal (HEntry _ _ _ x) = x
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

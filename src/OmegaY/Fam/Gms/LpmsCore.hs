@@ -1,8 +1,4 @@
--- | LPMS / LPTSS 族核心。对齐 C++ @lpms.hpp@。
---
---   二者共用同一展开引擎，仅极限基本列不同：
---     * LPMS   极限 = [零列, 一列全 1]
---     * LPTSS  极限 = 列 [i,i,i] for i=0..n
+-- | LPMS / LPTSS 族核心。
 module OmegaY.Fam.Gms.LpmsCore
   ( runLpms
   ) where
@@ -13,9 +9,7 @@ import Data.List (foldl')
 import OmegaY.Fam.Gms.Common
 import OmegaY.Matrix (matCols)
 
--- ---------------------------------------------------------------------
 -- 基础列工具
--- ---------------------------------------------------------------------
 
 maxRows :: FMat -> Int
 maxRows m = foldr max 0 (map length m)
@@ -31,7 +25,6 @@ constCol a rows
   | rows > 0 = a : replicate (rows - 1) 0
   | otherwise = []
 
--- | 列比较，缺省元素分别取 missA/missB。
 colCompareMiss :: Col -> Col -> Int -> Int -> Int -> Int
 colCompareMiss a b rows missA missB = go 0
  where
@@ -70,9 +63,7 @@ lastAllZero m
   | null m = True
   | otherwise = all (== 0) (last m)
 
--- ---------------------------------------------------------------------
 -- 祖先链 / 父列（纯函数）
--- ---------------------------------------------------------------------
 
 aAncestors :: FMat -> Int -> Int -> Int -> Int -> (Col, Set Int)
 aAncestors m rows cols col a
@@ -130,9 +121,7 @@ headOr d xs = case xs of
   (x : _) -> x
   [] -> d
 
--- ---------------------------------------------------------------------
 -- Prep
--- ---------------------------------------------------------------------
 
 data Prep = Prep
   { pM :: FMat
@@ -302,9 +291,7 @@ bhs prep h =
          | r <- [0 .. rows - 1] ]
       | local <- [0 .. length b - 1] ]
 
--- ---------------------------------------------------------------------
 -- upms_single / bms_fs
--- ---------------------------------------------------------------------
 
 upmsSingle :: FMat -> Int -> Int -> Bool -> FMat
 upmsSingle matrix l rows lFinite =
@@ -351,9 +338,7 @@ bmsFs matrix n rows =
                       ]
                  in standardize result rows
 
--- ---------------------------------------------------------------------
 -- 阶段列辅助
--- ---------------------------------------------------------------------
 
 phaseColumn :: FMat -> Int -> Int -> Col
 phaseColumn m index rows
@@ -452,9 +437,7 @@ atOrLast mp idx fallback
   | not (null mp) = last mp
   | otherwise = fallback
 
--- ---------------------------------------------------------------------
 -- lpms_single（状态机）
--- ---------------------------------------------------------------------
 
 data LpState = LpState
   { stMp :: FMat
@@ -674,9 +657,7 @@ stepState prep cPrime last2Root n rows r alpha state t =
                                                in state { stMp = appendS (stMp state) prep t desc
                                                         , stSkip = skip2 }
 
--- ---------------------------------------------------------------------
 -- lpms_fs / 入口
--- ---------------------------------------------------------------------
 
 lpmsFs :: FMat -> Int -> FMat
 lpmsFs expr n0 =

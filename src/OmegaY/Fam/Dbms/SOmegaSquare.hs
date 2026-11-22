@@ -14,7 +14,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 cmpUndef :: Bool -> Int -> Bool -> Int -> Int
 cmpUndef aDef a bDef b
   | aDef && bDef = cmpI a b
@@ -272,7 +271,6 @@ display = concatMap colD
       | not bd = "ω" ++ (if a /= 0 then show (a + 1) else "")
       | a == 0 = show (b + 1)
       | otherwise = "ω" ++ (if a /= 1 then show a else "") ++ "+" ++ show (b + 1)
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

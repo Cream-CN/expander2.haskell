@@ -37,9 +37,6 @@ expandNAlter :: Int -> String -> Int -> String
 expandNAlter n text term =
   fsWith text term False (\m idx _ -> bmBhmExpand m idx n False)
 
--- ---------------------------------------------------------------------
-
--- | 把（可能不等长）列打包为规范化矩形。
 packColumns :: [[Int]] -> Matrix
 packColumns cols =
   let rows = maximum (0 : map length cols)
@@ -47,7 +44,6 @@ packColumns cols =
         (Matrix rows (length cols)
            [ take rows (c ++ repeat 0) | c <- cols ])
 
--- | ascension_thresholds。
 ascensionThresholds :: [[Int]] -> Int -> [Int] -> Int -> [Int]
 ascensionThresholds pTab r roots b = [ result i | i <- [0 .. nc - 1] ]
  where
@@ -68,13 +64,11 @@ ascensionThresholds pTab r roots b = [ result i | i <- [0 .. nc - 1] ]
       | otherwise = t
     resultAt pp = ascensionThresholds pTab r roots b !! pp  -- 递归（同 C++ result[pp]）
 
--- | ascension_vector：末列相对根列 r 前 b 行的差。
 ascensionVector :: Matrix -> Int -> Int -> [Int]
 ascensionVector m r b =
   let right = matCols m - 1
    in [ matAt m y right - bmAt m y r | y <- [0 .. b - 1] ]
 
--- | ascend_vector：列 + w·V（仅前 A 行）。
 ascendVector :: Matrix -> Int -> [Int] -> Int -> Int -> [Int]
 ascendVector m col v a w =
   let rows = matRows m
@@ -86,7 +80,6 @@ ascendVector m col v a w =
       | y <- [0 .. len - 1]
       ]
 
--- | compute_expansion。
 computeExpansion :: Matrix -> Int -> [Int] -> [Int] -> Int -> Bool -> Matrix
 computeExpansion m r v a index shorter =
   packColumns cols
@@ -103,7 +96,6 @@ computeExpansion m r v a index shorter =
     ]
   cols = baseCols ++ added
 
--- | extend：一次较短展开后再追加提升后的末列。
 extend :: Matrix -> Int -> [Int] -> [Int] -> Matrix
 extend m r v a =
   let base = computeExpansion m r v a 1 True
@@ -111,7 +103,6 @@ extend m r v a =
       lastCol = ascendVector m (matCols m - 1) v (a !! (matCols m - 1)) 1
    in packColumns (cols ++ [lastCol])
 
--- | BHM.ts BHM_expand。
 bhmExpand :: Matrix -> Int -> Bool -> Matrix
 bhmExpand input index shorter =
   let m = standardizeMatrix 0 input
@@ -162,7 +153,6 @@ body m index shorter = result
               then i
               else pick (i + 1)
 
--- | BM_BHM_expand：顶行小于 n 走 BM4，否则走 BHM。
 bmBhmExpand :: Matrix -> Int -> Int -> Bool -> Matrix
 bmBhmExpand input index n shorter =
   let m = standardizeMatrix 0 input

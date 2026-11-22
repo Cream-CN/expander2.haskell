@@ -43,9 +43,7 @@ module OmegaY.Fam.Mn.MnOrdShare
 import Data.Char (isDigit, toLower)
 import Data.List (foldl')
 
--- ---------------------------------------------------------------------
 -- 数据类型
--- ---------------------------------------------------------------------
 
 data Term = Term { tExp :: Ordinal, tCoeff :: Int }
   deriving (Eq, Show)
@@ -58,9 +56,7 @@ data Entry = Entry { eA :: Int, eX :: Ordinal }
 type Column = [Entry]
 type Expr = [Column]
 
--- ---------------------------------------------------------------------
 -- 基础构造与判定
--- ---------------------------------------------------------------------
 
 ordNat :: Int -> Ordinal
 ordNat n | n <= 0 = []
@@ -100,9 +96,7 @@ towerIndex a
       k | k < 0 -> -1
         | otherwise -> k + 1
 
--- ---------------------------------------------------------------------
 -- 序数比较
--- ---------------------------------------------------------------------
 
 numCompare :: Int -> Int -> Int
 numCompare a b = case compare a b of { LT -> -1; EQ -> 0; GT -> 1 }
@@ -127,9 +121,7 @@ ordEq a b = ordCompare a b == 0
 ordIsSuccessor :: Ordinal -> Bool
 ordIsSuccessor a = isPositive a && isZero (tExp (last a))
 
--- ---------------------------------------------------------------------
 -- 序数运算
--- ---------------------------------------------------------------------
 
 ordFS :: Ordinal -> Int -> Ordinal
 ordFS src0 m
@@ -165,9 +157,7 @@ shiftOrdNumbers a cutoff d strong = map go a
             , tCoeff = if tCoeff t /= 1 && tCoeff t > cutoff then tCoeff t + d else tCoeff t
             }
 
--- ---------------------------------------------------------------------
 -- 解析与显示
--- ---------------------------------------------------------------------
 
 -- | ω 的哨兵字符（与 C++ '\x7F' 对应）。
 kW :: Char
@@ -273,7 +263,6 @@ peExponentAt s i0
                   Just (t, i1) -> Just ([t], i1)
             | otherwise -> Nothing
 
--- | 解析一个 expr，从给定位置开始；end='\0' 表示无终止符。
 peExprAt :: String -> Int -> Char -> Maybe (Ordinal, Int)
 peExprAt s i0 end =
   let n = length s
@@ -297,7 +286,6 @@ peExprAt s i0 end =
                                       else go i2 acc'
                            else Just (reverse acc', i1)
 
--- | 序数解析。失败返回 Nothing。
 parseOrd :: String -> Bool -> Maybe Ordinal
 parseOrd text allowZero =
   let s0 = normalizeOmega text
@@ -325,9 +313,7 @@ ordToPlain a
           let e = "ω" <> (if isOne (tExp t) then "" else "^{" <> ordToPlain (tExp t) <> "}")
            in e <> (if tCoeff t /= 1 then show (tCoeff t) else "")
 
--- ---------------------------------------------------------------------
 -- e0MN 表达式比较
--- ---------------------------------------------------------------------
 
 entryCompare :: Entry -> Entry -> Int
 entryCompare a b =
@@ -351,9 +337,7 @@ lexCompare a b cmp =
 exprCompare :: Expr -> Expr -> Int
 exprCompare a b = lexCompare a b colCompare
 
--- ---------------------------------------------------------------------
 -- 表达式解析与显示
--- ---------------------------------------------------------------------
 
 colToPlain :: Column -> String
 colToPlain c
@@ -363,7 +347,6 @@ colToPlain c
 exprToPlain :: Expr -> String
 exprToPlain e = concatMap colToPlain e
 
--- | 顶层按 sep 切分（括号深度 0）。
 splitTop :: String -> Char -> [String]
 splitTop s sep = go 0 0 0 0
   where
@@ -466,9 +449,7 @@ parseExpr text =
                     '}' -> goF p (b - 1) (j + 1)
                     _ -> goF p b (j + 1)
 
--- ---------------------------------------------------------------------
 -- 基本列机制
--- ---------------------------------------------------------------------
 
 down :: Expr -> Bool -> Expr
 down src0 strong

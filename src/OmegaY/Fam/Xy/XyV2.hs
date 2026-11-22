@@ -29,9 +29,7 @@ parentRow w eid = do
     Nothing -> pure Nothing
     Just p -> Just . e_row <$> getE w p
 
--- ---------------------------------------------------------------------------
 -- drawMountain（v2：void，就地修改 mref）
--- ---------------------------------------------------------------------------
 
 drawMountain :: World s -> STRef s [[Int]] -> ST s ()
 drawMountain w mref = do
@@ -86,9 +84,7 @@ drawMountain w mref = do
         pe <- getE w p
         if e_value pe >= fv then climbUp (e_parent pe) fv else pure (Just p)
 
--- ---------------------------------------------------------------------------
 -- setElementNo
--- ---------------------------------------------------------------------------
 
 setElementNo :: World s -> STRef s [[Int]] -> Int -> ST s ()
 setElementNo w mref bId = do
@@ -128,9 +124,7 @@ setElementNo w mref bId = do
                   Just hp -> e_no <$> getE w hp
     modE w eid (\ee -> ee { e_no = no })
 
--- ---------------------------------------------------------------------------
 -- getReferenceChain
--- ---------------------------------------------------------------------------
 
 getReferenceChain :: World s -> Int -> ST s [Int]
 getReferenceChain w itId = go itId []
@@ -197,9 +191,7 @@ getReferenceChain w itId = go itId []
                           else pure (Just hp)
         Nothing -> pure Nothing
 
--- ---------------------------------------------------------------------------
 -- getMainDimensionSequence
--- ---------------------------------------------------------------------------
 
 getMainDimensionSequence :: World s -> [Int] -> Int -> ST s [Int]
 getMainDimensionSequence w chain tId = do
@@ -230,9 +222,7 @@ getMainDimensionSequence w chain tId = do
             modE w eid (\ee -> ee { e_parent = Just root })) (zip [0 ..] s)
   pure s
 
--- ---------------------------------------------------------------------------
 -- getBootCloumn
--- ---------------------------------------------------------------------------
 
 getBootCloumn :: World s -> [Int] -> ST s Int
 getBootCloumn w s = do
@@ -256,9 +246,7 @@ getBootCloumn w s = do
               mds <- getMainDimensionSequence w chain t
               getBootCloumn w mds
 
--- ---------------------------------------------------------------------------
 -- isEqualSequnce
--- ---------------------------------------------------------------------------
 
 isEqualSequnce :: World s -> [Int] -> [Int] -> ST s Bool
 isEqualSequnce w s1 s2 = do
@@ -277,9 +265,7 @@ isEqualSequnce w s1 s2 = do
       Just p -> e_cloumn <$> getE w p
     pure (e_value ae == e_value be && ca == cb)
 
--- ---------------------------------------------------------------------------
 -- copyElement（v2）
--- ---------------------------------------------------------------------------
 
 copyElement :: World s -> STRef s [[Int]] -> Int -> [Int] -> ST s ()
 copyElement w mref headId maxRow = do
@@ -342,9 +328,7 @@ copyElement w mref headId maxRow = do
                 modifySTRef' mref (\mm -> take (length mm - 1) mm ++ [last mm ++ [foot]])
                 go foot
 
--- ---------------------------------------------------------------------------
 -- copyCloumn（v2）
--- ---------------------------------------------------------------------------
 
 copyCloumn :: World s -> STRef s [[Int]] -> Int -> Int -> Int -> Int -> Int -> [Int] -> ST s ()
 copyCloumn w mref bId tId j i len ex = do
@@ -470,9 +454,7 @@ fixParentV2 w headId = go headId
                 go hid
               else pure ()
 
--- ---------------------------------------------------------------------------
 -- expandElementDimensionSequence（v2，含 memo）
--- ---------------------------------------------------------------------------
 
 type Memo s = STRef s ([([Int], [Int], Int, [Int])])
 
@@ -574,9 +556,7 @@ findMemo w entries c n d = go entries
         if eq then pure (Just ex) else go rest
       else go rest
 
--- ---------------------------------------------------------------------------
 -- expandImpl（v2）
--- ---------------------------------------------------------------------------
 
 expandImpl :: World s -> [Int] -> Int -> [Int] -> Memo s -> ST s [Int]
 expandImpl w s0 n d memo = do
@@ -729,9 +709,7 @@ expandImpl w s0 n d memo = do
     pure (length mm)
   when c act = if c then act else pure ()
 
--- ---------------------------------------------------------------------------
 -- 公开入口
--- ---------------------------------------------------------------------------
 
 expandXyV2 :: [Int] -> Int -> [Int]
 expandXyV2 seq term

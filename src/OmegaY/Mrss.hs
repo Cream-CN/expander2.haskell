@@ -20,13 +20,10 @@ module OmegaY.Mrss
 
 import Data.Char (isDigit, isSpace)
 
--- | 原子（整数）或子表达式序列。
 data Expr = Atom Int | Node [Expr]
   deriving (Eq, Show)
 
--- ----------------------------------------------------------------------
 -- 解析与序列化
--- ----------------------------------------------------------------------
 
 -- | 解析 @1,(2,3),4@ 形式；失败返回 Nothing（C++ 抛/返回 nullopt）。
 mrssParse :: String -> Maybe [Expr]
@@ -93,9 +90,7 @@ parseInt s0 =
        in Just (foldl (\a d -> a * 10 + fromEnum d - 48) 0 ds, rest)
     _ -> Nothing
 
--- ----------------------------------------------------------------------
 -- 序与结构工具
--- ----------------------------------------------------------------------
 
 isOne :: Expr -> Bool
 isOne (Atom 1) = True
@@ -134,9 +129,7 @@ toIntSequence = mapM f
   f (Atom v) = Just v
   f (Node _) = Nothing
 
--- ----------------------------------------------------------------------
 -- MrSS1.2.1 展开
--- ----------------------------------------------------------------------
 
 -- | @startsWith a b@：a 的最左下降链以 b 开头（对齐 C++ @starts_with@）。
 startsWith :: Expr -> Expr -> Bool
@@ -150,7 +143,6 @@ safeHead :: [a] -> Maybe a
 safeHead [] = Nothing
 safeHead (x : _) = Just x
 
--- | 找“坏根”：最后一个元素之前，第一个更小或最左链为其前缀者。
 findBadRoot :: [Expr] -> Maybe Int
 findBadRoot seq
   | length seq < 2 = Nothing

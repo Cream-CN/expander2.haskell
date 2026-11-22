@@ -12,7 +12,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 parseH :: String -> Maybe (H, String)
 parseH t = do
   s1 <- expect '(' (skipSp t)
@@ -89,7 +88,6 @@ copyH (H h0 h1) r off = H (copyVal h0 r off) h1
 
 copyCol :: Col -> Int -> Int -> Col
 copyCol col r off = [E (copyVal v r off) (copyH h r off) | E v h <- col]
-
 
 height1 :: Col -> Int
 height1 col = case colHeight col of

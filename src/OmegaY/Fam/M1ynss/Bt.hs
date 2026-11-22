@@ -38,9 +38,7 @@ module OmegaY.Fam.M1ynss.Bt
 
 import OmegaY.Fam.M1ynss.PP
 
--- ---------------------------------------------------------------------------
 -- 数据类型
--- ---------------------------------------------------------------------------
 
 data BtNode = BtNode
   { btCols :: [BtColumn]
@@ -54,16 +52,13 @@ data BtColumn = BtColumn
 btMakeNode :: BtNode
 btMakeNode = BtNode []
 
-
 btIsZeroColumn :: BtColumn -> Bool
 btIsZeroColumn c = all (== 0) (bArr c) && null (bHigher c)
 
 btNumberCmp :: Int -> Int -> Int
 btNumberCmp a b = if a == b then 0 else if a < b then (-1) else 1
 
--- ---------------------------------------------------------------------------
 -- 比较
--- ---------------------------------------------------------------------------
 
 btCompare :: BtNode -> BtNode -> Int
 btCompare a b = go 0
@@ -97,9 +92,7 @@ btColumnCompare a b = goArr 0
           let c = btNumberCmp (bArr a !! i) (bArr b !! i)
            in if c /= 0 then c else goArr (i + 1)
 
--- ---------------------------------------------------------------------------
 -- 显示
--- ---------------------------------------------------------------------------
 
 btColumnDisplay :: BtColumn -> String
 btColumnDisplay c =
@@ -117,9 +110,7 @@ btTopDisplay e
 btDisplay :: BtNode -> String
 btDisplay e = concatMap btColumnDisplay (btCols e)
 
--- ---------------------------------------------------------------------------
 -- 去基 / 特判
--- ---------------------------------------------------------------------------
 
 btRemoveBase :: BtNode -> Int -> BtNode
 btRemoveBase a base =
@@ -155,9 +146,7 @@ btIsSpecialColumn c =
               vr = length (btCols h) - 1
            in vr >= 0 && btIsOneLineColumn (btCols h !! vr) (if null (bArr c) then 0 else head (bArr c) + 1)
 
--- ---------------------------------------------------------------------------
 -- 父树
--- ---------------------------------------------------------------------------
 
 data BtPCol = BtPCol
   { bpParr :: [Int]
@@ -179,9 +168,7 @@ btLastNonneg v = go (length v - 1)
       | v !! i >= 0 = i
       | otherwise = go (i - 1)
 
--- ---------------------------------------------------------------------------
 -- 阈值树
--- ---------------------------------------------------------------------------
 
 data BtACol = BtACol
   { baA :: Maybe Int
@@ -234,9 +221,7 @@ btThresholds e pm ropt b stk =
               else ai
        in go 0
 
--- ---------------------------------------------------------------------------
 -- 复制 / 提升
--- ---------------------------------------------------------------------------
 
 btCloneSlice :: BtNode -> Int -> BtNode
 btCloneSlice e from =
@@ -277,9 +262,7 @@ btAscendReplace e tail tl aTree vVec w =
                 ]
            in [BtColumn newArr newHigher]
 
--- ---------------------------------------------------------------------------
 -- 层 / 根
--- ---------------------------------------------------------------------------
 
 btTailLayer :: BtNode -> (Int, Bool)
 btTailLayer e
@@ -347,9 +330,7 @@ btAscensionVector e r b tailLayer =
       back = Prelude.last st
    in [bArr back !! j - bArr (st !! r) !! j | j <- [0 .. b - 1]]
 
--- ---------------------------------------------------------------------------
 -- FS special
--- ---------------------------------------------------------------------------
 
 btFsSpecial :: BtNode -> Int -> Int -> BtNode
 btFsSpecial e tailLayer index =
@@ -369,12 +350,9 @@ btFsSpecial e tailLayer index =
           else keptHigher ++ [btFsSpecial (bHigher col !! hr) (tailLayer - 1) index]
    in BtNode (keptCols ++ [BtColumn (bArr col) newHigher])
 
--- ---------------------------------------------------------------------------
 -- FS
--- ---------------------------------------------------------------------------
 
 data BtVariant = Bt1 | Bt2 | Bt3 | Btl
-
 
 btFs :: BtNode -> Int -> Int -> BtVariant -> BtNode
 btFs e index n variant
@@ -442,9 +420,7 @@ btSkipLayerA (BtANode acols) k =
 repAt :: Int -> a -> [a] -> [a]
 repAt k v xs = take k xs ++ [v] ++ drop (k + 1) xs
 
--- ---------------------------------------------------------------------------
 -- 父计算（变体分发）
--- ---------------------------------------------------------------------------
 
 btComputeParents :: BtNode -> Int -> BtVariant -> BtPNode
 btComputeParents e n variant =
@@ -656,9 +632,7 @@ bt2FillTop e pt n = fst (go e pt [] [])
 btPNodeSub :: BtPColN -> Int -> BtPNode
 btPNodeSub pc ix = bpnSubs pc !! ix
 
--- ---------------------------------------------------------------------------
 -- 入口
--- ---------------------------------------------------------------------------
 
 expandBt :: BtVariant -> String -> Int -> Int -> String
 expandBt variant text term n =

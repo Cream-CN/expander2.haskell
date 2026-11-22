@@ -20,7 +20,6 @@ parseIntExpr text = do
 displayIntExpr :: IExpr -> String
 displayIntExpr e = displayExpr [ [(v, 0) | v <- col] | col <- e ]
 
-
 computeUp :: IExpr -> Int -> Int -> [Int]
 computeUp expr r b = result
   where

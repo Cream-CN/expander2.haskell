@@ -18,9 +18,7 @@ import Data.STRef
   )
 import OmegaY.Notation.Types (Notation, seqNotation)
 
--- ---------------------------------------------------------------------------
 -- Entry 与 Arena
--- ---------------------------------------------------------------------------
 data V3 = V3
   { vValue :: Int
   , vRow :: [Int]
@@ -64,9 +62,7 @@ modN w i f = modifySTRef' (wAr w) (IM.adjust f i)
 makeRoot :: V3
 makeRoot = V3 0 [1] (-1) 0 0 0 Nothing Nothing Nothing Nothing []
 
--- ---------------------------------------------------------------------------
 -- 行运算（v3 版）
--- ---------------------------------------------------------------------------
 atI :: [Int] -> Int -> Int
 atI xs i = if i >= 0 && i < length xs then xs !! i else 0
 
@@ -154,9 +150,7 @@ getFootRowV3 mParentRow row d =
           then rowAdditionV3 row [1, 2]
           else rowAdditionV3 row [1, row0 !! 1 + 1]
 
--- ---------------------------------------------------------------------------
 -- 图结构处理
--- ---------------------------------------------------------------------------
 setElementRefrence :: World s -> STRef s [[Int]] -> ST s ()
 setElementRefrence w mRef = do
   m <- readSTRef mRef
@@ -373,9 +367,7 @@ getBootIndex w s d = do
           else pure (vCloumn be, vIdx be)
     Nothing -> pure (-1, 0)
 
--- ---------------------------------------------------------------------------
 -- 复制与展开
--- ---------------------------------------------------------------------------
 getFootRowFor :: World s -> Int -> [Int] -> ST s [Int]
 getFootRowFor w eid d = do
   e <- getN w eid
@@ -530,7 +522,6 @@ expandDimensionSequnece w mRef bId tId n d = do
                         next
     go (vCloumn b + 1)
 
--- | 沿 ref 链上溯插入新元素；返回 (最终 ds, pos)。
 upchain :: World s -> V3 -> Int -> [Int] -> Int -> ST s ([Int], Int)
 upchain w bu itId ds pos = do
   e <- getN w itId
@@ -556,7 +547,6 @@ upchain w bu itId ds pos = do
               upchain w bu rid ds1 (pos + 1)
         else pure (ds, pos)
 
--- | parent 上溯到值严格更大的祖先。
 fixParentUp :: World s -> Int -> ST s ()
 fixParentUp w eid = do
   e <- getN w eid
@@ -642,9 +632,7 @@ expand_impl w s n d f = do
             (\col -> if null col then pure 0 else vValue <$> getN w (head col))
             m6
 
--- ---------------------------------------------------------------------------
 -- 入口
--- ---------------------------------------------------------------------------
 dXY :: [Int]
 dXY = [1, 0, 1]
 

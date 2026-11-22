@@ -13,11 +13,6 @@ import Data.Char (isDigit, isSpace)
 import Data.List (dropWhileEnd)
 import OmegaY.Matrix
 
--- | 逗号分隔整数序列。
---
---   与 C++ @parse_sequence@ 一致：按 ',' 切分，去掉分段内所有空白，
---   空分段跳过，@std::stoi@ 语义（可带符号、遇非数字停止），失败的分段
---   被静默丢弃。
 parseSequence :: String -> [Int]
 parseSequence s =
   [ v
@@ -121,6 +116,7 @@ secondPass nr s0 = go 0 [] Nothing (replicate nr 0) False s0
         let ds = takeWhile isDigit rest
          in (reverse cols, Just (if null ds then 0 else digitsToInt ds))
       _ | isDigit c ->
+            -- C++ 侧列缓冲固定 128 行；越界后继续消费字符，但不再写值。
             if row >= 128
               then go row cols mterm cur hasDigit rest
               else

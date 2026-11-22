@@ -6,7 +6,6 @@ module OmegaY.Fam.M1ynss.Flat
 
 import OmegaY.Fam.M1ynss.PP
 
--- | 列：arr 长度恒为 n（解析时补零）；step 为整数步长。
 data Column = Column { cArr :: [Int], cStep :: Int }
 data Expr = Expr { eCols :: [Column] }
 
@@ -24,7 +23,6 @@ indexOfLastNonneg v = go (length v - 1)
 -- | 父表：每列 arr 存父列下标（长度 n，初值 -1），step 存一个下标。
 data PCol = PCol { pArr :: [Int], pStep :: Int }
 
--- | 逐列从左到右构建父表；构建第 i 列时只能引用 i 之前已建好的列。
 parents :: Expr -> Int -> [PCol]
 parents e n = reverse built
   where
@@ -107,7 +105,6 @@ ascend col delta b w =
   let arr = cArr col
       newArr = [if j < b then arr !! j + delta !! j * w else arr !! j | j <- [0 .. length arr - 1]]
    in Column newArr (cStep col)
-
 
 fs :: Expr -> Int -> Int -> Expr
 fs e index n
@@ -206,7 +203,6 @@ parseColumn n = do
               return (v : vs)
         _ -> return []
 
--- | 顶层展开入口：clamp n 到 [0,25]，term<1 时置 1；解析失败返回 kParseError。
 expand :: String -> Int -> Int -> String
 expand text term n0 =
   let n = max 0 (min 25 n0)

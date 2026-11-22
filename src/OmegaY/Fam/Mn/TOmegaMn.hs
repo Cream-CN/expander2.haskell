@@ -202,7 +202,6 @@ expand a0 index shorter =
                       result = stepN 1 a3
                    in if shorter then init result else result
 
-
 -- ---------- 解析 ----------
 skipSpaces :: String -> Int -> Int
 skipSpaces s i = if i < length s && s !! i == ' ' then skipSpaces s (i + 1) else i

@@ -1,9 +1,4 @@
 -- | DEN 族公共骨架，逐行对齐 C++ @Header/notation/denshare.hpp@。
---
---   * 'DenEntry' = 条目（值 + 标记）；
---   * 文本解析器（只跳过空格，数字按 long long 累积并截断到 INT_MAX）；
---   * 'pleasantUntil' / 'apValue' / 切片辅助 / 极限行构造；
---   * 按值降序的稳定排序（对齐 @std::stable_sort@ + greater）。
 module OmegaY.Fam.Den.Share
   ( DenEntry (..)
   , maxInt32
@@ -27,7 +22,6 @@ import Data.Char (isDigit)
 import Data.List (sortOn)
 import Data.Ord (Down (..))
 
--- | 条目：整数值 + 是否带标记。
 data DenEntry = DenEntry
   { deValue :: !Int
   , deMarked :: !Bool
@@ -37,9 +31,7 @@ data DenEntry = DenEntry
 maxInt32 :: Int
 maxInt32 = 2147483647
 
--- ---------------------------------------------------------------------
 -- 文本解析（对齐 TextParser）
--- ---------------------------------------------------------------------
 
 -- | 只跳过空格 @' '@（不跳 tab / 换行）。
 skipSpaces :: String -> String
@@ -49,7 +41,6 @@ peek :: String -> Char
 peek [] = '\0'
 peek (c : _) = c
 
--- | 匹配字面量并消费；成功返回剩余串。
 matchLit :: String -> String -> Maybe String
 matchLit lit s =
   let n = length lit
@@ -70,11 +61,8 @@ parseDigits s0 =
     let v = a * 10 + (fromEnum d - fromEnum '0')
      in if v > maxInt32 then maxInt32 else v
 
--- ---------------------------------------------------------------------
 -- 工具
--- ---------------------------------------------------------------------
 
--- | 行的条目值列表。
 rowValuesE :: [DenEntry] -> [Int]
 rowValuesE = map deValue
 
@@ -90,9 +78,7 @@ atE es i = if i >= 0 && i < length es then deValue (es !! i) else 0
 rowAtE :: [[a]] -> Int -> [[a]]
 rowAtE rows i = if i >= 0 && i < length rows then [rows !! i] else []
 
--- ---------------------------------------------------------------------
 -- pleasant_until / ap
--- ---------------------------------------------------------------------
 
 indexOfFirstLess :: [Int] -> Int -> Int
 indexOfFirstLess v limit = go 0
@@ -139,7 +125,6 @@ lastIndexOf v x = go (length v - 1)
     | v !! i == x = Just i
     | otherwise = go (i - 1)
 
--- | ap 单值映射。tvals 为 active 行条目值（不含 step），step 为 active.step。
 apValue :: Int -> [Int] -> Int -> Int
 apValue x tvals step
   | null tvals = x
@@ -151,22 +136,17 @@ apValue x tvals step
  where
   inRange i = i >= 0 && i < length tvals
 
--- ---------------------------------------------------------------------
 -- 切片（对齐 TS slice(from, -tail) / slice(from)）
--- ---------------------------------------------------------------------
 
--- | row[from .. size-tail)；tail<=0 或 tail>=size 时为空。
 appendSliceExceptTail :: [a] -> Int -> Int -> [a]
 appendSliceExceptTail row from tail
   | tail <= 0 = []
   | tail >= length row = []
   | otherwise = take (length row - tail) (drop (max from 0) row)
 
--- | row[from..]（from<0 按 0）。
 appendSliceFrom :: [a] -> Int -> [a]
 appendSliceFrom row from = drop (max from 0) row
 
--- | DEN2 / DEN3 极限行条目：[0..n+2] 按标记规则后追加 2 再整体反转。
 limitRowEntries :: Int -> [DenEntry]
 limitRowEntries n =
   reverse
@@ -174,6 +154,5 @@ limitRowEntries n =
         ++ [DenEntry 2 False]
     )
 
--- | 按值降序稳定排序（对齐 stable_sort + greater）。
 sortEntriesDesc :: [DenEntry] -> [DenEntry]
 sortEntriesDesc es = map fst (sortOn (\(e, idx) -> (Down (deValue e), idx)) (zip es [0 ..]))

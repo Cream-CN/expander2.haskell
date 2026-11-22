@@ -1,12 +1,4 @@
 -- | 生成 DLL 的三份产物（唯一的代码生成器，build-dll.ps1 会先跑它）：
---
---   * @<outdir>\Expander2Exports.hs@ —— 每个记号两个 @foreign export@ 包装
---   * @<outdir>\expander2.h@          —— C 头文件（纯 ASCII，避免 MSVC 编码坑）
---   * @<outdir>\symbols.txt@          —— 导出符号清单（build 脚本据此写 .def）
---
---   导出符号名的唯一规则在 'OmegaY.Dll.symbolOf'，本文件只负责排版。
---
---   用法：@gen-dll <outdir>@
 module Main (main) where
 
 import Data.Char (toLower)
@@ -41,17 +33,14 @@ mkEntry n =
 entries :: [Entry]
 entries = map mkEntry allNotations
 
--- | C 形参列表
 cArgs :: Entry -> String
 cArgs e = case eKind e of
   "param" -> "const char * input, int term, int param"
   _ -> "const char * input, int term"
 
--- | Haskell 内部函数名（导出名不受影响）
 hsName :: String -> String
 hsName sym = "w_" ++ map toLower sym
 
--- | 生成的包装模块
 hsModule :: [Entry] -> String
 hsModule es =
   unlines $
@@ -93,7 +82,6 @@ hsBlock e =
         "cs term = expandWith \""
           ++ eId e ++ "\" " ++ show mode ++ " cs (fromIntegral term) 0"
 
--- | 头文件
 cHeader :: [Entry] -> String
 cHeader es =
   unlines $

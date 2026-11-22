@@ -63,9 +63,7 @@ data StretchData = StretchData
   , sdForce :: Bool
   } deriving (Eq, Show)
 
--- ---------------------------------------------------------------------
 -- 比较
--- ---------------------------------------------------------------------
 
 numCompare :: Int -> Int -> Int
 numCompare a b = compare a b
@@ -106,9 +104,7 @@ columnCompare a b = lexCompare a b entryCompare
 mountainCompare :: Mountain -> Mountain -> Int
 mountainCompare a b = lexCompare a b columnCompare
 
--- ---------------------------------------------------------------------
 -- 显示
--- ---------------------------------------------------------------------
 
 sepDisplay :: Sep -> String
 sepDisplay s =
@@ -125,9 +121,7 @@ columnDisplay c = "(" ++ concatMap entryDisplay c ++ ")"
 mountainDisplay :: Mountain -> String
 mountainDisplay m = concatMap columnDisplay m
 
--- ---------------------------------------------------------------------
 -- 解析
--- ---------------------------------------------------------------------
 
 fromDisplay :: String -> Maybe Mountain
 fromDisplay s = go s 0
@@ -137,9 +131,7 @@ fromDisplay s = go s 0
           while p f j = if p j && j < length str then while p f (f j) else j
       in Nothing  -- TODO: implement parser
 
--- ---------------------------------------------------------------------
 -- 山结构辅助
--- ---------------------------------------------------------------------
 
 sepIsOne :: Sep -> Bool
 sepIsOne s = length s == 1 && head s == 1

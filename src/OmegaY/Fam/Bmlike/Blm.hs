@@ -40,8 +40,6 @@ colsToString = concatMap fmt
     joinComma [x] = x
     joinComma (x : xs) = x ++ "," ++ joinComma xs
 
--- ---------------------------------------------------------------------
-
 blmExpand :: Matrix -> Int -> Cols
 blmExpand input a = runST $ do
   let raw = matData input
@@ -55,6 +53,8 @@ blmExpand input a = runST $ do
         | otherwise = (b !! cc) !! rr
 
   sharedArr <- newArray (0, d2) 0 :: ST s (STUArray s Int Int)
+  -- b2 各列共享同一个 STUArray：b2Write 写的是同一块存储，读取结果取决于
+  -- C++ 原实现的覆盖顺序。不要改成每列独立数组，否则与参考实现不一致。
   b2Ref <- newSTRef (replicate (d3 + 1) sharedArr)
   cRef <- newSTRef (replicate (d2 + 2) 0)
   c2Ref <- newSTRef (replicate (d3 + 2) 0)

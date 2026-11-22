@@ -1,13 +1,4 @@
 -- | 命令行入口：与 C++ 侧对照程序同构。
---
---   @expander2-hs@                       零参数 -> 直接进入交互会话（REPL）
---   @expander2-hs -i@ / @--interactive@  显式进入交互会话
---   @expander2-hs --list@
---   @expander2-hs --license@            打印内嵌的完整 GPLv3 文本
---   @expander2-hs <id> <fs|alter> <term> [param]@ ，表达式从 stdin 读入
---
---   启动时打印 GPLv3 许可与版权横幅（见 @OmegaY.Banner@）：交互式写 stdout，
---   带数据的 CLI 调用写 stderr，以免污染对拍脚本解析 stdout。
 module Main (main) where
 
 import qualified OmegaY.Banner as Banner
@@ -26,7 +17,6 @@ main = do
     then Shell.repl
     else Banner.announceCli >> runCli args
 
--- | 非交互路径（标语已由 'main' 打到 stderr）。
 runCli :: [String] -> IO ()
 runCli args = case args of
   ["--license"] ->
@@ -68,8 +58,6 @@ runCli args = case args of
     hPutStrLn stderr "       expander2-hs --license                            (完整 GPLv3 文本)"
     exitFailure
 
-
--- | 与 refui 预言机同款转义：换行 -> 字面 "\n"，反斜杠 -> "\\"。
 esc :: String -> String
 esc = concatMap one
  where

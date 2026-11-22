@@ -10,9 +10,7 @@ import Control.Monad.ST (ST, runST)
 import Data.STRef (STRef, newSTRef, readSTRef, writeSTRef)
 import OmegaY.Notation.Types (Notation, seqNotation)
 
--- ---------------------------------------------------------------------------
 -- Element
--- ---------------------------------------------------------------------------
 
 data GEnt s = GEnt
   { gv     :: STRef s Int
@@ -110,9 +108,7 @@ sEx :: GEnt s -> [Int] -> ST s (); sEx e = writeSTRef (gex e)
 sHasEx :: GEnt s -> Bool -> ST s (); sHasEx e = writeSTRef (ghasex e)
 sNn :: GEnt s -> Int -> ST s (); sNn e = writeSTRef (gn e)
 
--- ---------------------------------------------------------------------------
 -- compareRow / rowAddition / rowDifference
--- ---------------------------------------------------------------------------
 
 compareRow :: [Int] -> [Int] -> Maybe Int -> Int
 compareRow r1 r2 midx = go 0
@@ -149,9 +145,7 @@ rowDifference r1 r2 =
              else i
    in if i' >= length r2 then [] else drop i' r2
 
--- ---------------------------------------------------------------------------
 -- toSequence / drawMountain
--- ---------------------------------------------------------------------------
 
 toSequence :: [Int] -> ST s [GEnt s]
 toSequence s = go 0 []
@@ -260,9 +254,7 @@ drawMountain s d = do
         sP foot pFinal
         loop mRef i foot
 
--- ---------------------------------------------------------------------------
 -- getFootRow
--- ---------------------------------------------------------------------------
 
 getFootRow :: GEnt s -> [Int] -> ST s [Int]
 getFootRow it d = do
@@ -299,9 +291,7 @@ getFootRow it d = do
                       loop newRow1 1
       loop [1, itRow !! 1 + 1] 1
 
--- ---------------------------------------------------------------------------
 -- setElementRefrence / setElementNo / getTpElement / getBootIndex
--- ---------------------------------------------------------------------------
 
 setElementRefrence :: [[GEnt s]] -> ST s ()
 setElementRefrence m = mapM_ (mapM_ one) m
@@ -376,9 +366,7 @@ getBootIndex s d = do
       ep <- gP e
       maybe (pure (-1)) gC ep
 
--- ---------------------------------------------------------------------------
 -- expandDimensionSequnece
--- ---------------------------------------------------------------------------
 
 expandDimensionSequnece :: [[GEnt s]] -> GEnt s -> GEnt s -> Int -> [Int] -> ST s ()
 expandDimensionSequnece m b t n d
@@ -536,9 +524,7 @@ expandDimensionSequnece m b t n d
                                   [1 .. n]
                             sOffs it offsets
 
--- ---------------------------------------------------------------------------
 -- copyElement / copyCloumn
--- ---------------------------------------------------------------------------
 
 chaseFoot :: GEnt s -> Int -> ST s (GEnt s)
 chaseFoot r rid = do
@@ -755,9 +741,7 @@ copyCloumnImpl m b t c i ex d f = do
   fixVal (last newCol)
   pure (take (length m' - 1) m' ++ [newCol])
 
--- ---------------------------------------------------------------------------
 -- expand_elements / expand_impl
--- ---------------------------------------------------------------------------
 
 expandElements :: [GEnt s] -> Int -> [Int] -> Bool -> ST s [Int]
 expandElements s n d f = do

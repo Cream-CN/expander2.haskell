@@ -260,7 +260,6 @@ computeUp expr r hh@(H _ h1) = build
                     then (True, setAt xStart (c > 0) rs)
                     else loopUp xStart yStart (k + 1) rs
 
-
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter
   | null expr = expr

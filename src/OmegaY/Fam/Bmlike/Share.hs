@@ -1,9 +1,4 @@
 -- | BM-like 公共骨架，逐行对齐 C++ @Header/notation/bmlike_share.hpp@。
---
---   * 'BmExpr' = 普通矩阵；
---   * 单元格越界读 0（复用 'OmegaY.Matrix.matAt'）；
---   * parents / 字典序比较 / 极限判定 / 极限基本列 / bm4 核心展开；
---   * BM 文本解析与序列化（含空列 @(0)@、解析错误文本）。
 module OmegaY.Fam.Bmlike.Share
   ( BmExpr (..)
   , kParseError
@@ -30,8 +25,6 @@ module OmegaY.Fam.Bmlike.Share
 import Data.Char (isDigit, isSpace)
 import OmegaY.Matrix
 
--- | BM-like 表达式。
--- | BM-like 表达式。
 data BmExpr = BmExpr
   { beMat :: !Matrix
   } deriving (Eq, Show)
@@ -44,7 +37,6 @@ kParseError = "解析失败，请确认你没有使用全角括号，逗号"
 bmAt :: Matrix -> Int -> Int -> Int
 bmAt = matAt
 
--- | 第 c 列规范化高度：最后一个正值所在行 + 1。
 columnHeight :: Matrix -> Int -> Int
 columnHeight m c = go (matRows m - 1)
  where
@@ -53,13 +45,11 @@ columnHeight m c = go (matRows m - 1)
     | matAt m r c > 0 = r + 1
     | otherwise = go (r - 1)
 
--- | 第 c 列去尾随 0 后的列向量。
 normalizedColumn :: Matrix -> Int -> [Int]
 normalizedColumn m c = [ matAt m r c | r <- [0 .. h - 1] ]
  where
   h = columnHeight m c
 
--- | 规范化：各列截去尾随 0，行数取最大列高。
 normalizeMatrix :: Matrix -> Matrix
 normalizeMatrix m
   | matCols m == 0 = emptyMatrix
@@ -73,7 +63,6 @@ normalizeMatrix m
   rows = maximum (0 : hs)
   h' c = min rows (columnHeight m c)
 
--- | 标准化：行数补齐到 minRows。
 standardizeMatrix :: Int -> Matrix -> Matrix
 standardizeMatrix minRows m
   | matCols m == 0 = m
@@ -106,7 +95,6 @@ parentsOf m = pTab
   -- 转回列主序：pTab !! i !! j
   pTab = [ [ pRows !! j !! i | j <- [0 .. rows - 1] ] | i <- [0 .. nc - 1] ]
 
--- | 读父项；缺失返回 -1。
 parentAtOf :: [[Int]] -> Int -> Int -> Int
 parentAtOf pTab c r
   | c < 0 || c >= length pTab = -1
@@ -118,7 +106,6 @@ numberCompare a b = compareI a b
  where
   compareI x y = if x == y then 0 else if x < y then (-1) else 1
 
--- | 等长逐元素再比长度（前缀短者更小）。
 vectorCompare :: [Int] -> [Int] -> Int
 vectorCompare a b = go 0
  where
@@ -134,7 +121,6 @@ columnCompare :: Matrix -> Int -> Matrix -> Int -> Int
 columnCompare a ca b cb =
   vectorCompare (normalizedColumn a ca) (normalizedColumn b cb)
 
--- | 两矩阵 BM 字典序。
 compareMat :: Matrix -> Matrix -> Int
 compareMat a b = go 0
  where
@@ -145,18 +131,15 @@ compareMat a b = go 0
          in if r /= 0 then r else go (c + 1)
     | otherwise = numberCompare (matCols a) (matCols b)
 
--- | 末列第 0 行 > 0。
 isLimit :: Matrix -> Bool
 isLimit m =
   matCols m > 0 && matRows m > 0 && matAt m 0 (matCols m - 1) > 0
 
--- | 删除最后一列。
 dropLastColumn :: Matrix -> Matrix
 dropLastColumn m
   | matCols m <= 1 = Matrix (matRows m) 0 []
   | otherwise = Matrix (matRows m) (matCols m - 1) (init (matData m))
 
--- | ascending_threshold：每列首个不再相对根列 r 上升的行号。
 ascendingThreshold :: [[Int]] -> Int -> Int -> [Int]
 ascendingThreshold pTab r jmax = [ result i | i <- [0 .. nc - 1] ]
  where
@@ -218,7 +201,6 @@ bm4Expand m index shorter
           ]
   out = packColumns outCols
 
--- | 把（可能不等长的）列打包成矩形矩阵。
 packColumns :: [[Int]] -> Matrix
 packColumns cols =
   let rows = maximum (0 : map length cols)

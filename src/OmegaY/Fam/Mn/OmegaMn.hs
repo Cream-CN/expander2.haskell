@@ -9,7 +9,6 @@ import OmegaY.Fam.Mn.SmnShare
 errText :: String
 errText = "解析失败，请确认你没有使用全角括号，逗号，分号"
 
--- | omega_mn_detail::from_display：与 smnshare 版差异在 unparenthesized '0' 分支也接受 ','。
 fromDisplayOmega :: String -> Maybe Mountain
 fromDisplayOmega s0 = go s0 0
   where
@@ -110,8 +109,6 @@ fromDisplayOmega s0 = go s0 0
 isLimitMountain :: Mountain -> Bool
 isLimitMountain m = not (null m) && not (null (last m))
 
-
--- | omega_mn_detail::expand。
 expandOmega :: Mountain -> Int -> Bool -> Mountain
 expandOmega m0 index shorter =
   let rightmost = length m0 - 1
@@ -155,7 +152,6 @@ adjustRightmost m0 trSep v0 brij topmost rightmost =
       tailCol = if brJ >= 0 && brJ < length brCol then drop brJ brCol else []
    in take rightmost m0 ++ [newRight ++ tailCol] ++ drop (rightmost + 1) m0
 
--- | 计算 magma_checks_list。
 magmaChecksList :: Mountain -> [[Vertical]] -> Position -> Int -> [[Int]]
 magmaChecksList m v brij rightmost =
   let brI = pI brij; brJ = pJ brij

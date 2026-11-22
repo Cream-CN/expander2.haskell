@@ -306,7 +306,6 @@ fromDisplayPcf raw = go (skipSpaces s 0) []
           Nothing -> Nothing
           Just (col, j) -> go (skipSpaces s j) (acc ++ [col])
 
-
 trimWS :: String -> String
 trimWS = reverse . dropWhile (`elem` " \t") . reverse . dropWhile (`elem` " \t")
 

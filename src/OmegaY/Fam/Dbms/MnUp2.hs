@@ -409,9 +409,7 @@ dbmsExpand expr index shorter v1flag v1c
       | shorter = init result2
       | otherwise = result2
 
--- =====================================================================
 -- up2mn 专用（v1b / v1b-plus）
--- =====================================================================
 
 up2mnCopyCol :: Col -> Pos -> Int -> Int -> Bool -> Col
 up2mnCopyCol col (ri, rj) offset yOffset up =

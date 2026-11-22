@@ -1,6 +1,4 @@
 -- | Xy 族 v1/v2 共享底层：Entry arena（对应 C++ deque Arena）、行运算
---   （compareRow 长度优先 / rowAddition / rowDifference / getFootRow）、
---   toSequence。v3 行运算不同，不复用本模块。
 module OmegaY.Fam.Xy.Common
   ( E (..)
   , World
@@ -30,7 +28,6 @@ import Data.STRef
   , writeSTRef
   )
 
--- | Entry 节点。chain/dimseq 仅 v2 使用；v1 置空。
 data E = E
   { e_value :: Int
   , e_row :: [Int]
@@ -47,7 +44,6 @@ data E = E
 atM :: [Int] -> Int -> Int
 atM xs i = if i >= 0 && i < length xs then xs !! i else 0
 
--- | 合成根：value=0, row=[1], cloumn=-1。
 makeRootV12 :: E
 makeRootV12 = E 0 [1] (-1) 0 Nothing Nothing Nothing [] []
 
@@ -75,14 +71,12 @@ getE w i = do
   m <- readSTRef (wAr w)
   pure (IM.findWithDefault makeRootV12 i m)
 
--- | 局部修改某条目字段。
 modE :: World s -> Int -> (E -> E) -> ST s ()
 modE w i f = modifySTRef' (wAr w) (IM.adjust f i)
 
 setE :: World s -> Int -> E -> ST s ()
 setE w i e = modifySTRef' (wAr w) (IM.insert i e)
 
--- | 字典序：先比长度（短 < 长），再逐元素。对应 xy-v1/v2 compareRow。
 compareRow :: [Int] -> [Int] -> Int
 compareRow r1 r2
   | length r1 < length r2 = -1
@@ -97,7 +91,6 @@ compareRow r1 r2
       EQ -> cmp as bs
   cmp _ _ = 0
 
--- | 行加法。对应 xy-v1/v2 rowAddition。
 rowAddition :: [Int] -> [Int] -> [Int]
 rowAddition r1 r2
   | length r1 < length r2 = r2
@@ -108,7 +101,6 @@ rowAddition r1 r2
           b = b0 : drop 1 r2
        in take k r1 ++ b
 
--- | 行减法。对应 xy-v1/v2 rowDifference。
 rowDifference :: [Int] -> [Int] -> [Int]
 rowDifference r1 r2
   | length r1 > length r2 = r1
@@ -118,7 +110,6 @@ rowDifference r1 r2
           d = atM r1 i - atM r2 i
        in d : drop (i + 1) r1
 
--- | getFootRow（v1/v2 版）。传入 parent 的 row（无父则 Nothing）。
 getFootRow :: E -> Maybe [Int] -> [Int] -> [Int]
 getFootRow it mparentRow d =
   let row0 = [1]
@@ -132,7 +123,6 @@ getFootRow it mparentRow d =
       row1 = row0 ++ zeros
    in rowAddition (e_row it) row1
 
--- | isDimensionLimited。d=[1,0,1] 时恒 false，保留以忠实移植。
 isDimensionLimitedV12 :: E -> Maybe [Int] -> [Int] -> Bool
 isDimensionLimitedV12 it mparentRow d =
   length d == 1

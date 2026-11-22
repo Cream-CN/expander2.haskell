@@ -1,11 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 
--- | GPLv3 全文：编译期从仓库根的 @LICENSE@ 读入并烘焙进二进制，
---   运行时不再依赖文件是否存在（装到别处也能打印完整许可证）。
---
---   定位策略：先用本模块源文件所在目录回推仓库根（@src/OmegaY@ 往上两级），
---   再退回当前工作目录下的 @LICENSE@；两处都没有则编译失败并给出尝试过的路径。
---   @addDependentFile@ 保证 LICENSE 改动会触发重编。
+-- | GPLv3 全文。TemplateHaskell 在编译期读取仓库根的 LICENSE 并烘焙进二进制；
+--   找不到时编译失败，而不是运行时降级。
 module OmegaY.License (licenseText) where
 
 import Control.Exception (IOException, try)

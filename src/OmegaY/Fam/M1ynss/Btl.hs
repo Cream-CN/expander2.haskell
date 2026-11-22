@@ -20,9 +20,7 @@ data BColumn = BColumn
 makeNode :: BNode
 makeNode = BNode []
 
--- ---------------------------------------------------------------------------
 -- 显示
--- ---------------------------------------------------------------------------
 
 topDisplay :: BNode -> Int -> String
 topDisplay e u
@@ -48,9 +46,7 @@ columnDisplay c
 display :: BNode -> String
 display e = concatMap columnDisplay (bCols e)
 
--- ---------------------------------------------------------------------------
 -- 比较
--- ---------------------------------------------------------------------------
 
 numCmp :: Int -> Int -> Int
 numCmp a b = if a == b then 0 else if a < b then (-1) else 1
@@ -109,9 +105,7 @@ isOneLineColumn c value =
     && all (== 0) (drop 1 (cLower c))
     && null (cHigher c)
 
--- ---------------------------------------------------------------------------
 -- 类型与父树
--- ---------------------------------------------------------------------------
 
 data BType = Undef | Lower | Higher | Star | Mark | MarkStar
   deriving (Eq, Show)
@@ -187,9 +181,7 @@ computeParents e n = goNode e [] [] []
               | null (cHigher col) = error "illegal tail"
               | otherwise = null (bCols (last (cHigher col)))
 
--- ---------------------------------------------------------------------------
 -- 层 / 根
--- ---------------------------------------------------------------------------
 
 isZeroCol :: BColumn -> Bool
 isZeroCol c = all (== 0) (cLower c) && null (cHigher c)
@@ -260,9 +252,7 @@ ascendVector :: [Int] -> Int -> [Int] -> Int -> [Int]
 ascendVector v a vv w =
   [ if j < a && j < length vv then v !! j + vv !! j * w else v !! j | j <- [0 .. length v - 1] ]
 
--- ---------------------------------------------------------------------------
 -- 阈值
--- ---------------------------------------------------------------------------
 
 data ACol = ACol (Maybe Int) [ANode]
 newtype ANode = ANode [ACol]
@@ -302,9 +292,7 @@ thresholds e (PNode pcols) ropt b stk =
               else ai
        in go 0
 
--- ---------------------------------------------------------------------------
 -- 复制提升
--- ---------------------------------------------------------------------------
 
 cloneSlice :: BNode -> Int -> BNode
 cloneSlice e from = BNode [bCols e !! i | i <- [from .. length (bCols e) - 1]]
@@ -353,9 +341,7 @@ ascendReplace e tail tl aTree vv w =
     aTh (ACol t _) = maybe 0 id t
     aThs (ACol _ h) = h
 
--- ---------------------------------------------------------------------------
 -- fs_star
--- ---------------------------------------------------------------------------
 
 fsStar :: BNode -> Int -> Int -> BNode
 fsStar e tLayer index =
@@ -376,16 +362,10 @@ fsStar e tLayer index =
       (mark, higher) = newHigher
    in BNode (keptCols ++ [BColumn (cLower col) mark higher])
 
--- ---------------------------------------------------------------------------
--- ---------------------------------------------------------------------------
-
-
 isLimit :: BNode -> Bool
 isLimit e = not (null (bCols e)) && not (isZeroCol (last (bCols e)))
 
--- ---------------------------------------------------------------------------
 -- fs
--- ---------------------------------------------------------------------------
 
 fs :: BNode -> Int -> Int -> BNode
 fs e index n
@@ -446,9 +426,7 @@ lnz e index n
   | not (isLimit e) = fs e 0 n
   | otherwise = fs e index n
 
--- ---------------------------------------------------------------------------
 -- 入口
--- ---------------------------------------------------------------------------
 
 expandBtl :: String -> Int -> Int -> String
 expandBtl text term n0 =
@@ -465,9 +443,7 @@ safeRun action = unsafePerformIO $ do
     Left _ -> return kParseError
     Right s -> return s
 
--- ---------------------------------------------------------------------------
 -- 解析
--- ---------------------------------------------------------------------------
 
 parseNode :: Int -> P BNode
 parseNode n = do

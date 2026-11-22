@@ -1,8 +1,4 @@
--- | TBM（超限巴斯丘矩阵）树形矩阵记号。忠实移植 @Header/notation/tbm.hpp@。
---
---   数据层级：Expr = Column[]，Column = Entry[]，Entry = (value, height:Expr)。
---   本模块同时导出 TUPMS 需要复用的全部原语（比较链、竖直序列、parents、
---   列运算、解析、显示）。
+-- | TBM（超限巴斯丘矩阵）树形矩阵记号。
 module OmegaY.Fam.Tree.Tbm
   ( Expr (..)
   , Entry (..)
@@ -37,15 +33,12 @@ module OmegaY.Fam.Tree.Tbm
 
 import Data.Char (isDigit)
 
--- ---------------------------------------------------------------------------
 -- 数据
--- ---------------------------------------------------------------------------
 
 data Expr = Expr { cols :: [Column] } deriving (Eq)
 type Column = [Entry]
 data Entry = Entry { eValue :: Int, eHeight :: Expr } deriving (Eq)
 
--- | 高度为 1：单列且该列为空。
 oneExpr :: Expr
 oneExpr = Expr [[]]
 
@@ -56,13 +49,10 @@ isOne :: Expr -> Bool
 isOne (Expr [[]]) = True
 isOne _ = False
 
-
 kParseError :: String
 kParseError = "解析失败，请确认你没有使用全角括号，逗号"
 
--- ---------------------------------------------------------------------------
 -- 比较
--- ---------------------------------------------------------------------------
 
 cmpInt :: Int -> Int -> Int
 cmpInt a b = case compare a b of
@@ -108,9 +98,7 @@ verticalCmp a b = go 0
       0 -> go (i + 1)
       c -> c
 
--- ---------------------------------------------------------------------------
 -- 竖直序列
--- ---------------------------------------------------------------------------
 
 -- | 在 V 中找到第一个 > pos 的下标；都不大于则返回 V.size。
 indexAfter :: [[Expr]] -> [Expr] -> Int
@@ -121,7 +109,6 @@ indexAfter v pos = go 0
     | verticalCmp (v !! k) pos > 0 = k
     | otherwise = go (k + 1)
 
--- | 返回第一个 Vi[k] >= v 对应的 Pi[k]。
 verticalParent :: [Expr] -> [(Int, Int)] -> [[Expr]] -> Maybe (Int, Int)
 verticalParent v pi vi = go 0
  where
@@ -149,9 +136,7 @@ columnVerticals col = reverse (snd (foldl step ([], []) col))
     let acc' = verticalAdd acc [eHeight en]
     in (acc', acc' : out)
 
--- ---------------------------------------------------------------------------
 -- parents
--- ---------------------------------------------------------------------------
 
 -- | 对每一列逐层求父项链。某行找不到父项时该列更高行不再生成（与 C++ 一致）。
 parents :: Expr -> [[[Expr]]] -> [[(Int, Int)]]
@@ -196,7 +181,6 @@ parents (Expr mcols) v = allRows
           then Just (p - 1, 0)
           else verticalParent pos (allRows !! p) (v !! p)
 
--- | 把高度表达式按空列切成若干竖直段。
 toVertical :: Expr -> [Expr]
 toVertical (Expr mcols) = build 0 1
  where
@@ -222,7 +206,6 @@ columnSub a b = go 0
            then []
            else Entry delta (eHeight (a !! j)) : go (j + 1)
 
--- | TBM 版提升阈值（直接扫描）。
 ascensionThreshold :: [[[Expr]]] -> [[(Int, Int)]] -> Int -> [Expr] -> [[Expr]]
 ascensionThreshold v p r b = result
  where
@@ -283,10 +266,7 @@ copyColumn :: Column -> Column -> [Expr] -> Int -> Column
 copyColumn colI offset ai w =
   columnAdd colI (columnMul (columnTruncate offset ai) w)
 
--- ---------------------------------------------------------------------------
 -- 展开
--- ---------------------------------------------------------------------------
-
 
 isLimit :: Expr -> Bool
 isLimit e
@@ -344,9 +324,7 @@ tbmFs m index
   | not (isLimit m) = expand m 0
   | otherwise = expand m index
 
--- ---------------------------------------------------------------------------
 -- 显示
--- ---------------------------------------------------------------------------
 
 display :: Expr -> String
 display e = concatMap columnDisplay (cols e)
@@ -364,16 +342,13 @@ entryDisplay e =
     Nothing -> show (eValue e)
     Just sd -> show (eValue e) ++ "^" ++ sd
 
--- | 返回 Just 上标文本；Nothing 表示高度为 1（无上标）。
 heightDisplay :: Expr -> Maybe String
 heightDisplay s
   | length (cols s) == 1 = Nothing
   | exprCmp s makeOmega == 0 = Just "\969"
   | otherwise = Just (display s)
 
--- ---------------------------------------------------------------------------
 -- 解析（失败返回 Nothing；expandText 统一坍缩为 kParseError）
--- ---------------------------------------------------------------------------
 
 type P a = String -> Maybe (a, String)
 
@@ -476,7 +451,6 @@ parseExprText s = case pParse s of
   Just (e, "") -> Just e
   _ -> Nothing
 
--- | 对外：解析 + FS + 显示；任何失败返回统一错误串。
 expandText :: String -> Int -> String
 expandText text term =
   case pParse text of

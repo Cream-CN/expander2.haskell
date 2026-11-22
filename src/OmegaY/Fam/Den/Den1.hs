@@ -1,6 +1,4 @@
 -- | DEN1 记号（id=den1），逐行对齐 C++ @Header/notation/den1.hpp@。
---
---   行结构：@rows[0]@ 是父标号列表（显示在 @;@ 之后），其余行 @row[0]@ 为 step。
 module OmegaY.Fam.Den.Den1
   ( expandText
   , expandTextAlter
@@ -10,9 +8,7 @@ import Data.List (sortOn)
 import Data.Ord (Down (..))
 import OmegaY.Fam.Den.Share
 
--- ---------------------------------------------------------------------
 -- 类型与显示
--- ---------------------------------------------------------------------
 
 data Den1Expr = Den1Expr
   { d1Rows :: [[Int]]
@@ -41,11 +37,8 @@ toString e
   joinComma [x] = show x
   joinComma (x : xs) = show x ++ "," ++ joinComma xs
 
--- ---------------------------------------------------------------------
 -- 解析
--- ---------------------------------------------------------------------
 
--- | 解析一行：'(' 值列表 ')' step。
 parseRow :: String -> Maybe ([Int], String)
 parseRow s0 = do
   let s1 = drop 1 s0 -- '('
@@ -102,12 +95,6 @@ parse s0 = do
              in if null rest then Nothing else parseParents rest (acc ++ [v])
           else Just (acc ++ [v], s2)
 
--- | 组装表达式：rows[0]=父标号列表。
--- ---------------------------------------------------------------------
--- 展开核心
--- ---------------------------------------------------------------------
-
--- | 删除最后一行，并弹出父标号列表最后一个元素。
 cut :: Den1Expr -> Den1Expr
 cut raw
   | null (d1Rows raw) = Den1Expr []
@@ -127,7 +114,6 @@ isAncestor r i j = go j
     | not (i < jj) || jj <= 0 || jj > length r = False
     | otherwise = go (r !! (jj - 1))
 
--- | 为新复制行计算父标号。
 computeParent :: [Int] -> Int -> Int -> Int -> Int -> Int -> Int
 computeParent rOld rowIdx start end oldHeight tmin =
   let parent = if rowIdx >= 1 && rowIdx <= length rOld then rOld !! (rowIdx - 1) else 0
@@ -141,7 +127,6 @@ computeParent rOld rowIdx start end oldHeight tmin =
     | ancestor >= 1 && ancestor <= length rOld = walk (rOld !! (ancestor - 1))
     | otherwise = 0
 
--- | 按 active 行的映射规则复制一行。
 applyRow :: [Int] -> [Int] -> [Int]
 applyRow s t =
   let tvals = drop 1 t
@@ -149,7 +134,6 @@ applyRow s t =
    in (if null s then 0 else head s)
         : [apValue (s !! k) tvals step | k <- [1 .. length s - 1]]
 
--- | 复制 [begin, end) 区间行并补算父标号。
 copy :: Den1Expr -> Int -> Den1Expr
 copy raw flag
   | null (d1Rows raw) || null (last (d1Rows raw)) = cut raw
@@ -171,7 +155,6 @@ copy raw flag
   applyParents rows parents =
     if null rows then parents : [] else [head rows ++ parents] ++ drop 1 rows
 
--- | 复制 [begin, raw.length) 区间行（含 active 自身）。
 extend :: Den1Expr -> Den1Expr
 extend raw
   | null (d1Rows raw) || null (last (d1Rows raw)) = cut raw
@@ -192,7 +175,6 @@ extend raw
   applyParents rows parents =
     if null rows then parents : [] else [head rows ++ parents] ++ drop 1 rows
 
--- | 对第 i 行做压缩。
 comp :: Den1Expr -> Int -> [Int] -> Den1Expr
 comp raw i t =
   let rows0 = take i (d1Rows raw)
@@ -268,7 +250,6 @@ comp raw i t =
     if pos < length rows then setAt pos row rows else rows ++ [row]
   setRow0 rows p = setAt 0 p rows
 
--- | 对第 i 行构造 T 后调用 comp；T 为空则保持原样。
 fullcomp :: Den1Expr -> Int -> Den1Expr
 fullcomp expr i =
   let row = (d1Rows expr) !! i
@@ -288,7 +269,6 @@ fullcomp expr i =
         th = row `atV` (head row + 1)
      in if t' !! 0 > th then build t' else t'
 
--- | 核心展开。longer=False 对应 FS，True 对应 FS_alter。
 expand :: Den1Expr -> Int -> Bool -> Den1Expr
 expand raw fsTerm longer
   | null (d1Rows raw) = raw
@@ -324,16 +304,9 @@ expand raw fsTerm longer
                       [length (d1Rows raw) - 1 .. length (d1Rows expr1) - 1]
                in expr2
 
--- ---------------------------------------------------------------------
 -- 极限
--- ---------------------------------------------------------------------
 
-
-
-
--- ---------------------------------------------------------------------
 -- 公共入口
--- ---------------------------------------------------------------------
 
 expandTextImpl :: String -> Int -> Bool -> String
 expandTextImpl text term longer =

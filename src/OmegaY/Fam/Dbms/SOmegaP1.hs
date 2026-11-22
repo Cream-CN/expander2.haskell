@@ -14,7 +14,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 cmpHP :: HP -> HP -> Int
 cmpHP (HP w1 n1) (HP w2 n2)
   | w1 && w2 = 0
@@ -237,7 +236,6 @@ display = concatMap colD
       (if k > 0 then "," else "") ++ show (v + 1) ++ "@" ++
       (if hpIsW p then "ω" else show (pNum p + 1))
       where hpIsW (HP w _) = w; pNum (HP _ n) = n
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

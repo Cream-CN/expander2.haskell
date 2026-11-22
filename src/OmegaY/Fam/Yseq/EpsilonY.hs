@@ -1,8 +1,4 @@
 -- | ε-Y 记号：忠实移植 C++ @notation/epsilon-y.hpp@。
---
---   C++ 侧用 @std::deque<Entry>@ 作 arena，@Entry*@ 互相引用。这里用
---   @STRef s EntryRec@ 作为等价的稳定指针；字段全部可变，与原实现逐句对应。
---   phantom/根节点 value = 0（epsilon-y.hpp 的 Entry 默认值）。
 module OmegaY.Fam.Yseq.EpsilonY
   ( expandEpsilonY
   , epsilonYNotation
@@ -13,9 +9,7 @@ import Control.Monad.ST (ST, runST)
 import Data.STRef (STRef, newSTRef, readSTRef, writeSTRef)
 import OmegaY.Notation.Types (Notation, seqNotation)
 
--- ---------------------------------------------------------------------------
 -- Entry 与 arena（对齐 epsilon_y_detail::Entry / Arena）
--- ---------------------------------------------------------------------------
 
 data EEnt s = EEnt
   { ev    :: STRef s Int
@@ -70,9 +64,7 @@ sH :: EEnt s -> Maybe (EEnt s) -> ST s (); sH e = writeSTRef (ehead e)
 sF :: EEnt s -> Maybe (EEnt s) -> ST s (); sF e = writeSTRef (efoot e)
 sRef :: EEnt s -> Maybe (EEnt s) -> ST s (); sRef e = writeSTRef (eref e)
 
--- ---------------------------------------------------------------------------
 -- 基础工具
--- ---------------------------------------------------------------------------
 
 rowGenerator :: Int -> [Int]
 rowGenerator n
@@ -172,9 +164,7 @@ isDimLimitedD d =
   (length d == 2 && d !! 0 == 0) ||
   (length d == 3 && d !! 0 == 0 && d !! 1 == 1 && d !! 2 == 0)
 
--- ---------------------------------------------------------------------------
 -- rowStandardization / getFootRow / isDimensionLimited
--- ---------------------------------------------------------------------------
 
 rowStandardization :: [Int] -> [Int] -> ST s [Int]
 rowStandardization r d =
@@ -224,9 +214,7 @@ isDimensionLimited it d = do
       then pure True
       else pure False
 
--- ---------------------------------------------------------------------------
 -- toSequence
--- ---------------------------------------------------------------------------
 
 toSequence :: [Int] -> ST s [EEnt s]
 toSequence s = go 0 []
@@ -255,9 +243,7 @@ toSequence s = go 0 []
                 e <- newEnt vi [] i 0 0 0 (Just parent) Nothing Nothing Nothing
                 go (i + 1) (e : acc)
 
--- ---------------------------------------------------------------------------
 -- drawMountain
--- ---------------------------------------------------------------------------
 
 drawMountainImpl :: [EEnt s] -> [Int] -> ST s [[EEnt s]]
 drawMountainImpl s d = do
@@ -329,9 +315,7 @@ drawMountainImpl s d = do
             sP foot pFinal
             loop mRef i foot
 
--- ---------------------------------------------------------------------------
 -- getReferenceChain / getOds / getMds
--- ---------------------------------------------------------------------------
 
 getReferenceChain :: EEnt s -> ST s [EEnt s]
 getReferenceChain it = go it []
@@ -384,9 +368,7 @@ getMds m = do
                   pure (if length row <= 1 then 1 else row !! 1)) chain
   toSequence seq
 
--- ---------------------------------------------------------------------------
 -- setElementRefrence / setElementNo
--- ---------------------------------------------------------------------------
 
 setElementRefrence :: [[EEnt s]] -> ST s ()
 setElementRefrence m = mapM_ (mapM_ one) m
@@ -470,9 +452,7 @@ setElementNo m b = do
       nn <- gN e
       sId e nn
 
--- ---------------------------------------------------------------------------
 -- copyElement / copyCloumn
--- ---------------------------------------------------------------------------
 
 copyElementImpl :: [[EEnt s]] -> Maybe (EEnt s) -> EEnt s -> EEnt s
                 -> [EEnt s] -> Int -> [Int] -> Bool -> ST s [EEnt s]
@@ -643,9 +623,7 @@ copyCloumn m b t c i ex d f = do
   fixVal (last newCol)
   pure (take (length m' - 1) m' ++ [newCol])
 
--- ---------------------------------------------------------------------------
 -- expand_impl
--- ---------------------------------------------------------------------------
 
 expandImpl :: [EEnt s] -> Int -> [Int] -> Bool -> ST s [Int]
 expandImpl s n d f = do
@@ -751,7 +729,6 @@ expandImpl s n d f = do
           mFinal <- loopN 0 m2
           mapM (\col -> if null col then pure 0 else gV (head col)) mFinal
 
--- | expand_entry(seq, term) = toSequence → expand_impl(s, term, {1}, false)
 expandEpsilonY :: [Int] -> Int -> [Int]
 expandEpsilonY seq term
   | term < 1 || null seq = seq

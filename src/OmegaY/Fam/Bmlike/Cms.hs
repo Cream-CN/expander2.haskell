@@ -1,9 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 
--- | CMS —— 变长列矩阵记号。对齐 @Header/notation/cms.hpp@。
---
--- CMS 在 C++ 里是 \"无 alter\" 的 MakeText 文本记号：FS 模式由共享层自动做
--- MrSS 末元素截断，本模块只负责 expand 主体（不做 FS 截断）。
+-- | CMS —— 变长列矩阵记号。
 module OmegaY.Fam.Bmlike.Cms
   ( expandText
   ) where
@@ -44,9 +41,7 @@ colsToString = concatMap fmt
     joinComma [x] = x
     joinComma (x : xs) = x ++ "," ++ joinComma xs
 
--- ---------------------------------------------------------------------
 -- ParentCache（对齐 @cms.hpp@ 内部的 ParentCache）
--- ---------------------------------------------------------------------
 
 data PCache = PCache
   { pcCols :: !Cols
@@ -84,9 +79,7 @@ colAt cols x y
   | y < 0 || y >= length (cols !! x) = 0
   | otherwise = (cols !! x) !! y
 
--- ---------------------------------------------------------------------
 -- L 函数：L(pc, ymax, x1, x2, m)
--- ---------------------------------------------------------------------
 
 lFunc :: PCache -> Int -> Int -> Int -> Cols -> Int
 lFunc pc ymax x1 x2 m = goY ymax
@@ -102,9 +95,7 @@ lFunc pc ymax x1 x2 m = goY ymax
       let (c1, p) = parentOf c cc yy
        in if x1 < p then goX c1 p yy else (c1, p)
 
--- ---------------------------------------------------------------------
 -- expand 主体（对齐 cms_detail::expand）
--- ---------------------------------------------------------------------
 
 expand :: Matrix -> Int -> Cols
 expand input fsTerm =

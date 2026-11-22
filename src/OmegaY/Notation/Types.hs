@@ -19,7 +19,6 @@ import OmegaY.Parse (parseIntStrict, parseSequence, seqToString)
 data ExpandMode = Fs | FsAlter
   deriving (Eq, Show)
 
--- | 记号能力：序列型 / 文本型（可选 FS_alter）/ 参数化（可选 FS_alter）。
 data Caps
   = SeqCaps ([Int] -> Int -> [Int]) String
   | TextCaps (String -> Int -> String) (Maybe (String -> Int -> String)) String
@@ -95,11 +94,9 @@ expandNotation n mode text term param =
                       res = if mode == Fs && length res0 > 1 then init res0 else res0
                    in Right (seqToString res ++ suffix)
 
--- ---------------------------------------------------------------------------
 -- UI 级校验：逐字复刻 Expander.cpp 中 IDM_FS / IDM_FSALTER 的三条分支
 -- （文本型 / 参数化 / 序列型）的提示语与判定顺序。termRaw / paramRaw 是
 -- 输入框里的**原始文本**，等价于 C++ 侧 std::stoi 的成败语义。
--- ---------------------------------------------------------------------------
 
 uiErrTermNotInt, uiErrTermNotPos, uiErrTermParamNotInt :: String
 uiErrTermNotInt = "项数必须是整数，\n所以说你为什么要这样输入"

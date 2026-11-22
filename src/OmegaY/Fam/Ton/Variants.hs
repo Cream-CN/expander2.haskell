@@ -16,7 +16,6 @@ import qualified Data.Map.Strict as M
 
 import OmegaY.Fam.Ton.TonCore
 
--- | std_memoized 的 State 版本。
 stdMemo :: TonNode -> State TonState Bool -> State TonState Bool
 stdMemo a compute
   | isLeaf a = return True
@@ -32,7 +31,6 @@ stdMemo a compute
             else return ()
           return r
 
--- | 通用的结构检查：a->r 标准 && a->l 标准 && (a->l 叶子 || compare(a->r, a->l->r) <= 0)
 structOk :: (TonNode -> State TonState Bool) -> TonNode -> State TonState Bool
 structOk stdQ a = do
   rOk <- stdQ (rightChild a)
@@ -49,9 +47,7 @@ structOkN stdQ sys a = do
               || compareRaise (rightChild a) (rightChild (leftChild a)) /= GT
   return (rOk && lOk && cond)
 
--- ======================================================================
 -- ton-m (main)
--- ======================================================================
 
 builtqMain :: TonV -> TonNode -> TonNode -> TonNode -> Bool
 builtqMain n b a x
@@ -79,9 +75,7 @@ tonMConfig = TonConfig
   , tcStdFn = \a sys -> standardQMain sys a
   }
 
--- ======================================================================
 -- ton-i
--- ======================================================================
 
 builtqI :: TonNode -> TonNode -> TonV -> TonNode -> Bool
 builtqI a b n x
@@ -126,9 +120,7 @@ tonIConfig = TonConfig
   , tcStdFn = \a _ -> standardQI a
   }
 
--- ======================================================================
 -- ton-dor
--- ======================================================================
 
 builtqDor :: TonNode -> TonNode -> TonNode -> Bool
 builtqDor a b x
@@ -161,9 +153,7 @@ tonDrConfig = TonConfig
   , tcStdFn = \a _ -> standardQDor a
   }
 
--- ======================================================================
 -- ton-drc
--- ======================================================================
 
 builtqDrc :: TonNode -> TonNode -> TonNode -> TonNode -> TonNode -> Bool
 builtqDrc a ap b x xp
@@ -200,9 +190,7 @@ tonDrcConfig = TonConfig
   , tcStdFn = \a _ -> standardQDrc a
   }
 
--- ======================================================================
 -- ton-drp
--- ======================================================================
 
 builtqDrp :: TonNode -> TonNode -> TonNode -> TonNode -> TonNode -> Bool
 builtqDrp a ai b a0 d
@@ -235,9 +223,7 @@ tonDrpConfig = TonConfig
   , tcStdFn = \a _ -> standardQDrp a
   }
 
--- ======================================================================
 -- ton-drpc
--- ======================================================================
 
 builtqDrpc :: TonNode -> TonNode -> TonNode -> TonNode -> TonNode -> TonNode -> Bool
 builtqDrpc a ap ai b a0 d
@@ -286,9 +272,7 @@ tonDrpcConfig = TonConfig
   , tcStdFn = \a _ -> standardQDrpc a
   }
 
--- ======================================================================
 -- ton-ibp
--- ======================================================================
 
 builtqIbp :: TonNode -> TonNode -> [TonV] -> TonV -> Bool
 builtqIbp a b c n
@@ -338,9 +322,7 @@ tonIbpConfig = TonConfig
   , tcStdFn = \a _ -> standardQIbp a
   }
 
--- ======================================================================
 -- ton-mc / ton-mpc
--- ======================================================================
 
 extractparent :: TonNode -> TonNode -> [Int] -> TonNode
 extractparent a b x =
@@ -446,7 +428,6 @@ tonMpcConfig = TonConfig
   , tcStdFn = \a sys -> standardQMpc sys a
   }
 
--- | tails：所有后缀（包括空）。
 tails :: [a] -> [[a]]
 tails [] = [[]]
 tails xs@(_:rest) = xs : tails rest

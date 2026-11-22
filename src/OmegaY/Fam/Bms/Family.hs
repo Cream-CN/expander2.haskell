@@ -5,7 +5,6 @@ import OmegaY.Notation.Types
 import qualified OmegaY.Fam.Bms.BmsCore as BC
 import qualified OmegaY.Fam.Bms.BmsText as BT
 
--- | 构造 BMS 文本记号（覆盖 nTruncate 为删末列）。
 bmsNotation :: String -> String -> [String] -> BC.Version -> Notation
 bmsNotation ident name tags ver =
   Notation
@@ -17,7 +16,6 @@ bmsNotation ident name tags ver =
     , nTruncate = BT.bmsTruncateFs
     }
 
--- | UPMS 文本记号（覆盖 nTruncate 为删末列）。
 upmsNotation :: Notation
 upmsNotation =
   Notation

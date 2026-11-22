@@ -291,7 +291,6 @@ extend m0 =
              in go (i + 1) (mAcc ++ [copied])
    in go (ri + 1) m1
 
-
 expandA :: AMountain -> Int -> Bool -> AMountain
 expandA m index shorter
   | null m = m

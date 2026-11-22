@@ -33,7 +33,6 @@ data Node = Node { nCols :: [Column] }
 makeNode :: Node
 makeNode = Node []
 
-
 numberCmp :: Int -> Int -> Int
 numberCmp a b = if a < b then -1 else if a > b then 1 else 0
 
@@ -89,7 +88,6 @@ isLimit e n
        in if n == 0
             then not (null (nCols (cStep lc)))
             else not (null (cArr lc)) && cArr lc !! 0 > 0
-
 
 -- | 父表：每列 arr 存父列下标，step 存一个下标。
 data PCol = PCol { pArr :: [Int], pStep :: Int }
@@ -258,7 +256,6 @@ columnDisplay c =
   where
     commas xs = foldr (\x acc -> x ++ (if null acc then "" else "," ++ acc)) "" xs
 
--- | 解析：topLevel 由调用方决定（parseNode 对应 parse_expr(top_level=true)）。
 parseNode :: Bool -> Int -> P Node
 parseNode topLevel n = do
   sp
@@ -362,7 +359,6 @@ parseColumn n = do
           _ -> return arr'
       foldNum arr'' js
 
--- | t--1y-(n+1)ss 记号入口：clamp n 到 [0,25]，term<1 置 1。
 expandTm1 :: String -> Int -> Int -> String
 expandTm1 text term n0 =
   let n = max 0 (min 25 n0)

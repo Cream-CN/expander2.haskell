@@ -28,9 +28,7 @@ run text term shorter =
      where
       m = beMat e
 
--- ---------------------------------------------------------------------
 -- Grid：稀疏列网格
--- ---------------------------------------------------------------------
 
 data Grid = Grid
   { gCols :: [[Int]]
@@ -91,9 +89,7 @@ truncateTrailingZeros x g =
          , gExists = take x (gExists g0) ++ [True] ++ drop (x + 1) (gExists g0)
          }
 
--- ---------------------------------------------------------------------
 -- vertical 序列
--- ---------------------------------------------------------------------
 
 type Vert = [Int]
 
@@ -117,7 +113,6 @@ verticalIncrease y d =
       c2 = take d c1 ++ [if d < length y then y !! d + 1 else 1] ++ drop (d + 1) c1
    in c2
 
--- | 为整个 Grid 预计算 vertical 表。
 buildVertical :: Grid -> [[Vert]]
 buildVertical g =
   [ if gridHas g x then vertCol x else []
@@ -149,9 +144,7 @@ verticalAt g vert x y =
               else (0, [])
        in verticalIncrease base (y - ending - 1)
 
--- ---------------------------------------------------------------------
 -- parent
--- ---------------------------------------------------------------------
 
 data Cell = Cell !Int !Int
   deriving (Eq, Ord, Show)
@@ -193,9 +186,7 @@ parentCheck g vert (Cell x y) =
             | otherwise = i
        in Cell p i'
 
--- ---------------------------------------------------------------------
 -- 主展开
--- ---------------------------------------------------------------------
 
 wmmExpand :: Matrix -> Int -> Grid
 wmmExpand input fsterm = result

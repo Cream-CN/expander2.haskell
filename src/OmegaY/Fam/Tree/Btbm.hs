@@ -1,7 +1,4 @@
--- | BTBM / BTBM-weak / BBM 分层树形矩阵记号。忠实移植
---   @Header/notation/btbm.hpp@、@btbw.hpp@、@bbm.hpp@。
---
---   内部 value 为 0-based，显示 +1；空列显示 (0)。末元素 height 即下一层。
+-- | BTBM / BTBM-weak / BBM 分层树形矩阵记号。
 module OmegaY.Fam.Tree.Btbm
   ( btbmExpandText
   , btbwExpandText
@@ -10,9 +7,7 @@ module OmegaY.Fam.Tree.Btbm
 
 import Data.Char (isDigit)
 
--- ---------------------------------------------------------------------------
 -- 数据
--- ---------------------------------------------------------------------------
 
 data Expr = Expr
   { eCols :: [Column]
@@ -41,9 +36,7 @@ emptyHeight = Expr []
 kParseError :: String
 kParseError = "解析失败，请确认你没有使用全角括号，逗号"
 
--- ---------------------------------------------------------------------------
 -- 比较
--- ---------------------------------------------------------------------------
 
 cmpInt :: Int -> Int -> Int
 cmpInt a b = case compare a b of
@@ -54,14 +47,9 @@ cmpInt a b = case compare a b of
 booleanCmp :: Bool -> Bool -> Int
 booleanCmp a b = (if a then 1 else 0) - (if b then 1 else 0)
 
--- ---------------------------------------------------------------------------
 -- 极限基本列
--- ---------------------------------------------------------------------------
 
-
--- ---------------------------------------------------------------------------
 -- to_height / from_height
--- ---------------------------------------------------------------------------
 
 toHeight :: Expr -> Int -> HExpr
 toHeight (Expr cols) r = HExpr (map hcol cols)
@@ -115,9 +103,7 @@ verticalCmp a b = go 0
       0 -> go (i + 1)
       c -> c
 
--- ---------------------------------------------------------------------------
 -- 层导航
--- ---------------------------------------------------------------------------
 
 hasNextLayer :: Expr -> Bool
 hasNextLayer e = case eCols e of
@@ -154,9 +140,7 @@ rootLayer eIn r = go eIn 0 0
     | r < left + length (eCols cur) = (layer, r - left)
     | otherwise = go (nextLayer cur) (left + length (eCols cur)) (layer + 1)
 
--- ---------------------------------------------------------------------------
 -- 整体替换提升
--- ---------------------------------------------------------------------------
 
 ascendReplace :: Expr -> Int -> Int -> Maybe Int -> Expr -> Expr
 ascendReplace (Expr cols) r diff tl newTail =
@@ -175,9 +159,7 @@ ascendReplace (Expr cols) r diff tl newTail =
         nv = if v >= r then v + diff else v
     in Entry nv (ascendReplace (enHeight en) r diff newTl newTail)
 
--- ---------------------------------------------------------------------------
 -- special（BTBM 版）
--- ---------------------------------------------------------------------------
 
 isSpecial :: Expr -> Int -> Bool
 isSpecial eIn tLayer
@@ -209,9 +191,7 @@ expandSpecial (Expr cols) tLayer index = Expr (init cols ++ [resultCol])
       in (if null prefix then [base] else []) ++ replicate index base
   resultCol = prefix ++ added
 
--- ---------------------------------------------------------------------------
 -- 追加起点
--- ---------------------------------------------------------------------------
 
 rootAppendingStart :: Column -> Int -> Column -> Int -> Int
 rootAppendingStart colRoot r colTail t = go 0 0
@@ -225,9 +205,7 @@ rootAppendingStart colRoot r colTail t = go 0 0
       let c = heightCmp (heightsRoot !! ir) (heightsTail !! it)
       in go (if c <= 0 then ir + 1 else ir) (if c >= 0 then it + 1 else it)
 
--- ---------------------------------------------------------------------------
 -- 竖直序列（weak 用）
--- ---------------------------------------------------------------------------
 
 verticalIncrease :: Vertical -> HExpr -> Vertical
 verticalIncrease vert h =
@@ -239,9 +217,7 @@ verticalDiff v1 v2 = drop i v1
   n = min (length v1) (length v2)
   i = length (takeWhile (\k -> heightCmp (v1 !! k) (v2 !! k) == 0) [0 .. n - 1])
 
--- ---------------------------------------------------------------------------
 -- plain 比较
--- ---------------------------------------------------------------------------
 
 entryPlainCmp :: Entry -> Entry -> Int
 entryPlainCmp a b =
@@ -267,9 +243,7 @@ plainCmp a b = goCols 0
       0 -> goEntries i ra rb (j + 1)
       c -> c
 
--- ---------------------------------------------------------------------------
 -- 核心 FS（参数化 special）
--- ---------------------------------------------------------------------------
 
 isLimit :: Expr -> Bool
 isLimit e =
@@ -351,9 +325,7 @@ fs isSF exSF e index
   | not (isLimit e) = fsCoreWith isSF exSF e 0
   | otherwise = fsCoreWith isSF exSF e index
 
--- ---------------------------------------------------------------------------
 -- weak：w_ascend_replace + w_fs
--- ---------------------------------------------------------------------------
 
 wAscendReplace :: Expr -> Int -> Int -> Int -> Maybe Int -> Expr -> Vertical -> Expr
 wAscendReplace (Expr cols) startIndex r diff tl newTail critical =
@@ -485,9 +457,7 @@ weakCase e tLayer index =
                 in Expr [newCol]
       in buildTail nt' (j - 1)
 
--- ---------------------------------------------------------------------------
 -- BBM special
--- ---------------------------------------------------------------------------
 
 bIsSpecial :: Expr -> Int -> Bool
 bIsSpecial e tLayer
@@ -515,9 +485,7 @@ bExpandSpecial (Expr cols) tLayer index = Expr (init cols ++ [resultCol])
       in (if null prefix then [base] else []) ++ replicate index base
   resultCol = prefix ++ added
 
--- ---------------------------------------------------------------------------
 -- 显示
--- ---------------------------------------------------------------------------
 
 display :: Expr -> String
 display e = concatMap displayColumn (eCols e)
@@ -538,9 +506,7 @@ intercalateComma [] = ""
 intercalateComma [x] = x
 intercalateComma (x : xs) = x ++ "," ++ intercalateComma xs
 
--- ---------------------------------------------------------------------------
 -- 解析
--- ---------------------------------------------------------------------------
 
 type P a = String -> Maybe (a, String)
 
@@ -640,9 +606,7 @@ pParse s0 = do
         then Just (e, s3)
         else Nothing
 
--- ---------------------------------------------------------------------------
 -- 对外入口
--- ---------------------------------------------------------------------------
 
 runNotation :: (Expr -> Int -> Expr) -> String -> Int -> String
 runNotation fsFn text term =

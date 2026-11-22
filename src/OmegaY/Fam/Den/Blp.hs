@@ -6,9 +6,7 @@ module OmegaY.Fam.Den.Blp
 
 import OmegaY.Fam.Den.Share
 
--- ---------------------------------------------------------------------
 -- 类型与显示
--- ---------------------------------------------------------------------
 
 data DenRow = DenRow
   { drStep :: !Int
@@ -31,9 +29,7 @@ toString e = concatMap rowStr (deRows e)
   joinComma [x] = x
   joinComma (x : xs) = x ++ "," ++ joinComma xs
 
--- ---------------------------------------------------------------------
 -- 解析
--- ---------------------------------------------------------------------
 
 parse :: String -> Maybe DenExpr
 parse s0 = do
@@ -71,11 +67,8 @@ parse s0 = do
       then parseEntries (skipSpaces (drop 1 s3)) (acc ++ [DenEntry v marked])
       else Just (acc ++ [DenEntry v marked], s3)
 
--- ---------------------------------------------------------------------
 -- 展开核心
--- ---------------------------------------------------------------------
 
--- | 删除最后一行。
 cut :: DenExpr -> DenExpr
 cut raw
   | null (deRows raw) = raw
@@ -115,7 +108,6 @@ seqFrom expr i j =
                  in walk (rec1 ++ [SeqItem v' 0]) thr
           else rec
 
--- | 按 active 行的映射规则复制一行。
 applyRow :: DenRow -> DenRow -> DenRow
 applyRow s t =
   let sVals = rowValuesE (drEntries s)
@@ -123,7 +115,6 @@ applyRow s t =
    in DenRow (drStep s)
         [ DenEntry (apValue x tVals (drStep t)) False | x <- sVals ]
 
--- | 复制 [begin-1, end-1) 区间行并迁移标记。
 copy :: DenExpr -> Int -> DenExpr
 copy raw flag =
   let active = last (deRows raw)
@@ -192,7 +183,6 @@ copy raw flag =
     activeEs = drEntries (last (deRows raw))
   setMarked es j = [ if k == j then e { deMarked = True } else e | (k, e) <- zip [0 ..] es ]
 
--- | compTo：对第 r 行做上向压缩。
 compTo :: DenExpr -> Int -> [Maybe [Int]] -> DenExpr
 compTo raw r already =
   let row = (deRows raw) !! r
@@ -224,7 +214,6 @@ compTo raw r already =
     DenExpr
       [ if k == idx then row else r | (k, r) <- zip [0 ..] (deRows expr) ]
 
--- | compFrom：以第 r 行为模板、T 为系数构造 q+1 行并平移后续行。
 compFrom :: DenExpr -> Int -> [Int] -> DenExpr
 compFrom raw r t =
   let q = length t
@@ -282,7 +271,6 @@ compFrom raw r t =
     | (k, e) <- zip [0 ..] es
     ]
 
--- | 核心展开。shorter=False 对应 FS，True 对应 FS_alter。
 expand :: DenExpr -> Int -> Bool -> DenExpr
 expand raw index shorter
   | null (deRows raw) = raw
@@ -356,17 +344,13 @@ expand raw index shorter
      in if head t' > th then buildT e step es t' else t'
   setAt idx v xs = [ if k == idx then v else x | (k, x) <- zip [0 ..] xs ]
 
--- ---------------------------------------------------------------------
 -- 极限
--- ---------------------------------------------------------------------
 
 limitRow :: Int -> DenRow
 limitRow n =
   DenRow 2
     [ DenEntry nn (3 <= nn && nn < 2 + n) | nn <- [2 + n, 2 + n - 1 .. 0] ]
 
-
--- | 极限判定。
 isLimit :: DenExpr -> Bool
 isLimit e
   | null (deRows e) = False
@@ -384,9 +368,7 @@ isLimit e
                   tcheck = map deValue (drop (drStep active) es)
                in pleasantUntil rows tcheck == (-1)
 
--- ---------------------------------------------------------------------
 -- 公共入口
--- ---------------------------------------------------------------------
 
 expandTextImpl :: String -> Int -> Bool -> String
 expandTextImpl text term shorter =

@@ -24,7 +24,6 @@ valOf w eid = e_value <$> getE w eid
 rowOf :: World s -> Int -> ST s [Int]
 rowOf w eid = e_row <$> getE w eid
 
--- | parent 的 row（无父则 Nothing）。
 parentRow :: World s -> Int -> ST s (Maybe [Int])
 parentRow w eid = do
   e <- getE w eid
@@ -32,9 +31,7 @@ parentRow w eid = do
     Nothing -> pure Nothing
     Just p -> Just . e_row <$> getE w p
 
--- ---------------------------------------------------------------------------
 -- drawMountain：建山，就地更新 mref，返回各列顶元素 id（按列顺序）。
--- ---------------------------------------------------------------------------
 
 drawMountain :: World s -> STRef s [[Int]] -> ST s [Int]
 drawMountain w mref = do
@@ -86,9 +83,7 @@ drawMountain w mref = do
         pe <- getE w p
         if e_value pe >= fv then climbUp (e_parent pe) fv else pure (Just p)
 
--- ---------------------------------------------------------------------------
 -- fetchDimensionSequence
--- ---------------------------------------------------------------------------
 
 fetchDimensionSequence :: World s -> Int -> ST s [Int]
 fetchDimensionSequence w tId = do
@@ -119,9 +114,7 @@ fetchDimensionSequence w tId = do
                       else seq
               loopUp hp seq'
 
--- ---------------------------------------------------------------------------
 -- expandDimensionSequence（d=[1,0,1] → 在维度序列上递归）
--- ---------------------------------------------------------------------------
 
 expandDimensionSequence :: World s -> [Int] -> Int -> ST s [Int]
 expandDimensionSequence w s0 n0 = do
@@ -142,9 +135,7 @@ expandDimensionSequence w s0 n0 = do
               s1 = take (len - 1) s0 ++ [p]
           pure (s1 ++ replicate n0 p)
 
--- ---------------------------------------------------------------------------
 -- preprocess
--- ---------------------------------------------------------------------------
 
 preprocess :: World s -> STRef s [[Int]] -> Int -> ST s ()
 preprocess w mref bId = do
@@ -166,9 +157,7 @@ preprocess w mref bId = do
           pure (if e_cloumn pe < bcol then 0 else e_no pe)
       modE w eid (\ee -> ee { e_no = no })) col
 
--- ---------------------------------------------------------------------------
 -- calcMaxCopyrow
--- ---------------------------------------------------------------------------
 
 calcMaxCopyrow :: World s -> STRef s [[Int]] -> Int -> Int -> Int -> [Int] -> Int -> Int -> ST s [Int]
 calcMaxCopyrow w mref bId tId srcId dimSeq index i = do
@@ -222,9 +211,7 @@ calcMaxCopyrow w mref bId tId srcId dimSeq index i = do
           Just h -> advanceP (Just h) no
         else pure (Just p)
 
--- ---------------------------------------------------------------------------
 -- copyItem：把 head 向上延伸的脚推入末列
--- ---------------------------------------------------------------------------
 
 copyItem :: World s -> STRef s [[Int]] -> Int -> [Int] -> ST s ()
 copyItem w mref headId maxRow = do
@@ -268,9 +255,7 @@ copyItem w mref headId maxRow = do
         modifySTRef' mref (\mm -> take (length mm - 1) mm ++ [last mm ++ [foot]])
         go foot
 
--- ---------------------------------------------------------------------------
 -- expandImpl
--- ---------------------------------------------------------------------------
 
 expandImpl :: World s -> [Int] -> Int -> [Int] -> ST s [Int]
 expandImpl w s0 n d = do
@@ -436,9 +421,7 @@ fixParent w headId = go headId
                 go hid
               else pure ()
 
--- ---------------------------------------------------------------------------
 -- 公开入口
--- ---------------------------------------------------------------------------
 
 expandXyV1 :: [Int] -> Int -> [Int]
 expandXyV1 seq term

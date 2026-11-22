@@ -9,7 +9,6 @@ data E = E !Int !Int deriving (Show) -- v (0-based), h (0-based; -1 省略)
 type Col = [E]
 type Expr = [Col]
 
-
 -- parse :: String -> Maybe (Bool, Expr)  -- Just (inf, expr)
 parse :: String -> Maybe Expr
 parse s =
@@ -195,7 +194,6 @@ cmpBool a b = if a == b then 0 else if a then 1 else -1
 
 setAt :: Int -> a -> [a] -> [a]
 setAt i v xs = take i xs ++ [v] ++ drop (i + 1) xs
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

@@ -27,17 +27,13 @@ applyWrites total writes =
   let m = foldl (\acc (i, v) -> IM.insert i v acc) IM.empty writes
    in [IM.findWithDefault 0 i m | i <- [0 .. total - 1]]
 
--- ----------------------------------------------------------------------
 -- 空记号（passthrough）
--- ----------------------------------------------------------------------
 
 emptyNotation :: Notation
 emptyNotation =
   seqNotation "empty" "空记号" ["测试", "基础"] (\seq _ -> seq) "  (尚在重构中)"
 
--- ----------------------------------------------------------------------
 -- PrSS
--- ----------------------------------------------------------------------
 
 isSuccessor :: [Int] -> Bool
 isSuccessor seq = not (null seq) && last seq == 0
@@ -70,9 +66,7 @@ expandPrss seq n0
 prssNotation :: Notation
 prssNotation = seqNotation "prss" "PrSS" ["PrSS", "原始数列", "数列", "入门", "基础"] expandPrss ""
 
--- ----------------------------------------------------------------------
 -- PPS（原始数列系统的第二版）
--- ----------------------------------------------------------------------
 
 -- | @expand_pps1@：PPS 的单步展开。
 expandPps1 :: [Int] -> Int -> [Int]
@@ -122,9 +116,7 @@ expandPps1 seq n0
 ppsNotation :: Notation
 ppsNotation = seqNotation "pps" "PPS" ["PPS", "原始数列", "数列", "入门"] expandPps1 ""
 
--- ----------------------------------------------------------------------
 -- PPS4 家族
--- ----------------------------------------------------------------------
 
 data PPS4Variant = PPS4 | WPPS4 | TPPS4 | EWPPS4
   deriving (Eq)
@@ -234,9 +226,7 @@ wpps4Notation = seqNotation "wpps4" "Weak PPS4" ["PPS", "弱", "4行", "数列"]
 tpps4Notation = seqNotation "tpps4" "Third PPS4" ["PPS", "第三", "4行", "数列"] (expandPps4Variant TPPS4) ""
 ewpps4Notation = seqNotation "ewpps4" "Ex. Weak PPS4" ["PPS", "扩展弱", "4行", "数列"] (expandPps4Variant EWPPS4) ""
 
--- ----------------------------------------------------------------------
 -- Second PPS4
--- ----------------------------------------------------------------------
 
 expandSecondPps4 :: [Int] -> Int -> [Int]
 expandSecondPps4 seq count
@@ -294,9 +284,7 @@ secondPps4Notation =
     expandSecondPps4
     ""
 
--- ----------------------------------------------------------------------
 -- 2-pps4
--- ----------------------------------------------------------------------
 
 expand2Pps4 :: [Int] -> Int -> [Int]
 expand2Pps4 seq n

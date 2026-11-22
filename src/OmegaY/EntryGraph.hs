@@ -1,9 +1,4 @@
--- | 「山脉」图：可变 Entry 节点图，对齐 C++ 侧 @core/entry.hpp@ 与
---   @Omega-YMagma.hpp@ / @omega_y.hpp@ 等使用指针链接的实现。
---
---   C++ 侧用 @Entry*@ 互相引用（leftleg_up / rightleg_up / rightleg_down /
---   leftleg_down）。这里用整数 id + IntMap 的 ST 图表示：读、写、改都在
---   ST 中进行，使移植后的算法与原实现逐句对应。
+-- | C++ core/entry.hpp 的可变节点图：用 IntMap 中的整数 id 代替裸指针。
 module OmegaY.EntryGraph
   ( EntryG (..)
   , Graph
@@ -25,7 +20,7 @@ import Data.IntMap.Strict (IntMap)
 import qualified Data.IntMap.Strict as IM
 import Data.STRef (STRef, newSTRef, readSTRef, writeSTRef)
 
--- | 与 C++ @core::Entry@ 同构的节点。
+-- | 与 C++ core::Entry 同构；leg 字段存节点 id，缺省为 Nothing。
 data EntryG = EntryG
   { egValue :: Int
   , egX :: Int
@@ -41,7 +36,7 @@ newtype Graph s = Graph (STRef s (IntMap EntryG))
 newGraph :: ST s (Graph s)
 newGraph = Graph <$> newSTRef IM.empty
 
--- | 新建节点，返回其 id。
+-- 节点只增不删，因此用当前最大 id + 1 分配；IntMap 的 findMax 是 O(log n)。
 newNode :: Graph s -> Int -> Int -> [Int] -> ST s Int
 newNode g v x y = do
   Graph ref <- pure g
@@ -53,8 +48,7 @@ newNode g v x y = do
 gGet :: Graph s -> Int -> ST s (Maybe EntryG)
 gGet (Graph ref) i = IM.lookup i <$> readSTRef ref
 
--- | 读节点；缺失时返回一个「空节点」（值为 0、y 为空）。
---   用于数组中不可能为空的场合，避免把 Maybe 渗透进每个表达式。
+-- 调用点保证 id 有效；缺失时返回零值节点，避免 Maybe 扩散到所有表达式。
 gGetDef :: Graph s -> Int -> ST s EntryG
 gGetDef g i = do
   m <- gGet g i
@@ -77,11 +71,9 @@ pushUpL g i child = gMod g i (\e -> e { egUpL = egUpL e ++ [child] })
 gSize :: Graph s -> ST s Int
 gSize (Graph ref) = IM.size <$> readSTRef ref
 
--- ----------------------------------------------------------------------
 -- y 向量的序
--- ----------------------------------------------------------------------
 
--- | 先比长度（更长 = 更大），再从高位到低位逐位比较。
+-- 序按 (长度, 从高维到低维的字典序) 定义，与 C++ 的 vertical 比较一致。
 verticalCompare :: [Int] -> [Int] -> Int
 verticalCompare a b
   | length a > length b = 1
@@ -94,7 +86,7 @@ verticalCompare a b
     | x < y = -1
     | otherwise = cmpRev xs ys
 
--- | 第 d 维加一，低于 d 的维清零；不足补 0 到 d+1（d < 0 视为 0）。
+-- 第 d 维自增，低于 d 的维清零，长度不足 d+1 时先补零。
 verticalIncrease :: [Int] -> Int -> [Int]
 verticalIncrease y d0
   | d0 < 0 = y
@@ -110,7 +102,7 @@ verticalIncrease y d0
   where
     replaceAt i v xs = take i xs ++ [v] ++ drop (i + 1) xs
 
--- | 最高一处不同的维号；完全相同返回 -1。
+-- 返回最高的不同维号；长度不同视为在较短一侧已出现差异。完全相同返回 -1。
 dimensionDifference :: [Int] -> [Int] -> Int
 dimensionDifference c1 c2 = go (max (length c1) (length c2) - 1)
  where

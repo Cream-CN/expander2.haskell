@@ -1,7 +1,4 @@
 -- | UPMS 核心，逐行对齐 @Header/notation/upms.hpp@。
---
---   Cols = 列列表（每列 [Int]，长度 = 行数）。
---   AncestorCache / VrCache 用 Data.Map。
 module OmegaY.Fam.Bms.UpmsCore
   ( upmsExpand
   ) where
@@ -10,9 +7,7 @@ import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 import OmegaY.Matrix
 
--- ---------------------------------------------------------------------------
 -- Cols 基础
--- ---------------------------------------------------------------------------
 
 type Cols = [[Int]]
 
@@ -24,13 +19,10 @@ rowCount c
   | null c = 0
   | otherwise = length (head c)
 
--- ---------------------------------------------------------------------------
 -- Ancestor cache: (col, a) -> set of ancestor columns
--- ---------------------------------------------------------------------------
 
 type AncestorCache = M.Map (Int, Int) (S.Set Int)
 
--- | get_b_parent(m, col_index, b, cache)
 getBParent :: Cols -> Int -> Int -> AncestorCache -> (Int, AncestorCache)
 getBParent m colIdx b cache0 =
   let nr = rowCount m
@@ -48,7 +40,6 @@ getBParent m colIdx b cache0 =
                        (-1) ancestors
          in (bestCol, cache1)
 
--- | get_a_ancestors(m, col_index, a, cache)
 getAAncestors :: Cols -> Int -> Int -> AncestorCache -> (S.Set Int, AncestorCache)
 getAAncestors m colIdx a cache0 =
   let key = (colIdx, a)
@@ -74,9 +65,7 @@ getAAncestors m colIdx a cache0 =
            then (finalSet, cache2)
            else worklist finalSet cache2
 
--- ---------------------------------------------------------------------------
 -- find_bad_root
--- ---------------------------------------------------------------------------
 
 data BadRoot = BadRoot
   { brRoot :: !Int
@@ -101,9 +90,7 @@ findBadRoot m cache0 =
               then (Nothing, cache1)
               else (Just (BadRoot root t), cache1)
 
--- ---------------------------------------------------------------------------
 -- compute_delta
--- ---------------------------------------------------------------------------
 
 computeDelta :: Cols -> Int -> Int -> [Int]
 computeDelta m rootCol t =
@@ -114,9 +101,7 @@ computeDelta m rootCol t =
      | r <- [0 .. nr - 1]
      ]
 
--- ---------------------------------------------------------------------------
 -- VrCache: (col, row) -> 0 | 1
--- ---------------------------------------------------------------------------
 
 type VrCache = M.Map (Int, Int) Int
 
@@ -126,9 +111,7 @@ vrGet vr col row = M.findWithDefault (-1) (col, row) vr
 vrSet :: VrCache -> Int -> Int -> Int -> VrCache
 vrSet vr col row v = M.insert (col, row) v vr
 
--- ---------------------------------------------------------------------------
 -- compute_upms_verification_roots
--- ---------------------------------------------------------------------------
 
 computeVr :: Cols -> Int -> Int -> AncestorCache -> VrCache
 computeVr m rootCol t cache0 =
@@ -286,9 +269,7 @@ computeVr m rootCol t cache0 =
               in goCI 0
             updateAt i v xs = take i xs ++ [v] ++ drop (i + 1) xs
 
--- ---------------------------------------------------------------------------
 -- generate_bh_upms
--- ---------------------------------------------------------------------------
 
 generateBh :: Cols -> [Int] -> Int -> Int -> Int -> VrCache -> Cols
 generateBh bCols delta t h rootCol vr =
@@ -302,9 +283,7 @@ generateBh bCols delta t h rootCol vr =
   where
     nr = rowCount bCols
 
--- ---------------------------------------------------------------------------
 -- expand
--- ---------------------------------------------------------------------------
 
 upmsExpand :: Matrix -> Int -> Matrix
 upmsExpand m term
@@ -337,7 +316,6 @@ upmsExpand m term
                                    ]
                     in colsToMatrix resultCols
 
--- | Cols → Matrix
 colsToMatrix :: Cols -> Matrix
 colsToMatrix cols
   | null cols = emptyMatrix

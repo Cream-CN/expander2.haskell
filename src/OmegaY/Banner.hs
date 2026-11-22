@@ -1,19 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 
--- | 启动横幅：标志文本、构建时间（UTC+0）、Unix 时间戳、构建工具链、
---   版权与 GPLv3 许可声明。
---
---   输出通道与篇幅的取舍：
---
---     * 交互式会话（REPL）以及 @--help@ / @--version@：完整横幅写 stdout，给人看；
---     * 带数据的 CLI 调用（@<id> <fs|alter> <term>@、@--list@ 等）：只写短的许可声明到 stderr，
---       既满足 GPLv3 的提示要求，又不把日志糊满启动信息。
---     * 设环境变量 @EXPANDER2_NO_BANNER@（取值 @1@ \/ @on@ \/ @true@ \/ @yes@）可静音，
---       便于脚本化调用。
---
---   构建时间由 TemplateHaskell 在本模块编译时取值（GHC 进程内 @getCurrentTime@），
---   即本模块目标文件的生成时刻；增量构建若没有重编该模块，时间会停留在上一次编译它的时刻，
---   全量重建（@build.ps1@ \/ @cmake --build ... --clean-first@）才会刷新。
+-- | 启动横幅。构建时间由 TemplateHaskell 在编译本模块时取得，
+--   增量构建不会自动刷新；@EXPANDER2_NO_BANNER@ 可关闭全部输出。
 module OmegaY.Banner
   ( programName
   , programVersion
@@ -48,11 +36,9 @@ programName = "expander2"
 programVersion :: String
 programVersion = "0.1.1"
 
--- | 版权行：GPLv3 要求分发时保留适当的版权声明。
 copyrightLine :: String
 copyrightLine = "Copyright (C) 2026 王强,Cream-CN,Wty250,Wtydsb,CCFdsb,YLC1145"
 
--- | 标志文本（取代字符画）：两个 lambda 加 @=Haskell@。
 logoText :: [String]
 logoText = ["λλ=Haskell"]
 
@@ -61,7 +47,7 @@ trim = dropWhileEndSpace . dropWhile isSpace
  where
   dropWhileEndSpace = reverse . dropWhile isSpace . reverse
 
--- 编译期取值：可读时间与时间戳在同一秒内一次抓取，二者严格对应。
+-- 编译期一次取时间与时间戳，保证两者严格对应同一秒。
 $( do
      t <- runIO getCurrentTime
      let txt = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" t
@@ -73,8 +59,7 @@ $( do
        |]
  )
 
--- 工具链版本：优先问编译时 PATH 上的 @ghc --numeric-version@（含补丁号，如 9.14.1），
--- 拿不到则退回 @System.Info.compilerVersion@（可能只有主次版本）。
+-- 优先使用 PATH 上的 ghc --numeric-version（含补丁号）；失败则退回 System.Info。
 $( do
      v <- runIO $ do
        r <- try (readProcessWithExitCode "ghc" ["--numeric-version"] "")
@@ -90,7 +75,6 @@ $( do
        |]
  )
 
--- | 许可与担保声明（含 GPLv3 的无担保条款）。
 licenseBlock :: [String]
 licenseBlock =
   [ "本项目以 GNU 通用公共许可证第 3 版（GPLv3）发布，是自由软件。"
@@ -100,7 +84,6 @@ licenseBlock =
   , "原始项目：Cream-CN/Expander2；本仓库为其 Haskell 移植。"
   ]
 
--- | 构建元信息三行（标签按汉字两列宽对齐到第 10 列）。
 buildInfoLines :: [String]
 buildInfoLines =
   [ "构建时间  " ++ buildUtc ++ " UTC+0"
@@ -108,7 +91,6 @@ buildInfoLines =
   , "工具链    GHC " ++ ghcVersionText ++ " · " ++ arch ++ "-" ++ os
   ]
 
--- | 版权行 + 许可声明（不含标志与构建信息）。
 licenseNotice :: String
 licenseNotice =
   unlines
@@ -116,7 +98,6 @@ licenseNotice =
         : licenseBlock
     )
 
--- | 完整横幅：标志 + 构建信息 + 空行 + 版权与许可（以换行结尾，可直接 hPutStr）。
 startupBanner :: String
 startupBanner =
   unlines
@@ -127,7 +108,7 @@ startupBanner =
         ++ licenseBlock
     )
 
--- | 横幅是否静音：@EXPANDER2_NO_BANNER@ 取值 1/on/true/yes 时为 True。
+-- 返回值是“启用”而非“静音”：环境变量取 1/on/true/yes 时为 False。
 bannerEnabled :: IO Bool
 bannerEnabled = do
   mv <- lookupEnv "EXPANDER2_NO_BANNER"
@@ -135,11 +116,9 @@ bannerEnabled = do
     Just v -> v `notElem` ["1", "on", "true", "yes"]
     Nothing -> True
 
--- | 往指定句柄打印完整横幅（被静音时什么都不做）。
 printBannerIfEnabled :: Handle -> IO ()
 printBannerIfEnabled h = withBanner h startupBanner
 
--- | CLI 数据路径的提示：只写短的许可声明到 stderr，不污染 stdout。
 announceCli :: IO ()
 announceCli = withBanner stderr licenseNotice
 

@@ -7,7 +7,6 @@ module OmegaY.Fam.Bmlike.Dsm
 import OmegaY.Matrix
 import OmegaY.Fam.Bmlike.Share
 
--- | 对外入口。
 expandFs :: String -> Int -> String
 expandFs text term = run text term True
 
@@ -28,9 +27,7 @@ run text term shorter =
      where
       m = beMat e
 
--- ---------------------------------------------------------------------
 -- 基础工具
--- ---------------------------------------------------------------------
 
 type Cols = [[Int]]
 
@@ -54,7 +51,6 @@ data Position = Position !Int !Int
 replaceAt :: Int -> Int -> [Int] -> [Int]
 replaceAt i v xs = take i xs ++ [v] ++ drop (i + 1) xs
 
--- | get_predecessor。
 getPredecessor :: PRM -> Int -> Int -> Maybe Position
 getPredecessor prm r c
   | pAt prm r c /= (-1) || r == 0 = Nothing
@@ -73,7 +69,6 @@ getPredecessor prm r c
                           else go next
        in go (pAt prm upRow c)
 
--- | construct_matrix_values：列优先父项矩阵 → 数值矩阵。
 constructMatrixValues :: [[Int]] -> Cols
 constructMatrixValues pcm = result
  where
@@ -91,9 +86,7 @@ toRowMajor pcm =
       rows = if cols > 0 then length (pcm !! 0) else 0
    in [ [ pcm !! c !! r | c <- [0 .. cols - 1] ] | r <- [0 .. rows - 1] ]
 
--- ---------------------------------------------------------------------
 -- generate_expansion
--- ---------------------------------------------------------------------
 
 generateExpansion :: [[Int]] -> Int -> Int -> Int -> Bool -> [[Int]]
 generateExpansion pcm badRow badCol times strong = finalCm
@@ -263,9 +256,7 @@ generateExpansion pcm badRow badCol times strong = finalCm
          in foldl (\rs k -> updateCell rs (badRow + k) nc nbp)
                   rowsMap [0 .. rowShift - 1]
 
--- ---------------------------------------------------------------------
 -- cols_compare
--- ---------------------------------------------------------------------
 
 colsCompare :: Cols -> Cols -> Int
 colsCompare a b = goC 0
@@ -292,9 +283,7 @@ colsCompare a b = goC 0
    where
     goH h = if h > 0 && col !! (h - 1) == 0 then goH (h - 1) else h
 
--- ---------------------------------------------------------------------
 -- get_bad_item_info
--- ---------------------------------------------------------------------
 
 data BadInfo = BadInfo !Int !Int [[Int]]
 
@@ -397,9 +386,7 @@ getBadItemInfo matrix
                       (m : _) -> m
               else findChosen rest
 
--- ---------------------------------------------------------------------
 -- normalize / serialize / expand_normal
--- ---------------------------------------------------------------------
 
 normalizeCols :: Cols -> Cols
 normalizeCols = map trim

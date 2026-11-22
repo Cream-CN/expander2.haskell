@@ -1,7 +1,4 @@
 -- | ω-Y（medium / strong magma）展开，对齐 C++ 侧 @Omega-YMagma.hpp@。
---
---   原实现以 @Entry*@ 指针构成的「山脉」（每列一叠 Entry）为数据结构；
---   这里用 id + IntMap 表示同一张图，空指针统一表示为 @-1@。
 module OmegaY.Notation.YMagma
   ( omegaYMediumNotation
   , omegaYStrongNotation
@@ -22,9 +19,7 @@ import OmegaY.Notation.Types
 data MagmaKind = Medium | Strong
   deriving (Eq, Show)
 
--- ----------------------------------------------------------------------
 -- 山脉（列号 → Entry id 列表）
--- ----------------------------------------------------------------------
 
 newtype Mtn s = Mtn (STRef s (IntMap [Int]))
 
@@ -48,9 +43,7 @@ mCol = mRead
 pushCol :: Mtn s -> Int -> Int -> ST s ()
 pushCol m i v = mWrite m i =<< (++ [v]) <$> mRead m i
 
--- ----------------------------------------------------------------------
 -- 节点访问器
--- ----------------------------------------------------------------------
 
 nullE :: EntryG
 nullE = EntryG 0 0 [] [] Nothing Nothing Nothing
@@ -78,9 +71,7 @@ downL = fromMaybe (-1) . egDownL
 sameRow :: EntryG -> EntryG -> Bool
 sameRow a b = verticalCompare (egY a) (egY b) == 0
 
--- ----------------------------------------------------------------------
 -- 序列 ⇄ 山脉
--- ----------------------------------------------------------------------
 
 fromSequence :: Graph s -> Mtn s -> [Int] -> ST s ()
 fromSequence g m seq = go 0
@@ -113,9 +104,7 @@ toSequence g m = do
         e <- node g (col !! (length col - 2))
         pure (vOf e)
 
--- ----------------------------------------------------------------------
 -- 绘图（补父项）与父项查找
--- ----------------------------------------------------------------------
 
 createEntry :: Graph s -> Int -> Int -> ST s Int
 createEntry g parent entry = do
@@ -165,9 +154,7 @@ drawMountain g m = do
           if verticalCompare (yOf ure) py <= 0 then climb ur py else pure up
         else pure up
 
--- ----------------------------------------------------------------------
 -- 列内二分查找
--- ----------------------------------------------------------------------
 
 findLower :: Graph s -> [Int] -> [Int] -> ST s Int
 findLower g col y
@@ -208,9 +195,7 @@ yslice g col loweq high
         e <- node g (col !! i)
         if verticalCompare (yOf e) y < 0 then binaryLow y i1 i else binaryLow y (i + 1) i2
 
--- ----------------------------------------------------------------------
 -- 弱 / 强收集
--- ----------------------------------------------------------------------
 
 collectWeak :: Graph s -> Int -> ST s [Int]
 collectWeak g = go
@@ -254,9 +239,7 @@ collectStrong g = go
             foldM' we es (acc ++ [e] ++ acc')
           else foldM' we es acc
 
--- ----------------------------------------------------------------------
 -- 复制与补边
--- ----------------------------------------------------------------------
 
 copySingleEdge :: Graph s -> Mtn s -> Int -> Int -> Int -> Maybe [Int] -> ST s ()
 copySingleEdge g m src off brx mty = do
@@ -292,9 +275,7 @@ fillMagmaEdge g m src ll = do
     pushUpL g ll nid
     pushCol m targetx nid
 
--- ----------------------------------------------------------------------
 -- 岩浆展开主体
--- ----------------------------------------------------------------------
 
 magmaExpand :: MagmaKind -> [Int] -> Int -> [Int]
 magmaExpand kind seq term
@@ -340,7 +321,6 @@ findSameRow g col ref = do
     ee <- node g e
     if sameRow ee re then pure e else go re es
 
--- | 按 dx（0..width）收集需要复制的 Entry。
 buildEntries :: Graph s -> Mtn s -> MagmaKind -> Int -> Int -> Int -> ST s (IntMap [Int])
 buildEntries g m kind brx br width = do
   start <- pure (IM.fromList [(d, []) | d <- [0 .. width]])

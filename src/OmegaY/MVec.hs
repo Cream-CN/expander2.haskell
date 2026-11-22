@@ -1,8 +1,4 @@
 -- | 可增长的整数向量（ST 中的可变数组），语义对齐 C++ @std::vector<int>@。
---
---   C++ 侧所有记号实现都以 @vector<int>@ 为载体做原地读写、
---   @push_back@ / @resize@，因此这里提供一个容量倍增的可变向量，
---   使移植后的代码与原实现逐句对应。
 module OmegaY.MVec
   ( MVec
   , newMVec
@@ -92,7 +88,7 @@ mvResize v newLen0 = do
       mapM_ (\i -> writeArray arr i 0) [n .. newLen - 1]
       writeSTRef (mvSize v) newLen
 
--- | 直接设置长度（不保证新位置为 0，供内部使用）。
+-- 只改逻辑长度，不初始化新增槽位；调用方必须先写入再读，否则可能读到旧数组残留值。
 mvSetLen :: MVec s -> Int -> ST s ()
 mvSetLen v newLen0 = do
   let newLen = max 0 newLen0

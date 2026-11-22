@@ -1,11 +1,4 @@
 -- | omega-y-sequence（ω-Y sequence）：忠实移植 C++ @notation/omega_y.hpp@
---   的 @OmegaYNotation::omega_Y_limit@。
---
---   与已实现的 omega-y-medium/strong（@Omega-YMagma.hpp@）是两套不同算法：
---   本模块含原实现的全部防护分支（空列 / BR 缺失 / width<=0 / ref 为空 break）、
---   INT_MAX 幽灵节点、collect_usual/collect1D 收集规则，以及 copy_single_edge
---   的 lx<0 提前返回。SequenceNotation 适配器只绑定 T::expand，故 alter 模式
---   与 fs 走同一 expand，仅不再额外 pop 末元素（由共享 SeqCaps 实现）。
 module OmegaY.Fam.Mrss.OmegaYSeq
   ( omegaYSeqNotation
   , omegaYMediumNotation
@@ -42,7 +35,6 @@ mLen (Mtn r) = do
   m <- readSTRef r
   pure (if IM.null m then 0 else fst (IM.findMax m) + 1)
 
--- | 把山扩容到至少 n 列（空列补 []）。
 mResize :: Mtn s -> Int -> ST s ()
 mResize (Mtn r) n = do
   m <- readSTRef r
@@ -84,14 +76,10 @@ verticalIncrease y d0 =
 sameRow :: EntryG -> EntryG -> Bool
 sameRow a b = verticalCompare (egY a) (egY b) == 0
 
--- | 严格 same_row（Omega-YMagma.hpp：dimension_difference == 0）。
---   两个空 y 不视为同行（dd=-1≠0），与 sequence 的 verticalCompare==0 不同。
 sameRowStrict :: EntryG -> EntryG -> Bool
 sameRowStrict a b = dimensionDifference (egY a) (egY b) == 0
 
--- ---------------------------------------------------------------------------
 -- from_sequence / to_sequence（phantom 值为 INT_MAX，对齐 omega_y.hpp）
--- ---------------------------------------------------------------------------
 
 fromSequence :: Int -> Graph s -> Mtn s -> [Int] -> ST s ()
 fromSequence phantomVal g m seq = go 0
@@ -175,9 +163,7 @@ drawMountain g m = do
               if verticalCompare (yOf ure) py <= 0 then climb ur py else pure up
             else pure up
 
--- ---------------------------------------------------------------------------
 -- 列内二分
--- ---------------------------------------------------------------------------
 
 findLower :: Graph s -> [Int] -> [Int] -> ST s Int
 findLower g col y
@@ -218,9 +204,7 @@ yslice g col loweq high
         e <- node g (col !! i)
         if verticalCompare (yOf e) y < 0 then binaryLow y i1 i else binaryLow y (i + 1) i2
 
--- ---------------------------------------------------------------------------
 -- collect_usual / collect1D / collect（对齐 omega_y.hpp）
--- ---------------------------------------------------------------------------
 
 contains :: [Int] -> Int -> Bool
 contains = flip elem
@@ -317,9 +301,7 @@ collect kind g sameR wid
         then collect1D g sameR wid []
         else collectUsual g sameR wid []
 
--- ---------------------------------------------------------------------------
 -- fill_magma_edge / copy_single_edge（omega_y.hpp 版，含 lx<0 提前返回）
--- ---------------------------------------------------------------------------
 
 fillMagmaEdge :: Graph s -> Mtn s -> Int -> Int -> ST s ()
 fillMagmaEdge g m source ll
@@ -388,9 +370,7 @@ copySingleEdge g m source off brx mty
                       pushUpL g leftlegEntry nid
                       pushCol m tx nid
 
--- ---------------------------------------------------------------------------
 -- omega_Y_limit 主体
--- ---------------------------------------------------------------------------
 
 omegaYLimitKind :: Kind -> Graph s -> Mtn s -> [Int] -> Int -> ST s [Int]
 omegaYLimitKind kind g m0 seq fsTerm = omegaYLimit kind g m0 seq fsTerm
@@ -602,9 +582,7 @@ rewire g col = do
             dleE <- node g dle
             gMod g ci (\e -> e { egValue = vOf ue + vOf dleE })
 
--- ---------------------------------------------------------------------------
 -- 公开 expand
--- ---------------------------------------------------------------------------
 
 data Kind = KindSeq | KindMedium | KindStrong deriving Eq
 

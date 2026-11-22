@@ -19,9 +19,7 @@ module OmegaY.Fam.Aw2mn.Aw2mnShare
 
 import Data.List (foldl')
 
--- ---------------------------------------------------------------------
 -- 数据类型
--- ---------------------------------------------------------------------
 
 data Entry = Entry
   { eValue :: Int
@@ -45,9 +43,7 @@ data SubtractKind = V2 | V3
 kParseFail :: String
 kParseFail = "解析失败，请确认你没有使用全角括号，逗号，分号"
 
--- ---------------------------------------------------------------------
 -- 比较
--- ---------------------------------------------------------------------
 
 numCompare :: Int -> Int -> Int
 numCompare a b = case compare a b of { LT -> -1; EQ -> 0; GT -> 1 }
@@ -76,9 +72,7 @@ mountainCompare a b = lexCompare a b columnCompare
 verticalCompare :: Vertical -> Vertical -> Int
 verticalCompare a b = lexCompare a b mountainCompare
 
--- ---------------------------------------------------------------------
 -- 谓词
--- ---------------------------------------------------------------------
 
 mountainIsLimit :: Expr -> Bool
 mountainIsLimit m = not (null m) && not (null (last m))
@@ -86,9 +80,7 @@ mountainIsLimit m = not (null m) && not (null (last m))
 mountainIsOne :: Expr -> Bool
 mountainIsOne m = length m == 1 && null (head m)
 
--- ---------------------------------------------------------------------
 -- 显示
--- ---------------------------------------------------------------------
 
 isOmegaSep :: Sep -> Bool
 isOmegaSep sep =
@@ -116,9 +108,7 @@ columnDisplay c = "(" ++ concatMap entryDisplay c ++ ")"
 mountainDisplay :: Expr -> String
 mountainDisplay m = concatMap columnDisplay m
 
--- ---------------------------------------------------------------------
 -- 解析
--- ---------------------------------------------------------------------
 
 omegaSep :: Sep
 omegaSep = [[], [Entry 1 [[]] False]]
@@ -237,9 +227,7 @@ parse s0 = case go s0 0 of
               (rest, i3) <- parseUnparenEntries s i2
               Just (e : rest, i3)
 
--- ---------------------------------------------------------------------
 -- 山结构辅助
--- ---------------------------------------------------------------------
 
 verticalIncrease :: Vertical -> Sep -> Vertical
 verticalIncrease v m =
@@ -275,9 +263,7 @@ parent a v (i, j) =
       targetJ = findIndexBelowRow (v !! targetColumn) ((v !! i) !! j)
    in (targetColumn, targetJ)
 
--- ---------------------------------------------------------------------
 -- S 函数
--- ---------------------------------------------------------------------
 
 sFunc :: Expr -> Int -> Int -> Sep
 sFunc a i j
@@ -286,16 +272,12 @@ sFunc a i j
       let e = (a !! i) !! j
        in if eMark e then eSep e else sFunc a i (j - 1)
 
--- ---------------------------------------------------------------------
 -- 工具：更新 Expr 的指定列
--- ---------------------------------------------------------------------
 
 updateColumn :: Expr -> Int -> Column -> Expr
 updateColumn a i newCol = take i a ++ [newCol] ++ drop (i + 1) a
 
--- ---------------------------------------------------------------------
 -- subtract1
--- ---------------------------------------------------------------------
 
 -- 返回 (新 Expr, 追加到 rightmost 的 entries 列表)
 subtract1 :: Expr -> VV -> SubtractKind -> (Expr, [Entry])
@@ -376,9 +358,7 @@ subtract1 a0 v0 kind =
                            then (aPopped, entries ++ [Entry topRightValue truncated False])
                            else (aPopped, [])
 
--- ---------------------------------------------------------------------
 -- get_references
--- ---------------------------------------------------------------------
 
 getReferences :: Expr -> [Vertical] -> (Int, [Maybe Int])
 getReferences a rtops =
@@ -398,9 +378,7 @@ getReferences a rtops =
             loop i (j + 1) (pending : doneRev) Nothing len
    in loop 0 0 [] Nothing 0
 
--- ---------------------------------------------------------------------
 -- extend
--- ---------------------------------------------------------------------
 
 extend :: Expr -> Bool -> Bool -> SubtractKind -> Expr
 extend a0 isSmall weak kind =
@@ -569,9 +547,7 @@ extend' a0 isSmall weak kind rightmost topmost =
          in updatedCol
    in finalA
 
--- ---------------------------------------------------------------------
 -- expand
--- ---------------------------------------------------------------------
 
 expand :: Expr -> Int -> Bool -> Bool -> SubtractKind -> Expr
 expand a0 index shorter weak kind =
@@ -583,10 +559,7 @@ expand a0 index shorter weak kind =
         then take (length a1 - 1) a1
         else extend a1 True weak kind
 
-
--- ---------------------------------------------------------------------
 -- 值域校验
--- ---------------------------------------------------------------------
 
 validValueRange :: Expr -> Bool
 validValueRange e =

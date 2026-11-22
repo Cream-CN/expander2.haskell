@@ -13,7 +13,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 cmpHE :: HE -> HE -> Int
 cmpHE (HE v1 p1) (HE v2 p2) =
   case cmpI v1 v2 of
@@ -170,7 +169,6 @@ display = concatMap colD
     entryD (E v h) =
       show (v + 1) ++ "^(" ++ concat [ (if k > 0 then "," else "") ++ show (hv (h !! k) + 1) ++ "@" ++ show (hp (h !! k)) | k <- [0 .. length h - 1] ] ++ ")"
       where hv (HE x _) = x; hp (HE _ x) = x
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

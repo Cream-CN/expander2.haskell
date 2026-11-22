@@ -50,9 +50,7 @@ import qualified Data.Map.Strict as M
 import Data.Map.Strict (Map)
 import Debug.Trace (trace)
 
--- ----------------------------------------------------------------------
 -- 基本类型
--- ----------------------------------------------------------------------
 
 type TonV = Double
 
@@ -86,9 +84,7 @@ rightChild :: TonNode -> TonNode
 rightChild (TNode _ r) = r
 rightChild t = t
 
--- ----------------------------------------------------------------------
 -- 扁平化
--- ----------------------------------------------------------------------
 
 flatten :: TonNode -> [TonV]
 flatten (TLeaf v) = [v]
@@ -120,9 +116,7 @@ maxValue t = maximum (0 : flatten t)
 structuralEqual :: TonNode -> TonNode -> Bool
 structuralEqual a b = flattenKey a == flattenKey b
 
--- ----------------------------------------------------------------------
 -- 比较
--- ----------------------------------------------------------------------
 
 lexCompare :: [TonV] -> [TonV] -> Ordering
 lexCompare = go
@@ -168,9 +162,7 @@ rConfig a b
         LT -> a
         EQ -> TLeaf (-0.5)
 
--- ----------------------------------------------------------------------
 -- 显示
--- ----------------------------------------------------------------------
 
 displayNoraise :: TonNode -> String
 displayNoraise (TLeaf v)
@@ -184,9 +176,7 @@ displayMain (TLeaf v)
   | otherwise = "Ω<" ++ fmtVal v ++ ">"
 displayMain (TNode l r) = displayMain l ++ displayMain r ++ "C"
 
--- ----------------------------------------------------------------------
 -- 解析
--- ----------------------------------------------------------------------
 
 parseImpl :: String -> Bool -> Maybe TonNode
 parseImpl s0 mainStyle =
@@ -221,9 +211,7 @@ parseImpl s0 mainStyle =
           _ -> Nothing
         _ -> Nothing
 
--- ----------------------------------------------------------------------
 -- regress
--- ----------------------------------------------------------------------
 
 regress :: TonNode -> TonNode
 regress (TLeaf v) = TLeaf v
@@ -237,9 +225,7 @@ regressRepeated x =
   let cur = regress x
   in if flattenKey x == flattenKey cur then cur else regressRepeated cur
 
--- ----------------------------------------------------------------------
 -- mark
--- ----------------------------------------------------------------------
 
 markMain :: TonV -> TonNode
 markMain sys =
@@ -266,9 +252,7 @@ markFs sys n =
                   | otherwise = acc
   in loopS (loopN base n) (sys - 1)
 
--- ----------------------------------------------------------------------
 -- 索引机器
--- ----------------------------------------------------------------------
 
 extractPath :: TonNode -> [Int] -> TonNode
 extractPath t [] = t
@@ -385,9 +369,7 @@ getN a2 =
 dropWhileEnd :: (a -> Bool) -> [a] -> [a]
 dropWhileEnd p = foldr (\x r -> if null r && p x then [] else x:r) []
 
--- ----------------------------------------------------------------------
 -- std_memoized
--- ----------------------------------------------------------------------
 
 stdMemoized :: Map String Bool -> TonNode -> Bool -> (Map String Bool, Bool)
 stdMemoized memo a compute
@@ -401,9 +383,7 @@ stdMemoized memo a compute
                then (M.insert key True memo, True)
                else (memo, False)
 
--- ----------------------------------------------------------------------
 -- 状态
--- ----------------------------------------------------------------------
 
 type StdFn = TonNode -> TonV -> State TonState Bool
 
@@ -430,13 +410,8 @@ data TonState = TonState
 initialTonState :: TonState
 initialTonState = TonState M.empty M.empty "" (GenState zeroLeaf True 0) []
 
--- ----------------------------------------------------------------------
 -- ton_step
--- ----------------------------------------------------------------------
 
--- | 执行一次完整的 ton_step（含 branch2 内层循环）。
---   返回 (newBeta, success)。success=False 表示 beta 已是裸负数叶子（终端），
---   此时 newBeta 就是那个叶子（branch2 已把 beta 更新为它）。
 tonStep :: TonV -> TonNode -> (TonNode, Bool)
 tonStep sys beta = case beta of
   TLeaf v ->
@@ -469,9 +444,7 @@ walkSpine sys beta@(TNode _ r1@(TNode _ r2@(TNode _ _))) =
     isLeafNegOne _ = False
 walkSpine _ beta = beta
 
--- ----------------------------------------------------------------------
 -- ton_gen_next
--- ----------------------------------------------------------------------
 
 tonGenNext :: TonV -> Int -> StdFn -> Bool -> State TonState TonNode
 tonGenNext sys n stdFn mainStyle = go
@@ -526,9 +499,7 @@ expandBeta sys beta = case beta of
       TNode _ _ -> loop (1:path) (rightChild c1)
       leafv -> (path, leafv)
 
--- ----------------------------------------------------------------------
 -- cache.fs
--- ----------------------------------------------------------------------
 
 cacheFs :: TonNode -> TonV -> Int -> Bool -> StdFn -> State TonState TonNode
 cacheFs term sys n mainStyle stdFn = do
@@ -560,9 +531,7 @@ cacheFs term sys n mainStyle stdFn = do
           put st2 { tsVals = tsVals st2 ++ [newVal] }
           loop
 
--- ----------------------------------------------------------------------
 -- 配置与入口
--- ----------------------------------------------------------------------
 
 data TonConfig = TonConfig
   { tcMainStyle :: !Bool

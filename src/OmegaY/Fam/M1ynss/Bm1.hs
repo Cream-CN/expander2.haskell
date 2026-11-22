@@ -8,23 +8,17 @@ module OmegaY.Fam.M1ynss.Bm1
 import OmegaY.Fam.M1ynss.PP
 import OmegaY.Fam.M1ynss.Tm1
 
--- | 父表：parr 长度 n+1（0..n-1 下层父，n 顶层父）；sub 为 step 的父表。
 data BPCol = BPCol { bpArr :: [Int], bpSub :: [BPCol] }
 
--- | 阈值树：a 为 Maybe Int；sub 为 step 的阈值子树。
 data ACol = ACol { aA :: Maybe Int, aSub :: [ACol] }
 
--- | rel 相对 key：low = [(isDiff, value)]；sub 为 step 的 key。
 data RKeyCol = RKeyCol { kLow :: [(Bool, Int)], kSub :: [RKeyCol] }
 
--- ---------------------------------------------------------------------------
 -- 基础谓词
--- ---------------------------------------------------------------------------
 
 brIsLimit :: Node -> Bool
 brIsLimit e =
   not (null (nCols e)) && not (isZeroColumn (Prelude.last (nCols e)))
-
 
 nextLayer :: Node -> Node
 nextLayer e = cStep (Prelude.last (nCols e))
@@ -46,9 +40,7 @@ lastNonneg v = go (length v - 1)
       | v !! i >= 0 = i
       | otherwise = go (i - 1)
 
--- ---------------------------------------------------------------------------
 -- 下层父（j=0..n-1），abs/rel 共用。stack/pstack 在同节点内随列增长（不 resize）。
--- ---------------------------------------------------------------------------
 
 brLower :: Node -> Int -> [Column] -> [[Int]] -> [BPCol]
 brLower e n outerCols outerParrs =
@@ -85,9 +77,7 @@ brLower e n outerCols outerParrs =
                           else (parrStack !! p) !! (jj - 1)
                in walk arr pNext jj vv
 
--- ---------------------------------------------------------------------------
 -- abs：同趟求顶层父（绝对 step 比较 + 排除祖先链）
--- ---------------------------------------------------------------------------
 
 brAbs :: Node -> Int -> [Column] -> [[Int]] -> [Int] -> [BPCol]
 brAbs e n outerCols outerParrs forbidden =
@@ -131,14 +121,11 @@ brAbs e n outerCols outerParrs forbidden =
           let pNext = if n == 0 then p - 1 else (extParrs !! p) !! (n - 1)
            in topWalk extCols extParrs forbidden pNext stepV
 
--- ---------------------------------------------------------------------------
 -- rel：阈值树 / 相对 key / fill_top
--- ---------------------------------------------------------------------------
 
 brBoolCmp :: Bool -> Bool -> Int
 brBoolCmp a b = (if a then 1 else 0) - (if b then 1 else 0)
 
--- | 阈值树。Pm = 当前节点的父表（Just）或 Nothing。ropt=Nothing → 全 undefined。
 brThresholds :: Node -> Maybe [BPCol] -> Maybe Int -> Int -> [Maybe Int] -> [ACol]
 brThresholds e pm ropt b stk =
   case ropt of
@@ -225,7 +212,6 @@ brKeyCmp a b = go 0
                     c -> c
         km = min (length (kLow (a !! i))) (length (kLow (b !! i)))
 
--- | 在已建好的 P 上回填顶层父，返回更新后的 P 树。严格左折叠以保证 keys 按列序构建。
 brFillTop :: Node -> [BPCol] -> Int -> [[Int]] -> [[RKeyCol]] -> [Int] -> [BPCol]
 brFillTop e pt n outerParrs keys outer =
   reverse built
@@ -253,9 +239,7 @@ brFillTop e pt n outerParrs keys outer =
           pc = BPCol parr' subP
        in extParrs `seq` allKeys `seq` (extParrs, allKeys, pc : builtAcc)
 
--- ---------------------------------------------------------------------------
 -- 层 / 根 / 提升向量
--- ---------------------------------------------------------------------------
 
 brTailLayer :: Node -> Int
 brTailLayer e
@@ -305,9 +289,7 @@ brAscensionVector e r b tailLayer =
       back = Prelude.last st
    in [cArr back !! j - cArr (st !! r) !! j | j <- [0 .. b - 1]]
 
--- ---------------------------------------------------------------------------
 -- 复制 / 提升
--- ---------------------------------------------------------------------------
 
 cloneSlice :: Node -> Int -> Node
 cloneSlice e from =
@@ -346,9 +328,7 @@ brAscendReplace e tail tl aTree vVec w =
             _ -> Nothing
        in Column newArr (brAscendReplace (cStep col) tail ntl subA vVec w)
 
--- ---------------------------------------------------------------------------
 -- FS
--- ---------------------------------------------------------------------------
 
 brComputeParents :: Node -> Int -> Bool -> [BPCol]
 brComputeParents e n rel =
@@ -398,9 +378,7 @@ brFs e index n rel
           result = foldl addWave makeNode [index, index - 1 .. 1]
        in brAscendReplace e result (Just tLayer) (Just aTree) vVec 0
 
--- ---------------------------------------------------------------------------
 -- 显示（严格版）
--- ---------------------------------------------------------------------------
 
 brIsOneColumn :: Column -> Bool
 brIsOneColumn c =
@@ -436,9 +414,7 @@ brRender e topLevel
                 else concatMap brColumnDisplay cols
   | otherwise = concatMap brColumnDisplay (nCols e)
 
--- ---------------------------------------------------------------------------
 -- 入口
--- ---------------------------------------------------------------------------
 
 expandBm :: Bool -> String -> Int -> Int -> String
 expandBm rel text term n0 =

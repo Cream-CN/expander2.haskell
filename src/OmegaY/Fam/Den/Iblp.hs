@@ -1,6 +1,4 @@
 -- | iblp 记号（id=iblp），逐行对齐 C++ @Header/notation/iblp.hpp@。
---
---   行结构：'row[0]' 是 step（视为占位条目），'row[1..]' 是条目。
 module OmegaY.Fam.Den.Iblp
   ( expandText
   , expandTextAlter
@@ -8,9 +6,7 @@ module OmegaY.Fam.Den.Iblp
 
 import OmegaY.Fam.Den.Share
 
--- ---------------------------------------------------------------------
 -- 类型与显示
--- ---------------------------------------------------------------------
 
 type Den3Row = [DenEntry]
 
@@ -30,9 +26,7 @@ toString e = concatMap rowStr (d3Rows e)
   joinComma [x] = x
   joinComma (x : xs) = x ++ "," ++ joinComma xs
 
--- ---------------------------------------------------------------------
 -- 解析
--- ---------------------------------------------------------------------
 
 parse :: String -> Maybe Den3Expr
 parse s0 = do
@@ -67,9 +61,7 @@ parse s0 = do
           then parseEntries (skipSpaces (drop 1 s3)) (acc ++ [DenEntry v marked])
           else Just (acc ++ [DenEntry v marked], s3)
 
--- ---------------------------------------------------------------------
 -- 展开核心
--- ---------------------------------------------------------------------
 
 cut :: Den3Expr -> Den3Expr
 cut raw
@@ -121,7 +113,6 @@ seqFrom expr i j =
                  in walk (rec1 ++ [SeqItem v' 0]) thr
           else rec
 
--- | 按 active 行的映射规则复制一行。
 applyRow :: Den3Row -> Den3Row -> Den3Row
 applyRow s t =
   let sVals = map deValue (drop 1 s)
@@ -130,7 +121,6 @@ applyRow s t =
    in DenEntry (deValue (head s)) False
         : [DenEntry (apValue x tVals step) False | x <- sVals]
 
--- | 复制 [begin-1, end-1) 区间行并迁移标记（seq 取自新表达式）。
 copy :: Den3Expr -> Int -> Den3Expr
 copy raw flag =
   let active = last (d3Rows raw)
@@ -202,7 +192,6 @@ copy raw flag =
                                       || deValue (target !! tj) <= a1
                                in if activeMarked && lhs then setMarked acc j else acc
 
--- | compTo：对第 r 行做上向压缩。
 compTo :: Den3Expr -> Int -> [Maybe [Int]] -> Den3Expr
 compTo raw r rec =
   let row = (d3Rows raw) !! r
@@ -238,7 +227,6 @@ compTo raw r rec =
     Den3Expr
       [ if k == idx then nrow else r | (k, r) <- zip [0 ..] (d3Rows expr) ]
 
--- | compFrom：以第 r 行为模板、T 为系数构造 q+1 行并平移后续行。
 compFrom :: Den3Expr -> Int -> [Int] -> Den3Expr
 compFrom raw r t =
   let q = length t
@@ -296,7 +284,6 @@ compFrom raw r t =
     | (k, e) <- zip [0 ..] row
     ]
 
--- | 核心展开。longer=False 对应 FS，True 对应 FS_alter。
 expand :: Den3Expr -> Int -> Bool -> Den3Expr
 expand raw fsTerm longer
   | null (d3Rows raw) = raw
@@ -371,14 +358,9 @@ expand raw fsTerm longer
      in if head t' > pr then buildT e row t' pr else t'
   setAt idx v xs = [ if k == idx then v else x | (k, x) <- zip [0 ..] xs ]
 
--- ---------------------------------------------------------------------
 -- 极限
--- ---------------------------------------------------------------------
 
-
--- ---------------------------------------------------------------------
 -- 公共入口
--- ---------------------------------------------------------------------
 
 expandTextImpl :: String -> Int -> Bool -> String
 expandTextImpl text term longer =

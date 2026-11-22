@@ -1,7 +1,4 @@
--- | 唯一注册表：114 个记号，顺序与 C++ 侧 @kMetaArray@ 完全一致，
---   再按 display_name 首字符 UTF-8 码位做**稳定**排序（与 @kSortedOrder@ 一致）。
---
---   各记号族由 @OmegaY.Fam.<Group>.Family@ 提供；本文件是唯一的汇总点。
+-- | 唯一注册表：114 个记号，顺序与 C++ 侧 kMetaArray 一致。
 module OmegaY.Registry
   ( allNotations
   , byId
@@ -184,7 +181,7 @@ poolMap = M.fromList [(nId n, n) | n <- notationPool]
 rawNotations :: [Notation]
 rawNotations = [n | i <- idOrder, Just n <- [M.lookup i poolMap]]
 
--- | 按显示名首字符码位稳定排序。
+-- 仅用于展示/枚举；使用哪个记号仍由 id 决定，不受此排序影响。
 allNotations :: [Notation]
 allNotations = sortOn (firstCodepoint . nName) rawNotations
 
@@ -195,6 +192,5 @@ firstCodepoint (c : _) = ord c
 byId :: String -> Maybe Notation
 byId ident = M.lookup ident poolMap
 
--- | 尚未实现的 id（集成期用来衡量覆盖率）。
 missingIds :: [String]
 missingIds = [i | i <- idOrder, M.notMember i poolMap]

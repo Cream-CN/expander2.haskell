@@ -1,9 +1,4 @@
--- | GMS —— General Matrix System 族核心。对齐 C++ @gms.hpp@。
---
---   两个维度参数化：
---     * 'System'  = GBMS / UPMS / LPMS2（底层记号）
---     * 'Proj'    = OmegaP / PQSS / QSS / Full / WeirdlyFull（展开策略）
---   共组合出 15 个记号；由 'runGms' 统一驱动。
+-- | GMS —— General Matrix System 族核心。
 module OmegaY.Fam.Gms.GmsCore
   ( System (..)
   , Proj (..)
@@ -19,9 +14,7 @@ data System = SysGBMS | SysUPMS | SysLPMS2
 data Proj = ProjOmegaP | ProjPQSS | ProjQSS | ProjFull | ProjWeirdlyFull
   deriving (Eq, Show)
 
--- ---------------------------------------------------------------------
 -- 父项链
--- ---------------------------------------------------------------------
 
 type Parents = [Col]  -- parents!!(level-1)!!col
 
@@ -74,9 +67,7 @@ childAboveAncestor parents level descendant ancestor = go descendant
                 then (-1)
                 else go p
 
--- ---------------------------------------------------------------------
 -- LimitCtx
--- ---------------------------------------------------------------------
 
 data LimitCtx = LimitCtx
   { lcA :: FMat
@@ -172,13 +163,10 @@ projectionRecurrence ctx d index
  where
   rows = lcRows ctx
 
--- ---------------------------------------------------------------------
 -- UPMS：Y / v / D，以及带记忆化的 build_adjusted_suffix
--- ---------------------------------------------------------------------
 
 type AdjCache = [((Int, Int), FMat)]
 
--- | build_adjusted_suffix(z_index, level)。vArr 为已构建完整的 v 表。
 adjSuffix :: Int -> FMat -> Parents -> Int -> Int -> Int -> [Col]
           -> AdjCache -> Int -> Int -> (FMat, AdjCache)
 adjSuffix rows a parents yIndex last h vArr cache zIndex level =
@@ -299,9 +287,7 @@ buildVLevel rows a parents yIndex last h yArr spanLength vArr cache level prevV 
                             cur' = take pos cur ++ [bit] ++ drop (pos + 1) cur
                          in go cur' (pos + 1) cache1
 
--- ---------------------------------------------------------------------
 -- LPMS2 的 X
--- ---------------------------------------------------------------------
 
 firstDifferentColumn :: FMat -> FMat -> Int
 firstDifferentColumn a b = go 0
@@ -391,9 +377,7 @@ buildLpms2X ctx upms cache0 =
     (x : _) -> x
     [] -> d
 
--- ---------------------------------------------------------------------
 -- old_finite_fs
--- ---------------------------------------------------------------------
 
 oldFiniteFs :: FMat -> Int -> System -> GmsM FMat
 oldFiniteFs a index system
@@ -424,9 +408,7 @@ oldFiniteFs a index system
                               let next = clone (lcFs1 ctx) rows ++ xMat
                               oldFiniteFs next (index - 1) system
 
--- ---------------------------------------------------------------------
 -- 五个极限构造器
--- ---------------------------------------------------------------------
 
 limitBuilder :: Proj -> Int -> FMat
 limitBuilder proj index = case proj of
@@ -509,9 +491,7 @@ fs a index system proj
               then go result logical (rawIndex + 1)
               else go candidate (logical + 1) (rawIndex + 1)
 
--- ---------------------------------------------------------------------
 -- 对外入口
--- ---------------------------------------------------------------------
 
 runGms :: System -> Proj -> String -> Int -> String
 runGms system proj text term =

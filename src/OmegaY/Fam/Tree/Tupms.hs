@@ -29,7 +29,6 @@ import OmegaY.Fam.Tree.Tbm
   , kParseError
   )
 
--- | 常数列：竖直序列每一段配同一个数值。
 constColumn :: Int -> [Expr] -> Column
 constColumn value vertical = map (\seg -> Entry value seg) vertical
 
@@ -57,7 +56,6 @@ data St = St
   , stRootSet :: [Bool]
   }
 
--- | TUPMS 版提升阈值。
 tupmsAscensionThreshold :: Expr -> [[[Expr]]] -> [[(Int, Int)]] -> Int -> [Expr] -> [[Expr]]
 tupmsAscensionThreshold m@(Expr mcols) v p r b = stA (loop heap0 st0)
  where
@@ -220,9 +218,7 @@ tupmsAscensionThreshold m@(Expr mcols) v p r b = stA (loop heap0 st0)
 update :: Int -> a -> [a] -> [a]
 update k x xs = take k xs ++ [x] ++ drop (k + 1) xs
 
--- ---------------------------------------------------------------------------
 -- 展开
--- ---------------------------------------------------------------------------
 
 tuExpandSuccessor :: Expr -> Int -> Expr
 tuExpandSuccessor m@(Expr mcols) index = Expr resultCols

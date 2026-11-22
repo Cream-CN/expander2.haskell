@@ -12,7 +12,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 cmpH :: Height -> Height -> Int
 cmpH a b =
   case cmpI (length a) (length b) of
@@ -150,7 +149,6 @@ display = concatMap colD
       show (v + 1) ++ "^(" ++
       concat [ (if i > 0 then "," else "") ++ show (h !! (length h - 1 - i) + 1) | i <- [0 .. length h - 1] ]
       ++ ")"
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

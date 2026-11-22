@@ -14,7 +14,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 cmpHP :: HP -> HP -> Int
 cmpHP (HP h1 n1) (HP h2 n2)
   | h1 && h2 = cmpI n1 n2
@@ -250,7 +249,6 @@ display = concatMap colD
     fmt (HP hi n)
       | hi = "ω" ++ (if n /= 0 then "+" ++ show n else "")
       | otherwise = show (n + 1)
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

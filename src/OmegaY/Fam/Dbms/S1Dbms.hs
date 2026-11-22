@@ -11,7 +11,6 @@ type Expr = [Col]
 eVal :: E -> Int
 eVal (E v _) = v
 
-
 parse :: String -> Maybe Expr
 parse s =
       let s1 = skipSp s
@@ -62,7 +61,6 @@ copyVal v r off = if v >= r then v + off else v
 
 copyCol :: Col -> Int -> Int -> Col
 copyCol col r off = [E (copyVal v r off) (copyVal h r off) | E v h <- col]
-
 
 expand :: Expr -> Int -> Bool -> Expr
 expand expr index shorter

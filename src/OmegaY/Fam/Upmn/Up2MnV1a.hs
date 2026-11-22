@@ -9,7 +9,6 @@ import OmegaY.Fam.Upmn.SmnShare (smnExpand)
 
 errP = errParse
 
-
 hasInfinite :: Col -> Bool
 hasInfinite col = not (null col) && snd (last col) > 0
 
@@ -47,11 +46,9 @@ mountainCompare a b = go 0
           let c = colCompare (a !! k) (b !! k)
            in if c /= 0 then c else go (k + 1)
 
-
 -- subtract_1 for v1a infinite branch (0-based: value -= 1)
 subtract1 :: Expr -> Expr
 subtract1 = map (map (\(v, sep) -> (v - 1, sep)))
-
 
 copyColumnV1a :: Col -> Int -> Int -> Int -> Bool -> Int -> Col
 copyColumnV1a col ri rj offset up yOffset =

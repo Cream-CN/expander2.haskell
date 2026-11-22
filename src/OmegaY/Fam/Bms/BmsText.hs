@@ -12,9 +12,7 @@ import OmegaY.Parse (parseMatrix, matrixToString)
 import qualified OmegaY.Fam.Bms.BmsCore as BC
 import qualified OmegaY.Fam.Bms.UpmsCore as UC
 
--- ---------------------------------------------------------------------------
 -- BMS
--- ---------------------------------------------------------------------------
 
 kParseError :: String
 kParseError = "解析失败，请确认你没有使用全角括号，逗号"
@@ -22,7 +20,6 @@ kParseError = "解析失败，请确认你没有使用全角括号，逗号"
 kNonStandard :: String
 kNonStandard = "输入的矩阵为非标准表达式"
 
--- | bmsExpandTextWith(ver, text, term)
 bmsExpandTextWith :: BC.Version -> String -> Int -> String
 bmsExpandTextWith ver text cliTerm =
   let (m, mTerm) = parseMatrix text
@@ -46,9 +43,7 @@ bmsTruncateFs out _term =
        then matrixToString (matResizeCols (matCols m - 1) m) 0
        else out
 
--- ---------------------------------------------------------------------------
 -- UPMS
--- ---------------------------------------------------------------------------
 
 kUpmsEmpty :: String
 kUpmsEmpty = "后继形展开为空矩阵，或未能定位坏根"
@@ -97,7 +92,6 @@ parseUpmsText s =
                in go acc' 0 False False cs
           | otherwise = go acc cur neg inNum cs
 
--- | formatUpmsText（对齐 registry.hpp 484-500）：省略尾随零。
 formatUpmsText :: Matrix -> String
 formatUpmsText m
   | matEmpty m = ""
@@ -115,7 +109,6 @@ formatUpmsText m
     joinComma [x] = x
     joinComma (x : xs) = x ++ "," ++ joinComma xs
 
--- | upmsExpandText
 upmsExpandText :: String -> Int -> String
 upmsExpandText text term =
   let m = parseUpmsText text

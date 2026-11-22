@@ -9,9 +9,7 @@ import System.IO.Unsafe (unsafePerformIO)
 import OmegaY.Fam.M1ynss.PP
 import OmegaY.Fam.M1ynss.Bt (BtNode(..), BtColumn(..), btMakeNode)
 
--- ---------------------------------------------------------------------------
 -- 显示
--- ---------------------------------------------------------------------------
 
 bmColumnDisplay :: [Int] -> String
 bmColumnDisplay lower =
@@ -47,9 +45,7 @@ display :: BtNode -> String
 display e
   | otherwise = concatMap columnDisplay (btCols e)
 
--- ---------------------------------------------------------------------------
 -- 比较
--- ---------------------------------------------------------------------------
 
 numCmp :: Int -> Int -> Int
 numCmp a b = if a == b then 0 else if a < b then (-1) else 1
@@ -89,9 +85,7 @@ colCmp a b = go 0
           let c = numCmp (bArr a !! i) (bArr b !! i)
            in if c /= 0 then c else go (i + 1)
 
--- ---------------------------------------------------------------------------
 -- 父树
--- ---------------------------------------------------------------------------
 
 data PCol = PCol [Int] [PNode]
 newtype PNode = PNode [PCol]
@@ -179,9 +173,7 @@ hHeightCmp a b = go 0
           let c = heightCmp (a !! i) (b !! i)
            in if c /= 0 then c else go (i + 1)
 
--- ---------------------------------------------------------------------------
 -- 阈值
--- ---------------------------------------------------------------------------
 
 data ACol = ACol Int [ANode]
 newtype ANode = ANode [ACol]
@@ -221,9 +213,7 @@ thresholds e (PNode pcols) r b stk =
               else ai
        in go 0
 
--- ---------------------------------------------------------------------------
 -- vertical / height
--- ---------------------------------------------------------------------------
 
 data HCol = HCol [(Int, Bool)] [HNode]
 newtype HNode = HNode [HCol]
@@ -319,9 +309,7 @@ heightCmp a b = go 0
               let c = heightCmp (xs !! i) (ys !! i)
                in if c /= 0 then c else go (i + 1)
 
--- ---------------------------------------------------------------------------
 -- 层 / 根
--- ---------------------------------------------------------------------------
 
 nextLayer :: BtNode -> BtNode
 nextLayer cur =
@@ -419,9 +407,7 @@ ascendVector :: [Int] -> Int -> [Int] -> Int -> [Int]
 ascendVector v a vv w =
   [ if j < a && j < length vv then v !! j + vv !! j * w else v !! j | j <- [0 .. length v - 1] ]
 
--- ---------------------------------------------------------------------------
 -- special
--- ---------------------------------------------------------------------------
 
 isSpecial :: BtNode -> Int -> Bool
 isSpecial e tLayer
@@ -452,9 +438,7 @@ fsSpecial e tLayer index =
           else keptHigher ++ [fsSpecial (bHigher col !! hr) (tLayer - 1) index]
    in BtNode (keptCols ++ [BtColumn (bArr col) newHigher])
 
--- ---------------------------------------------------------------------------
 -- ascend replace
--- ---------------------------------------------------------------------------
 
 ascendReplace :: BtNode -> BtNode -> Maybe Int -> Maybe ANode -> [Int] -> Int -> [HNode] -> BtNode
 ascendReplace e tail tl aTree vv w critical =
@@ -495,13 +479,7 @@ ascendReplace e tail tl aTree vv w critical =
     aTh (ACol t _) = t
     aThs (ACol _ h) = h
 
--- ---------------------------------------------------------------------------
--- ---------------------------------------------------------------------------
-
-
--- ---------------------------------------------------------------------------
 -- expand
--- ---------------------------------------------------------------------------
 
 isLimit :: BtNode -> Bool
 isLimit e =
@@ -607,9 +585,7 @@ lnz short_ e index n
   | not (isLimit e) = expand e 0 n short_
   | otherwise = expand e index n short_
 
--- ---------------------------------------------------------------------------
 -- 入口
--- ---------------------------------------------------------------------------
 
 expandBt3 :: String -> Int -> Int -> String
 expandBt3 text term n0 =

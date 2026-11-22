@@ -1,16 +1,5 @@
--- | 交互式 + CLI 壳子：在 @OmegaY.Registry@ / @expandNotation@ / @uiExpand@ 之上
---   包一层面向人的操作界面，不改动计算层语义。
---
---   两种用法共用同一套设置（记号 / 模式 / 项数 / 参数 / 校验层 / 超时 / 输出上限）：
---
---     * CLI：@expander2-shell run pps "1,2,3" -t 3@ ，逐行输出或 @--json@；
---     * REPL：@expander2-shell repl@ ，@:use@ / @:mode@ / @:term@ … 之后直接敲表达式。
---
---   CLI 的输出与 @app/Main.hs@ 保持一致：成功打印结果，失败打印 @ERR:<转义文本>@，
---   退出码只在用法错误（2）、未知记号（1）、@--strict@ 展开失败（1）时非零。
---
---   展开一律走 'runExpand'：先强制求值再打印，因此可以捕获计算层抛出的异常，
---   也能按 @stTimeout@ 用异步异常中断发散输入（C++ 原实现存在这类 UB 用例）。
+-- | 供人使用的 CLI/REPL 外壳；计算语义仍由 OmegaY.Registry 与 expandNotation 决定。
+--   展开前先强制求值，并可用异步异常中断发散输入。
 module OmegaY.Shell (main, repl) where
 
 import Control.Exception
@@ -42,9 +31,7 @@ import System.Info (os)
 import System.Process (readProcessWithExitCode)
 import System.Timeout (timeout)
 
--- ---------------------------------------------------------------------------
 -- 设置
--- ---------------------------------------------------------------------------
 
 data Settings = Settings
   { stId :: String
@@ -108,11 +95,8 @@ suffixText s
   | null s = "\"\""
   | otherwise = show s
 
--- ---------------------------------------------------------------------------
 -- 表格排版（按终端显示宽度对齐）
--- ---------------------------------------------------------------------------
 
--- | 单个字符的显示宽度：组合符 / 格式符记 0 列，全角（CJK）记 2 列。
 charDisplayWidth :: Char -> Int
 charDisplayWidth c
   | generalCategory c `elem` [NonSpacingMark, EnclosingMark, Format, Control] = 0
@@ -145,8 +129,6 @@ textWidth = sum . map charDisplayWidth
 padWidth :: Int -> String -> String
 padWidth w s = s ++ replicate (max 0 (w - textWidth s)) ' '
 
--- | 第一行作表头，第二行是分隔线，其余为数据行；列间两个空格，
---   最后一列不留尾随空白。
 renderTable :: [[String]] -> [String]
 renderTable [] = []
 renderTable (hdr : rows) =
@@ -155,7 +137,6 @@ renderTable (hdr : rows) =
       sep = replicate (sum widths + 2 * (length widths - 1)) '-'
    in line hdr : sep : map line rows
 
--- | 记号列表的统一版面：ID / 名称 / 标签 / 能力。
 notationTable :: [Notation] -> String
 notationTable ns =
   unlines
@@ -165,7 +146,6 @@ notationTable ns =
         )
     )
 
--- | 旧版机器可读格式：@id<TAB>显示名@，供脚本沿用。
 notationLines :: [Notation] -> String
 notationLines = unlines . map (\n -> nId n ++ "\t" ++ nName n)
 
@@ -208,8 +188,8 @@ runExpand st text = do
 
     lim = stTimeout st
 
-    -- timeout 必须直接包住 act：它靠比对内部 Timeout 异常来判定超时，
-    -- 若内层先把异常吞掉，就只能看到 "`<<timeout>>`"。异常统一在外层归类。
+    -- timeout 必须直接包住 act：System.Timeout 靠捕获内部的 Timeout 异常判定超时，
+    -- 中间层若先吞异常，超时信号就失效。其它异常统一在外层归类。
     body
       | lim <= 0 = act
       | otherwise = do
@@ -230,9 +210,7 @@ runExpand st text = do
           | Just UserInterrupt <- fromException e -> Left "已中断"
           | otherwise -> Left ("内部异常: " ++ displayException e)
 
--- ---------------------------------------------------------------------------
 -- 文本工具
--- ---------------------------------------------------------------------------
 
 trim :: String -> String
 trim = dropWhile isSpace . dropWhileEnd isSpace
@@ -324,9 +302,7 @@ bracketDepth = foldl step 0
       ']' -> max 0 (n - 1)
       _ -> n
 
--- ---------------------------------------------------------------------------
 -- IO：Windows 控制台切 UTF-8；管道/重定向按 UTF-8 读写
--- ---------------------------------------------------------------------------
 
 setupIO :: IO ()
 setupIO = do
@@ -383,7 +359,6 @@ lookupNotation ident =
       hPutStrLn stderr "ERR_NO_NOTATION"
       exitWith (ExitFailure 1)
 
--- | 精确 id 优先，其次唯一前缀（当 Tab 补全的替代），再不行给出候选。
 resolveNotation :: String -> Either [Notation] Notation
 resolveNotation i =
   case byId i of
@@ -394,9 +369,7 @@ resolveNotation i =
             [n] -> Right n
             _ -> Left hits
 
--- ---------------------------------------------------------------------------
 -- 持久历史（~/.expander2_history，仅记录表达式，失败静默）
--- ---------------------------------------------------------------------------
 
 historyFilePath :: IO FilePath
 historyFilePath = do
@@ -426,9 +399,7 @@ loadHistory = do
   r <- try (readFileUtf8 hp) :: IO (Either IOException String)
   pure (either (const "") id r)
 
--- ---------------------------------------------------------------------------
 -- CLI
--- ---------------------------------------------------------------------------
 
 data Opts = Opts
   { oMode :: ExpandMode
@@ -575,7 +546,7 @@ versionLine =
     ++ show (length allNotations + length missingIds)
     ++ " 个记号"
 
--- | @--version@ 输出：许可证横幅 + 版本行。
+-- | @--version@ 输出许可证横幅与版本行。
 versionText :: String
 versionText = Banner.startupBanner ++ versionLine ++ "\n"
 
@@ -752,9 +723,7 @@ cmdBatch o pos = do
       strict <- readIORef errRef
       when (oStrict o && strict) $ exitWith (ExitFailure 1)
 
--- ---------------------------------------------------------------------------
 -- REPL
--- ---------------------------------------------------------------------------
 
 repl :: IO ()
 repl = do
@@ -1191,9 +1160,7 @@ renderStatus st =
               else "off（展开层：expandNotation）"
         ]
 
--- ---------------------------------------------------------------------------
 -- 入口
--- ---------------------------------------------------------------------------
 
 main :: IO ()
 main = do

@@ -1,8 +1,4 @@
 -- | BMS 族核心（10 个版本共享骨架，按 ver code 分支）。
---
---   逐行对齐 @Header/notation/BMSFamily.hpp@：
---   getParent / getParentIB / getConcestor / getBadSequence / copyBadSequence
---   / chkStd / expand。文本路径只用 chkStd + expand。
 module OmegaY.Fam.Bms.BmsCore
   ( Version (..)
   , verCode
@@ -14,7 +10,6 @@ import Data.Array (Array, listArray, (!))
 import qualified Data.Array as A
 import OmegaY.Matrix
 
--- | 10 个 BMS 版本。
 data Version
   = V1 | V2 | V21 | V22 | V23 | V3 | V31 | V32 | V33 | V4
   deriving (Eq, Show)
@@ -31,9 +26,7 @@ verCode V32 = 320
 verCode V33 = 330
 verCode V4  = 400
 
--- ---------------------------------------------------------------------------
 -- 工具
--- ---------------------------------------------------------------------------
 
 updateAt :: Int -> a -> [a] -> [a]
 updateAt i v xs = take i xs ++ [v] ++ drop (i + 1) xs
@@ -45,9 +38,7 @@ cGet c nr r col = c A.! (r + col * nr)
 cSet :: Array Int Int -> Int -> Int -> Int -> Int -> Array Int Int
 cSet c nr r col v = c A.// [(r + col * nr, v)]
 
--- ---------------------------------------------------------------------------
 -- getParent：同行向左找第一个严格小于 (r,c) 的列
--- ---------------------------------------------------------------------------
 
 getParent :: Matrix -> Int -> Int -> Int
 getParent s r c = go c
@@ -57,9 +48,7 @@ getParent s r c = go c
       | matAt s r i < matAt s r c = i
       | otherwise = go (i - 1)
 
--- ---------------------------------------------------------------------------
 -- getParentIB：IB 祖先
--- ---------------------------------------------------------------------------
 
 getParentIB :: Matrix -> Int -> Int -> Int
 getParentIB s r c = go c r
@@ -74,9 +63,7 @@ getParentIB s r c = go c r
                       then x'
                       else go x' y
 
--- ---------------------------------------------------------------------------
 -- getConcestor
--- ---------------------------------------------------------------------------
 
 getConcestor :: Matrix -> Int -> Int -> Int
 getConcestor s m c = go p0
@@ -90,9 +77,7 @@ getConcestor s m c = go p0
               p' = updateAt maxr (getParent s maxr (p !! maxr)) p
           in go p'
 
--- ---------------------------------------------------------------------------
 -- getBadSequence
--- ---------------------------------------------------------------------------
 
 getBadSequence :: Int -> Matrix -> [Int] -> Array Int Int -> Int -> Int
                -> (Int, [Int], Array Int Int)
@@ -104,7 +89,6 @@ getBadSequence ver s delta0 c0 n nr
       220 -> bs220 s delta0 c0 n nr
       _   -> bsGeneric ver s delta0 c0 n nr
 
--- | 找第一个 j ∈ [0,row] 使 S(j,n)==0；没有则返回 row+1。
 findFirstZero :: Matrix -> Int -> Int -> Int
 findFirstZero s n row = go 0
   where
@@ -113,7 +97,6 @@ findFirstZero s n row = go 0
       | matAt s j n == 0 = j
       | otherwise = go (j + 1)
 
--- | ver=100
 bs100 :: Matrix -> [Int] -> Array Int Int -> Int -> Int
       -> (Int, [Int], Array Int Int)
 bs100 s delta0 c0 n nr = (bad, delta', c0)
@@ -133,7 +116,6 @@ bs100 s delta0 c0 n nr = (bad, delta', c0)
                     )
                else goK (k + 1)
 
--- | ver=210
 bs210 :: Matrix -> [Int] -> Array Int Int -> Int -> Int
       -> (Int, [Int], Array Int Int)
 bs210 s delta0 c0 n nr = outer 0 0 delta0
@@ -158,7 +140,6 @@ bs210 s delta0 c0 n nr = outer 0 0 delta0
       | matAt s 0 (n - (k + l)) < matAt s 0 (n - k) = k + l
       | otherwise = innerL k (l + 1)
 
--- | ver=220
 bs220 :: Matrix -> [Int] -> Array Int Int -> Int -> Int
       -> (Int, [Int], Array Int Int)
 bs220 s delta0 c0 n nr = (bad, delta', c0)
@@ -171,7 +152,6 @@ bs220 s delta0 c0 n nr = (bad, delta', c0)
              | j <- [0 .. row]
              ]
 
--- | ver ∈ {200,230,300,310,320,330,400}：先求 bad/Delta，再按 ver 算 C。
 bsGeneric :: Int -> Matrix -> [Int] -> Array Int Int -> Int -> Int
           -> (Int, [Int], Array Int Int)
 bsGeneric ver s delta0 c0 n nr = (bad, delta', c')
@@ -199,7 +179,6 @@ bsGeneric ver s delta0 c0 n nr = (bad, delta', c')
     delta' = delta1
     c' = c1
 
--- | C 后处理（按 ver）。
 postProcess :: Int -> Matrix -> Array Int Int -> Int -> Int -> Int -> Int
             -> Array Int Int
 postProcess ver s c0 n nr row bad = case ver of
@@ -327,9 +306,7 @@ postProcess ver s c0 n nr row bad = case ver of
                          in goO (o + 1) n2 e'
               | otherwise = (eLoc, False, 0, 0)
 
--- ---------------------------------------------------------------------------
 -- copyBadSequence
--- ---------------------------------------------------------------------------
 
 copyBadSequence :: Int -> Matrix -> [Int] -> Array Int Int -> Int -> Int -> Int
                 -> Int -> Matrix
@@ -383,9 +360,7 @@ copyBadSequence ver s delta c nStart nn nr bad
           | matAt s' 0 (n - m) < matAt s' 0 n = m
           | otherwise = goM (m + 1)
 
--- ---------------------------------------------------------------------------
 -- expand
--- ---------------------------------------------------------------------------
 
 bmsExpand :: Version -> Matrix -> Int -> Matrix
 bmsExpand ver0 m term
@@ -410,9 +385,7 @@ bmsExpand ver0 m term
                     s2 = copyBadSequence ver s1 delta1 c2 n nn nr bad
                 in matResizeCols nn s2
 
--- ---------------------------------------------------------------------------
 -- chkStd：判断矩阵是否标准式。返回 0=标准，1=非标准。
--- ---------------------------------------------------------------------------
 
 bmsIsStandard :: Version -> Matrix -> Bool
 bmsIsStandard ver0 s = chkStd s == 0

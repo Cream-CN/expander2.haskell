@@ -1,20 +1,9 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 
--- | DLL 的 C ABI 层：把注册表里的 114 个记号暴露成 C 函数。
---
---   设计要点（与 @docs/DLL.md@ 一一对应）：
---
---   * 记号名 -> 导出符号名的规则唯一实现在 'symbolOf'，生成器
---     @tools/GenDll.hs@ 与本模块的 @EXPANDER2_SYMBOL@ 都调它，
---     避免头文件与 DLL 里的名字漂移。
---   * 每个记号两个入口：@\<SYM\>@（fs 模式）与 @\<SYM\>_ALTER@（alter 模式），
---     语义与 CLI 的 @\<id\> fs|alter@ 完全一致（都走 'expandNotation'）。
---   * 字符串一律 UTF-8；返回的 @char*@ 由 GHC 侧 @malloc@ 分配，
---     必须用 @EXPANDER2_FREE@ 释放。
---   * 失败返回 @NULL@，错误文本放进程级槽位，用 @EXPANDER2_LAST_ERROR@ 取
---     （errno 风格：读一次就复制出独立字符串）。
---   * 任何 Haskell 异常都在这里兜住，绝不越过 DLL 边界（否则整个宿主进程退出）。
+-- | C ABI 层。字符串为 UTF-8；返回的 char* 由 GHC 侧 malloc 分配，须用
+--   EXPANDER2_FREE 释放。失败返回 NULL，错误经 EXPANDER2_LAST_ERROR 读取；
+--   所有异常在本层拦截，不允许传播到宿主进程。
 module OmegaY.Dll
   ( expandWith
   , symbolOf
@@ -35,15 +24,8 @@ import System.IO.Unsafe (unsafePerformIO)
 import OmegaY.Notation.Types (Caps (..), ExpandMode (..), Notation (..), expandNotation)
 import OmegaY.Registry (allNotations, byId)
 
--- ---------------------------------------------------------------------------
--- 导出符号名
--- ---------------------------------------------------------------------------
-
--- | 记号 id -> C 导出符号名。
---
---   @pps@ -> @PPS@，@bms-v1@ -> @BMS_V1@，@-1y-(n+1)ss@ -> @_1Y_N_1_SS@。
---   规则：只保留 @[A-Za-z0-9]@（字母一律大写），其余字符变 @_@，
---   连续 @_@ 折成一个；若结果以数字开头则前置 @_@（保证是合法 C 标识符）。
+-- 导出符号名：只保留 ASCII 字母数字，驼峰折叠为下划线，数字开头补前缀；
+-- 规则须与 tools/GenDll.hs 生成的头文件一致。
 symbolOf :: String -> String
 symbolOf = fixLead . squeeze . map conv
   where
@@ -65,9 +47,7 @@ symbolOf = fixLead . squeeze . map conv
       | c >= '0' && c <= '9' = '_' : s
     fixLead s = s
 
--- ---------------------------------------------------------------------------
--- UTF-8 ⇄ String（不依赖 bytestring / GHC 内部模块，纯 base 实现）
--- ---------------------------------------------------------------------------
+-- UTF-8 ⇄ String，纯 base 实现，避免 DLL 额外链接 bytestring。
 
 foreign import ccall unsafe "string.h strlen"
   c_strlen :: CString -> IO CSize
@@ -117,7 +97,6 @@ decodeUtf8 = go
 
     isCont wbyte = wbyte >= 0x80 && wbyte <= 0xBF
 
--- | 读一个 C 字符串（UTF-8）。@NULL@ 视为空串。
 peekUtf8 :: CString -> IO String
 peekUtf8 cs
   | cs == nullPtr = pure ""
@@ -126,7 +105,7 @@ peekUtf8 cs
       ws <- peekArray (fromIntegral n) (castPtr cs)
       pure (decodeUtf8 ws)
 
--- | 分配一个 UTF-8 C 字符串（malloc，长度含结尾 0）。
+-- 返回 malloc 内存；调用方负责 EXPANDER2_FREE，长度含结尾 0。
 newUtf8 :: String -> IO CString
 newUtf8 s = do
   let ws = encodeUtf8 s ++ [0]
@@ -134,10 +113,8 @@ newUtf8 s = do
   pokeArray (castPtr p) ws
   pure p
 
--- ---------------------------------------------------------------------------
--- 错误槽位（errno 风格）
--- ---------------------------------------------------------------------------
-
+-- 进程级错误槽。只做整串覆盖写，读侧复制出独立 String，因此用
+-- unsafePerformIO 持有单个 IORef 即可，不需要加锁。
 {-# NOINLINE errSlot #-}
 errSlot :: IORef String
 errSlot = unsafePerformIO (newIORef "")
@@ -154,11 +131,8 @@ forceEither :: Either String String -> Either String String
 forceEither (Left e) = Left (forceStr e)
 forceEither (Right s) = Right (forceStr s)
 
--- ---------------------------------------------------------------------------
 -- 展开
--- ---------------------------------------------------------------------------
 
--- | 记号 id + 模式（0=fs，1=alter）+ 输入文本 -> 结果（失败 @NULL@）。
 expandWith :: String -> Int -> CString -> Int -> Int -> IO CString
 expandWith ident mode cs term param = do
   text <- peekUtf8 cs
@@ -178,9 +152,7 @@ expandWith ident mode cs term param = do
       pure nullPtr
     Right (Right out) -> newUtf8 out
 
--- ---------------------------------------------------------------------------
 -- 注册表自省
--- ---------------------------------------------------------------------------
 
 notationAt :: CInt -> Maybe Notation
 notationAt i
@@ -251,9 +223,7 @@ backendName = "ncg"
 cBuild :: IO CString
 cBuild = newUtf8 ("expander2.haskell/dll " ++ dllVersion ++ " backend=" ++ backendName)
 
--- ---------------------------------------------------------------------------
 -- C 入口（名字即 ABI，不要改）
--- ---------------------------------------------------------------------------
 
 foreign export ccall "EXPANDER2_EXPAND"
   cExpand :: CString -> CInt -> CInt -> CInt -> CString -> IO CString

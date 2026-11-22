@@ -7,7 +7,6 @@ import qualified Data.Map.Strict as Map
 import OmegaY.Matrix
 import OmegaY.Fam.Bmlike.Share
 
--- | 对外入口：BSMNotation::expand_text。
 expandText :: String -> Int -> String
 expandText text term =
   case parseBm text of
@@ -18,11 +17,8 @@ expandText text term =
           matrixToBmString
             (bsmExpand (beMat e) (if term < 1 then 1 else term))
 
--- ---------------------------------------------------------------------
-
 type AscMem = Map.Map (Int, Int) Bool
 
--- | ascending(r,x,y)，对齐 BSM.ts（memo 以 (x,y) 为键）。
 ascending :: [[Int]] -> [Int] -> AscMem -> Int -> Int -> Int
           -> (AscMem, Bool)
 ascending pTab roots mem r x y
@@ -38,7 +34,6 @@ ascending pTab roots mem r x y
                      in ascending pTab roots mem r p y
            in (Map.insert (x, y) v mem1, v)
 
--- | delta：末列相对根列 r 的增量；LNZ 行额外减 1。
 delta :: Matrix -> Int -> Int -> Int -> [Int]
 delta m endCol r lnz =
   [ if y < lnz
@@ -49,7 +44,6 @@ delta m endCol r lnz =
   | y <- [0 .. matRows m - 1]
   ]
 
--- | 复制 [r, end_col) 段 n 次，第 a 段按 a*delta 仅在 ascending 行上加。
 expansion :: Matrix -> Int -> Int -> Int -> [Int] -> [[Int]] -> [Int]
           -> Matrix
 expansion m r n endCol del pTab roots =
@@ -72,7 +66,6 @@ expansion m r n endCol del pTab roots =
         let (mm', v) = ascending pTab roots mm r x y
          in (mm', ys ++ [matAt m y x + (if v then a * (del !! y) else 0)])
 
--- | expansion(r,1) 后再追加提升后的末列。
 expansionAppend :: Matrix -> Int -> Int -> [Int] -> [[Int]] -> [Int]
                 -> Matrix
 expansionAppend m r endCol del pTab roots =
@@ -89,7 +82,6 @@ expansionAppend m r endCol del pTab roots =
       let (mm', v) = ascending pTab roots mm r endCol y
        in (mm', ys ++ [matAt m y endCol + (if v then del !! y else 0)])
 
--- | BSM.ts expand。
 bsmExpand :: Matrix -> Int -> Matrix
 bsmExpand input term =
   let m = standardizeMatrix 0 input
