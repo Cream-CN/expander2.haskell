@@ -62,6 +62,36 @@ function Get-ProfileDesc([string]$name) {
   }
 }
 
+# --- 子进程调用 ---------------------------------------------------------
+
+# 跑子宿主并把它 stdout/stderr 都当普通文本上屏，返回退出码。
+# 不能直接写 `& $hostExe @argList 2>&1 | Out-Host`：Windows PowerShell 5.1 里，
+# 子进程只要往 stderr 写一行（ghc 的进度/警告都在 stderr），
+# $ErrorActionPreference='Stop' 就会抛 NativeCommandError 中断构建。
+function Invoke-Native {
+  param([Parameter(Mandatory = $true)][string]$Exe, [string[]]$Arguments = @())
+  $old = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    & $Exe @Arguments 2>&1 | ForEach-Object {
+      $line = "$_"
+      # Windows PowerShell 5.1 会把 native stderr 拆成多条 ErrorRecord，其中一条
+      # 只剩异常类型名，直接上屏会污染构建日志，过滤掉。
+      if ($line -ne 'System.Management.Automation.RemoteException') { Write-Host $line }
+    }
+    return $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $old
+  }
+}
+
+function Get-HostExe {
+  $hostExe = Join-Path $PSHOME 'pwsh.exe'
+  if (-not (Test-Path -LiteralPath $hostExe)) { $hostExe = Join-Path $PSHOME 'powershell.exe' }
+  if (-not (Test-Path -LiteralPath $hostExe)) { $hostExe = 'powershell.exe' }
+  return $hostExe
+}
+
 # --- 状态 ---------------------------------------------------------------
 
 $catalog = Get-ProfileCatalog
@@ -111,9 +141,7 @@ function Invoke-Build([hashtable]$extra) {
     else { $argList += "-$k"; $argList += [string]$v }   # 空串也要原样传（RtsOpts 靠它表示“不传”）
   }
 
-  $hostExe = Join-Path $PSHOME 'pwsh.exe'
-  if (-not (Test-Path -LiteralPath $hostExe)) { $hostExe = Join-Path $PSHOME 'powershell.exe' }
-  if (-not (Test-Path -LiteralPath $hostExe)) { $hostExe = 'powershell.exe' }
+  $hostExe = Get-HostExe
 
   Write-Host ''
   Write-Host ('[menu] {0}' -f (Get-StateLine)) -ForegroundColor DarkGray
@@ -122,9 +150,7 @@ function Invoke-Build([hashtable]$extra) {
 
   Push-Location -LiteralPath $script:root
   try {
-    # Out-Host：子进程的输出直接上屏，不混进函数返回值（否则会把退出码冲掉）
-    & $hostExe @argList 2>&1 | Out-Host
-    $code = $LASTEXITCODE
+    $code = Invoke-Native -Exe $hostExe -Arguments $argList
   } finally {
     Pop-Location
   }
@@ -132,13 +158,6 @@ function Invoke-Build([hashtable]$extra) {
   if ($code -eq 0) { Write-Host '[menu] 构建成功' -ForegroundColor Green }
   else { Write-Host "[menu] 构建失败（退出码 $code），修好后再试" -ForegroundColor Red }
   return $code
-}
-
-function Get-HostExe {
-  $hostExe = Join-Path $PSHOME 'pwsh.exe'
-  if (-not (Test-Path -LiteralPath $hostExe)) { $hostExe = Join-Path $PSHOME 'powershell.exe' }
-  if (-not (Test-Path -LiteralPath $hostExe)) { $hostExe = 'powershell.exe' }
-  return $hostExe
 }
 
 # --- 调用 build-dll.ps1（DLL：normal / compat / all） ----------------------
@@ -168,8 +187,7 @@ function Invoke-Dll([hashtable]$extra) {
 
   Push-Location -LiteralPath $script:root
   try {
-    & $hostExe @argList 2>&1 | Out-Host
-    $code = $LASTEXITCODE
+    $code = Invoke-Native -Exe $hostExe -Arguments $argList
   } finally {
     Pop-Location
   }
@@ -210,8 +228,7 @@ function Invoke-All([hashtable]$extra) {
 
   Push-Location -LiteralPath $script:root
   try {
-    & $hostExe @argList 2>&1 | Out-Host
-    $code = $LASTEXITCODE
+    $code = Invoke-Native -Exe $hostExe -Arguments $argList
   } finally {
     Pop-Location
   }

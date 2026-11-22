@@ -1,4 +1,4 @@
-<#
+﻿<#
   expander2.haskell - 一键全部构建入口（主程序 + 交互式壳子 + DLL）
 
     .\build-all.ps1                  # 主程序 + 壳子 + 两个 DLL 变体（normal/compat）
@@ -60,8 +60,17 @@ function Invoke-BuildScript {
   Write-Host ''
   Write-Host ('==== [{0}] {1} ====' -f $Label, (Split-Path -Leaf $Script)) -ForegroundColor Cyan
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
-  & $Script @ParamHash
-  $code = $LASTEXITCODE
+  # 子脚本正常时会用 exit 留下退出码；万一它抛出终止错误（例如参数校验失败），
+  # 这里接住，转成退出码往上走，而不是让整个 all 构建被异常带崩。
+  $code = 1
+  try {
+    & $Script @ParamHash
+    $code = $LASTEXITCODE
+  } catch {
+    Write-Host ''
+    Write-Host ("[err] $Label 抛出异常：" + $_.Exception.Message) -ForegroundColor Red
+    $code = 1
+  }
   $sw.Stop()
   Write-Host ('==== [{0}] 退出码 {1}，用时 {2:N1} s ====' -f $Label, $code, $sw.Elapsed.TotalSeconds) -ForegroundColor DarkGray
   if ($code -ne 0) { Fail "$Label 构建失败（退出码 $code）" }

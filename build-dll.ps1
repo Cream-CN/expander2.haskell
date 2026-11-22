@@ -1,4 +1,4 @@
-<#
+﻿<#
   expander2.haskell - DLL 构建入口（两个产物，一套 ABI）
 
     .\build-dll.ps1                     # 两个都建：
@@ -32,7 +32,108 @@ $script:root = [System.IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\', '/')
 function Fail([string]$msg) {
   Write-Host ''
   Write-Host "[err] $msg" -ForegroundColor Red
+  if ($null -ne $script:logPath -and (Test-Path -LiteralPath $script:logPath)) {
+    Write-Host ('[log] 完整日志：{0}' -f (Get-RelPath $script:logPath)) -ForegroundColor DarkGray
+    Write-Host '[log] 最后 30 行：' -ForegroundColor DarkGray
+    Get-Content -LiteralPath $script:logPath -Tail 30 | ForEach-Object { Write-Host $_ }
+  }
   exit 1
+}
+
+function Get-RelPath([string]$full) {
+  if ($null -eq $full) { return '' }
+  $prefix = $script:root + [System.IO.Path]::DirectorySeparatorChar
+  if ($full.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) { return $full.Substring($prefix.Length) }
+  return $full
+}
+
+# --- 构建日志 -------------------------------------------------------------
+# GHC / 链接器 / cc 的输出全部写进 logs\dll-<时间戳>.log；控制台只留进度行和错误行。
+# 警告（GHC 9.14 默认开的 -Wx-partial 一条占 8 行）不再刷屏，只统计条数。
+
+$script:logDir = Join-Path $script:root 'logs'
+if (-not (Test-Path -LiteralPath $script:logDir)) { New-Item -ItemType Directory -Path $script:logDir -Force | Out-Null }
+$script:logPath = Join-Path $script:logDir ('dll-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.log')
+$script:logBuf = New-Object 'System.Collections.Generic.List[string]'
+$script:logEnc = New-Object System.Text.UTF8Encoding($false)
+$script:logWarnings = 0
+$script:logErrors = 0
+
+function Flush-BuildLog {
+  if ($null -eq $script:logPath) { return }
+  if ($script:logBuf.Count -eq 0) { return }
+  $text = (@($script:logBuf) -join "`r`n") + "`r`n"
+  [System.IO.File]::AppendAllText($script:logPath, $text, $script:logEnc)
+  $script:logBuf.Clear()
+}
+
+function Write-BuildLog {
+  param([string]$Line, [switch]$Echo)
+  if ($null -eq $script:logPath) { return }
+  $script:logBuf.Add($Line)
+  if ($script:logBuf.Count -ge 200) { Flush-BuildLog }
+  if ($Echo) { Write-Host $Line }
+}
+
+function Test-ConsoleLine([string]$line) {
+  if ($line -match '^\[\s*\d+\s+of\s+\d+\]\s+(Compiling|Linking|Checking)') { return $true }
+  if ($line -match ':\d+:\d+:\s+(fatal\s+)?error') { return $true }
+  if ($line -match '^(ghc(\.exe)?|ghc-[0-9][\w.]*|ld|lld|clang|gcc|objdump|<command line>|.*: fatal error)') { return $true }
+  if ($line -match 'Could not find module|Failed to load interface|undefined reference|Is not a .o file') { return $true }
+  return $false
+}
+
+# 调外部程序：输出全部进日志，控制台只放行进度行 / 错误行，返回退出码。
+# 不能直接写 `& $exe @args 2>&1`：Windows PowerShell 5.1 里，只要子进程往 stderr
+# 写一行（ghc / gcc 的进度和警告都走 stderr），$ErrorActionPreference='Stop' 就会
+# 抛 NativeCommandError，把构建当场打断。这里临时把 EA 降成 Continue。
+# -Raw：连被过滤的行也上屏（跑生成器 / 跑示例这种“真的要看输出”的调用用）。
+function Invoke-Native {
+  param([Parameter(Mandatory = $true)][string]$Exe, [string[]]$Arguments = @(), [switch]$Raw)
+  $old = $ErrorActionPreference
+  $tail = New-Object 'System.Collections.Generic.List[string]'
+  try {
+    $ErrorActionPreference = 'Continue'
+    & $Exe @Arguments 2>&1 | ForEach-Object {
+      $line = "$_"
+      # Windows PowerShell 5.1 会把 native stderr 拆成多条 ErrorRecord，其中一条
+      # 只剩异常类型名，直接上屏会污染构建日志，过滤掉。
+      if ($line -eq 'System.Management.Automation.RemoteException') { return }
+      Write-BuildLog $line
+      if ($line -match ':\s+warning:') { $script:logWarnings++ }
+      elseif ($line -match ':\d+:\d+:\s+(fatal\s+)?error') { $script:logErrors++ }
+      if ($tail.Count -ge 40) { $tail.RemoveAt(0) }
+      $tail.Add($line)
+      if ($Raw -or (Test-ConsoleLine $line)) { Write-Host $line }
+    }
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+      Write-Host ''
+      Write-Host ("[err] 外部命令退出码 $code：$Exe") -ForegroundColor Red
+      if ($tail.Count -gt 0) {
+        Write-Host ('[err] 最后 {0} 行（完整日志：{1}）：' -f $tail.Count, (Get-RelPath $script:logPath)) -ForegroundColor DarkGray
+        foreach ($t in $tail) { Write-Host $t }
+      }
+    }
+    return $code
+  } finally {
+    Flush-BuildLog
+    $ErrorActionPreference = $old
+  }
+}
+
+# 同上，但把输出收成纯文本，返回 @{ ExitCode; Text }（探针日志 / objdump 用）
+function Invoke-NativeText {
+  param([Parameter(Mandatory = $true)][string]$Exe, [string[]]$Arguments = @())
+  $old = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    $lines = & $Exe @Arguments 2>&1 | ForEach-Object { "$_" } |
+      Where-Object { $_ -ne 'System.Management.Automation.RemoteException' }
+    return @{ ExitCode = $LASTEXITCODE; Text = (@($lines) -join [Environment]::NewLine) }
+  } finally {
+    $ErrorActionPreference = $old
+  }
 }
 
 function Resolve-Inside([string]$rel) {
@@ -99,8 +200,8 @@ function Test-FlagSet {
     $argv = @($Flags)
     if ($argv -notcontains '--make') { $argv += '--make' }
     $argv += @('-outputdir', $tmp, '-o', $exe, $src)
-    $log = (& $GhcExe @argv 2>&1 | Out-String)
-    return @{ Ok = ($LASTEXITCODE -eq 0); Log = $log }
+    $r = Invoke-NativeText -Exe $GhcExe -Arguments $argv
+    return @{ Ok = ($r.ExitCode -eq 0); Log = $r.Text }
   } catch {
     return @{ Ok = $false; Log = $_.Exception.Message }
   } finally {
@@ -162,7 +263,7 @@ function Find-Compiler([string]$GhcExe) {
 function Get-DllExports {
   param([string]$DllPath, [string]$Objdump)
   if (-not $Objdump) { return $null }
-  $dump = (& $Objdump -p $DllPath 2>&1) | Out-String
+  $dump = (Invoke-NativeText -Exe $Objdump -Arguments @('-p', $DllPath)).Text
   $lines = $dump -split "`r`n|`n"
   $start = -1
   for ($i = 0; $i -lt $lines.Count; $i++) {
@@ -204,7 +305,7 @@ if ($Ghc -ne '') {
     $ghcPath = $cmd.Source
   }
 }
-$ghcVersion = (& $ghcPath --version 2>&1 | Out-String).Trim()
+$ghcVersion = (Invoke-NativeText -Exe $ghcPath -Arguments @('--version')).Text.Trim()
 
 if ($Jobs -eq 0) { $Jobs = Get-AutoJobs }
 
@@ -331,14 +432,27 @@ function Test-GenNeeded {
   return $false
 }
 
+# --- 日志头 ---------------------------------------------------------------
+
+Write-BuildLog ''
+Write-BuildLog ('=== dll build {0} ===' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+Write-BuildLog ('ghc     : {0}' -f $ghcVersion)
+Write-BuildLog ('which   : {0}' -f $Which)
+Write-BuildLog ('jobs    : {0}' -f $Jobs)
+foreach ($p in $plan) {
+  Write-BuildLog ('variant : {0} profile={1} llvm={2}' -f $p.Name, $p.Profile, $p.Llvm)
+  Write-BuildLog ('          flags: {0}' -f ($p.Flags -join ' '))
+}
+Write-Host ('[log] 编译器输出全部重定向到 {0}（控制台只留进度行和错误行）' -f (Get-RelPath $script:logPath)) -ForegroundColor DarkGray
+
 if (Test-GenNeeded) {
   Write-Host '[gen] 编译导出名生成器 tools/GenDll.hs ...'
+  Write-BuildLog '[gen] 编译导出名生成器 tools/GenDll.hs ...'
   $genArgs = @('-O0', '-w', '-isrc', '-itools', '-outputdir', $genObjDir, '-o', $genExe,
                (Join-Path $script:root 'tools\GenDll.hs'))
   Push-Location -LiteralPath $script:root
   try {
-    & $ghcPath @genArgs 2>&1 | ForEach-Object { Write-Host $_ }
-    $exit = $LASTEXITCODE
+    $exit = Invoke-Native -Exe $ghcPath -Arguments $genArgs
   } finally {
     Pop-Location
   }
@@ -348,8 +462,8 @@ if (Test-GenNeeded) {
 }
 
 Write-Host '[gen] 生成 Expander2Exports.hs / expander2.h / symbols.txt ...'
-& $genExe ($genDir + '\') 2>&1 | ForEach-Object { Write-Host $_ }
-if ($LASTEXITCODE -ne 0) { Fail '生成器运行失败' }
+$genExit = Invoke-Native -Exe $genExe -Arguments @($genDir + '\') -Raw
+if ($genExit -ne 0) { Fail '生成器运行失败' }
 foreach ($f in @($generatedHs, (Join-Path $genDir 'expander2.h'), $symbolsTxt)) {
   if (-not (Test-Path -LiteralPath $f)) { Fail "生成器没有产出 $f" }
 }
@@ -420,11 +534,13 @@ foreach ($p in $plan) {
   Write-Host ''
   Write-Host "[build] $($p.Name) -> $($p.Dll)"
   Write-Host "[build] $cmdLine"
+  Write-BuildLog ''
+  Write-BuildLog ("[build] $($p.Name) -> $($p.Dll)")
+  Write-BuildLog ('[build] ' + $cmdLine)
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
   Push-Location -LiteralPath $script:root
   try {
-    & $ghcPath @ghcArgs 2>&1 | ForEach-Object { Write-Host $_ }
-    $exit = $LASTEXITCODE
+    $exit = Invoke-Native -Exe $ghcPath -Arguments $ghcArgs
   } finally {
     Pop-Location
   }
@@ -447,14 +563,15 @@ foreach ($p in $plan) {
   }
 
   $mb = (Get-Item -LiteralPath $p.Dll).Length / 1MB
-  Write-Host ('[done] {0}  {1:N2} MB  {2:N1} s' -f $p.Dll, $mb, $sw.Elapsed.TotalSeconds)
+  Write-BuildLog ('[done] {0}  {1:N2} MB  {2:N1} s' -f $p.Dll, $mb, $sw.Elapsed.TotalSeconds) -Echo
   if (Test-Path -LiteralPath ($p.Dll + '.a')) {
-    Write-Host ('[done] {0}.a（导入库，给 C 链接用）' -f $p.Dll)
+    Write-BuildLog ('[done] {0}.a（导入库，给 C 链接用）' -f $p.Dll) -Echo
   }
 }
 
 Write-Host ''
 Write-Host '[ok] DLL 构建完成'
+Write-BuildLog '[ok] DLL 构建完成'
 
 # --- C 示例 ---------------------------------------------------------------
 
@@ -472,8 +589,7 @@ if ($Example) {
     Write-Host "[example] $cmdLine"
     Push-Location -LiteralPath $incDir
     try {
-      & $cc @ccArgs 2>&1 | ForEach-Object { Write-Host $_ }
-      $ccExit = $LASTEXITCODE
+      $ccExit = Invoke-Native -Exe $cc -Arguments $ccArgs
     } finally {
       Pop-Location
     }
@@ -481,8 +597,8 @@ if ($Example) {
     Write-Host "[example] 运行 $exe"
     Push-Location -LiteralPath $incDir
     try {
-      & $exe 2>&1 | ForEach-Object { Write-Host $_ }
-      $runExit = $LASTEXITCODE
+      # 跑的是示例程序，它自己的输出要原样看到，所以 -Raw
+      $runExit = Invoke-Native -Exe $exe -Raw
     } finally {
       Pop-Location
     }
@@ -506,8 +622,11 @@ if (-not $NoDeploy) {
       if (Test-Path -LiteralPath $f) {
         $leaf = Split-Path -Leaf $f
         Copy-Item -LiteralPath $f -Destination (Join-Path $deployDir $leaf) -Force
-        Write-Host ('[deploy] {0} -> Release\{0}' -f $leaf)
+        Write-BuildLog ('[deploy] {0} -> Release\{0}' -f $leaf) -Echo
       }
     }
   }
 }
+
+Flush-BuildLog
+Write-Host ('[log] 警告 {0} 条 / 错误 {1} 条；完整输出：{2}' -f $script:logWarnings, $script:logErrors, (Get-RelPath $script:logPath)) -ForegroundColor DarkGray

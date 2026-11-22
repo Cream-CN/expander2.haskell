@@ -42,7 +42,115 @@ $script:root = [System.IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\', '/')
 function Fail([string]$msg) {
   Write-Host ''
   Write-Host "[err] $msg" -ForegroundColor Red
+  if ($null -ne $script:logPath -and (Test-Path -LiteralPath $script:logPath)) {
+    Write-Host ('[log] 完整日志：{0}' -f (Get-RelPath $script:logPath)) -ForegroundColor DarkGray
+    Write-Host '[log] 最后 30 行：' -ForegroundColor DarkGray
+    Get-Content -LiteralPath $script:logPath -Tail 30 | ForEach-Object { Write-Host $_ }
+  }
   exit 1
+}
+
+# 取相对仓库根的路径，日志里显示短一点
+function Get-RelPath([string]$full) {
+  if ($null -eq $full) { return '' }
+  $prefix = $script:root + [System.IO.Path]::DirectorySeparatorChar
+  if ($full.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) { return $full.Substring($prefix.Length) }
+  return $full
+}
+
+# --- 构建日志 -------------------------------------------------------------
+# GHC 的进度 / 警告 / 错误全量写进 logs\build-<时间戳>.log；
+# 控制台只留进度行（[N of M] Compiling/Linking）和 error 相关行。
+# 这样 -Wx-partial 那几百条警告（每条占 8 行、文案里还带 "error"）就不再刷屏，
+# 真正的错误一眼能看到，排查时再去日志里翻全文。
+
+$script:logDir = Join-Path $script:root 'logs'
+if (-not (Test-Path -LiteralPath $script:logDir)) { New-Item -ItemType Directory -Path $script:logDir -Force | Out-Null }
+$script:logPath = Join-Path $script:logDir ('build-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.log')
+$script:logBuf = New-Object 'System.Collections.Generic.List[string]'
+$script:logEnc = New-Object System.Text.UTF8Encoding($false)
+$script:logWarnings = 0
+$script:logErrors = 0
+
+function Flush-BuildLog {
+  if ($null -eq $script:logPath) { return }
+  if ($script:logBuf.Count -eq 0) { return }
+  $text = (@($script:logBuf) -join "`r`n") + "`r`n"
+  [System.IO.File]::AppendAllText($script:logPath, $text, $script:logEnc)
+  $script:logBuf.Clear()
+}
+
+# 写一行进日志；-Echo 时同时上屏（脚本自己的提示行用）。
+# 缓存到 200 行刷一次盘，既不用每行开关文件，长时间编译时日志也是近实时的。
+function Write-BuildLog {
+  param([string]$Line, [switch]$Echo)
+  if ($null -eq $script:logPath) { return }
+  $script:logBuf.Add($Line)
+  if ($script:logBuf.Count -ge 200) { Flush-BuildLog }
+  if ($Echo) { Write-Host $Line }
+}
+
+# 编译器输出里哪些行值得留在控制台：进度 + 错误；warning 一律只进日志
+function Test-ConsoleLine([string]$line) {
+  if ($line -match '^\[\s*\d+\s+of\s+\d+\]\s+(Compiling|Linking|Checking)') { return $true }
+  if ($line -match ':\d+:\d+:\s+(fatal\s+)?error') { return $true }
+  if ($line -match '^(ghc(\.exe)?|ghc-[0-9][\w.]*|ld|lld|clang|gcc|<command line>|.*: fatal error)') { return $true }
+  if ($line -match 'Could not find module|Failed to load interface|undefined reference|Is not a .o file') { return $true }
+  return $false
+}
+
+# 调外部程序：输出全部进日志，控制台只放行进度行 / 错误行，返回退出码。
+# 不能直接写 `& $exe @args 2>&1`：Windows PowerShell 5.1 里，只要子进程往 stderr
+# 写一行（ghc 的进度和警告都走 stderr），$ErrorActionPreference='Stop' 就会抛
+# NativeCommandError，把构建当场打断。这里临时把 EA 降成 Continue，退出码自己看。
+# -Raw：连被过滤的行也上屏（跑程序而不是编译时用）。
+function Invoke-Native {
+  param([Parameter(Mandatory = $true)][string]$Exe, [string[]]$Arguments = @(), [switch]$Raw)
+  $old = $ErrorActionPreference
+  $tail = New-Object 'System.Collections.Generic.List[string]'
+  try {
+    $ErrorActionPreference = 'Continue'
+    & $Exe @Arguments 2>&1 | ForEach-Object {
+      $line = "$_"
+      # Windows PowerShell 5.1 会把 native stderr 拆成多条 ErrorRecord，其中一条
+      # 只剩异常类型名，直接上屏会污染构建日志，过滤掉。
+      if ($line -eq 'System.Management.Automation.RemoteException') { return }
+      Write-BuildLog $line
+      if ($line -match ':\s+warning:') { $script:logWarnings++ }
+      elseif ($line -match ':\d+:\d+:\s+(fatal\s+)?error') { $script:logErrors++ }
+      # 失败时要把现场打出来，所以顺带留最后 40 行
+      if ($tail.Count -ge 40) { $tail.RemoveAt(0) }
+      $tail.Add($line)
+      if ($Raw -or (Test-ConsoleLine $line)) { Write-Host $line }
+    }
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+      Write-Host ''
+      Write-Host ("[err] 外部命令退出码 $code：$Exe") -ForegroundColor Red
+      if ($tail.Count -gt 0) {
+        Write-Host ('[err] 最后 {0} 行（完整日志：{1}）：' -f $tail.Count, (Get-RelPath $script:logPath)) -ForegroundColor DarkGray
+        foreach ($t in $tail) { Write-Host $t }
+      }
+    }
+    return $code
+  } finally {
+    Flush-BuildLog
+    $ErrorActionPreference = $old
+  }
+}
+
+# 同上，但把输出收成纯文本，返回 @{ ExitCode; Text }（探针日志 / --version / objdump 用）
+function Invoke-NativeText {
+  param([Parameter(Mandatory = $true)][string]$Exe, [string[]]$Arguments = @())
+  $old = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    $lines = & $Exe @Arguments 2>&1 | ForEach-Object { "$_" } |
+      Where-Object { $_ -ne 'System.Management.Automation.RemoteException' }
+    return @{ ExitCode = $LASTEXITCODE; Text = (@($lines) -join [Environment]::NewLine) }
+  } finally {
+    $ErrorActionPreference = $old
+  }
 }
 
 function Resolve-Inside([string]$rel) {
@@ -111,8 +219,8 @@ function Test-FlagSet {
     $argv = @($Flags)
     if ($argv -notcontains '--make') { $argv += '--make' }
     $argv += @('-outputdir', $tmp, '-o', $exe, $src)
-    $log = (& $GhcExe @argv 2>&1 | Out-String)
-    return @{ Ok = ($LASTEXITCODE -eq 0); Log = $log }
+    $r = Invoke-NativeText -Exe $GhcExe -Arguments $argv
+    return @{ Ok = ($r.ExitCode -eq 0); Log = $r.Text }
   } catch {
     return @{ Ok = $false; Log = $_.Exception.Message }
   } finally {
@@ -157,7 +265,7 @@ if ($Ghc -ne '') {
   }
 }
 
-$ghcVersion = (& $ghcPath --version 2>&1 | Out-String).Trim()
+$ghcVersion = (Invoke-NativeText -Exe $ghcPath -Arguments @('--version')).Text.Trim()
 
 $profileFlags = @($defs.Table[$Profile] -split '\s+') | Where-Object { $_.Length -gt 0 }
 
@@ -216,7 +324,7 @@ function Publish-One([string]$file) {
   if (-not (Test-Path -LiteralPath $dstDir)) { New-Item -ItemType Directory -Path $dstDir -Force | Out-Null }
   $dst = Join-Path $dstDir (Split-Path -Leaf $file)
   Copy-Item -LiteralPath $file -Destination $dst -Force
-  Write-Host ('[deploy] {0} -> {1}' -f (Split-Path -Leaf $file), (Join-Path $deployDirName (Split-Path -Leaf $file)))
+  Write-BuildLog ('[deploy] {0} -> {1}' -f (Split-Path -Leaf $file), (Join-Path $deployDirName (Split-Path -Leaf $file))) -Echo
 }
 
 # --- 清理模式 -------------------------------------------------------------
@@ -324,12 +432,12 @@ function Build-One {
   $cmdLine = ($ghcArgs | ForEach-Object { if ($_ -match '[ ]') { '"{0}"' -f $_ } else { $_ } }) -join ' '
 
   Write-Host "[build] $cmdLine"
+  Write-BuildLog ('[build] ' + $cmdLine)
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
   # -isrc / -iapp 是相对路径，必须在仓库根目录下调用 ghc（用户从别的目录执行本脚本也能编）
   Push-Location -LiteralPath $script:root
   try {
-    & $ghcPath @ghcArgs 2>&1 | ForEach-Object { Write-Host $_ }
-    $exit = $LASTEXITCODE
+    $exit = Invoke-Native -Exe $ghcPath -Arguments $ghcArgs
   } finally {
     Pop-Location
   }
@@ -340,7 +448,7 @@ function Build-One {
   Publish-One -file $exe
 
   $mb = (Get-Item -LiteralPath $exe).Length / 1MB
-  Write-Host ('[done] {0}  {1:N2} MB  {2:N1} s' -f $exe, $mb, $sw.Elapsed.TotalSeconds)
+  Write-BuildLog ('[done] {0}  {1:N2} MB  {2:N1} s' -f $exe, $mb, $sw.Elapsed.TotalSeconds) -Echo
 }
 
 if ($Info) {
@@ -356,5 +464,20 @@ if ($Info) {
 }
 
 Write-Host ('[ghc] {0}' -f $ghcVersion)
+Write-BuildLog ''
+Write-BuildLog ('=== build {0} ===' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+Write-BuildLog ('ghc     : {0}' -f $ghcVersion)
+Write-BuildLog ('profile : {0}' -f $Profile)
+Write-BuildLog ('llvm    : {0}' -f $(if ($useLlvm) { 'on' } else { 'off' }))
+Write-BuildLog ('jobs    : {0}' -f $Jobs)
+Write-BuildLog ('targets : {0}' -f ($targets -join ', '))
+Write-BuildLog ('flags   : {0}' -f ($allFlags -join ' '))
+Write-Host ('[log] 编译器输出全部重定向到 {0}（控制台只留进度行和错误行）' -f (Get-RelPath $script:logPath)) -ForegroundColor DarkGray
+
 foreach ($t in $targets) { Build-One -Kind $t -Suffix $suffix -Flags $allFlags }
-Write-Host "[ok] profile=$Profile llvm=$(if ($useLlvm) { 'on' } else { 'off' }) jobs=$Jobs"
+
+$okLine = "[ok] profile=$Profile llvm=$(if ($useLlvm) { 'on' } else { 'off' }) jobs=$Jobs"
+Write-Host $okLine
+Write-BuildLog $okLine
+Flush-BuildLog
+Write-Host ('[log] 警告 {0} 条 / 错误 {1} 条；完整输出：{2}' -f $script:logWarnings, $script:logErrors, (Get-RelPath $script:logPath)) -ForegroundColor DarkGray
