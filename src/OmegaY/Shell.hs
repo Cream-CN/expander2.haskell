@@ -30,6 +30,8 @@ import Data.List (dropWhileEnd, intercalate, isInfixOf, isPrefixOf, nub, transpo
 import Data.Maybe (fromMaybe, isNothing)
 import Data.Time.Clock (diffUTCTime, getCurrentTime)
 import Numeric (showHex)
+import qualified OmegaY.Banner as Banner
+import qualified OmegaY.License as License
 import OmegaY.Notation.Types
 import OmegaY.Parse (parseIntStrict)
 import OmegaY.Registry (allNotations, byId, missingIds)
@@ -513,6 +515,7 @@ shortUsage =
     , "  batch <id> [文件]        逐行展开文件（省略则读 stdin），输出 行号<TAB>输入<TAB>结果"
     , "  repl                     进入交互式模式"
     , "  help / version           帮助 / 版本"
+    , "  license                  打印完整 GPLv3 许可证文本（编译期内嵌自 LICENSE）"
     , "选项:"
     , "  -m/--mode fs|alter       展开模式（默认 fs）"
     , "  -t/--term N              项数（默认 1）"
@@ -537,6 +540,7 @@ helpText =
     ++ "\n交互模式命令（行首为 : ）:\n"
     ++ unlines
       [ "  :help / :h / :?        显示本帮助"
+      , "  :license / :show license 打印完整 GPLv3 许可证文本（编译期内嵌）"
       , "  :list [过滤词]          列出全部记号（对齐表格，匹配 id / 名称 / 标签）"
       , "  :show [id|前缀]         查看记号元数据（缺省为当前记号）"
       , "  :use <id|前缀>          切换当前记号（唯一前缀可省略后半段）"
@@ -571,8 +575,9 @@ versionLine =
     ++ show (length allNotations + length missingIds)
     ++ " 个记号"
 
+-- | @--version@ 输出：许可证横幅 + 版本行。
 versionText :: String
-versionText = versionLine ++ "\n"
+versionText = Banner.startupBanner ++ versionLine ++ "\n"
 
 dieUsage :: String -> IO a
 dieUsage msg = do
@@ -600,6 +605,9 @@ dispatch c rest = case c of
   "interactive" -> repl
   "help" -> putStr helpText
   "version" -> putStr versionText
+  "license" -> putStr License.licenseText
+  "licence" -> putStr License.licenseText
+  "gpl" -> putStr License.licenseText
   _ -> dieUsage ("未知命令: " ++ c)
 
 matches :: Maybe String -> Maybe String -> Notation -> Bool
@@ -641,6 +649,7 @@ cmdList o pos = do
 
 cmdShow :: [String] -> IO ()
 cmdShow pos = case pos of
+  ("license" : _) -> putStr License.licenseText
   [] -> dieUsage "show 需要 <id>"
   (i : _) -> case resolveNotation i of
     Right n -> putStr (renderNotation n)
@@ -749,6 +758,7 @@ cmdBatch o pos = do
 
 repl :: IO ()
 repl = do
+  Banner.printBannerIfEnabled stdout
   putStrLn versionLine
   putStrLn "输入 :help 查看命令，:quit 退出；直接输入表达式即按当前设置展开。"
   putStr (renderStatus defaultSettings)
@@ -868,6 +878,9 @@ command st hist raw = do
     "help" -> putStr helpText >> pure (Just st, hist)
     "?" -> putStr helpText >> pure (Just st, hist)
     "version" -> putStr versionText >> pure (Just st, hist)
+    "license" -> putStr License.licenseText >> pure (Just st, hist)
+    "licence" -> putStr License.licenseText >> pure (Just st, hist)
+    "gpl" -> putStr License.licenseText >> pure (Just st, hist)
     "list" -> do
       listCmd rest
       pure (Just st, hist)
@@ -959,6 +972,7 @@ listCmd pat =
 
 showCmd :: Settings -> String -> IO ()
 showCmd st rest = case words rest of
+  ("license" : _) -> putStr License.licenseText
   [] -> putStr (renderNotation (nota st))
   (i : _) -> case resolveNotation i of
     Right n -> putStr (renderNotation n)
@@ -1186,10 +1200,14 @@ main = do
   args <- getArgs
   setupIO
   case args of
-    ["-h"] -> putStr helpText
-    ["--help"] -> putStr helpText
+    ["-h"] -> Banner.printBannerIfEnabled stdout >> putStr helpText
+    ["--help"] -> Banner.printBannerIfEnabled stdout >> putStr helpText
     ["--version"] -> putStr versionText
     [] -> do
       tty <- hIsTerminalDevice stdin
-      if tty then repl else dieUsage "缺少命令"
-    (c : rest) -> dispatch c rest
+      if tty
+        then repl
+        else Banner.announceCli >> dieUsage "缺少命令"
+    (c : rest) -> do
+      when (c `notElem` ["repl", "shell", "interactive"]) Banner.announceCli
+      dispatch c rest

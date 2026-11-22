@@ -3,9 +3,15 @@
 --   @expander2-hs@                       零参数 -> 直接进入交互会话（REPL）
 --   @expander2-hs -i@ / @--interactive@  显式进入交互会话
 --   @expander2-hs --list@
+--   @expander2-hs --license@            打印内嵌的完整 GPLv3 文本
 --   @expander2-hs <id> <fs|alter> <term> [param]@ ，表达式从 stdin 读入
+--
+--   启动时打印 GPLv3 许可与版权横幅（见 @OmegaY.Banner@）：交互式写 stdout，
+--   带数据的 CLI 调用写 stderr，以免污染对拍脚本解析 stdout。
 module Main (main) where
 
+import qualified OmegaY.Banner as Banner
+import qualified OmegaY.License as License
 import qualified OmegaY.Shell as Shell (repl)
 import OmegaY.Notation.Types (Caps (..), ExpandMode (..), Notation (..), expandNotation, uiExpand)
 import OmegaY.Registry (allNotations, byId, missingIds)
@@ -16,45 +22,51 @@ import System.IO (hPutStrLn, stderr)
 main :: IO ()
 main = do
   args <- getArgs
-  case args of
-    [] -> Shell.repl
-    ["-i"] -> Shell.repl
-    ["--interactive"] -> Shell.repl
-    ["--list"] ->
-      mapM_ (\n -> putStrLn (nId n ++ "\t" ++ nName n)) allNotations
-    ["--missing"] ->
-      mapM_ putStrLn missingIds
-    ["--params"] ->
-      mapM_ (\n -> putStrLn (nId n ++ "\t" ++ paramDesc (nParam n) ++ "\t" ++ capsDesc (nCaps n))) allNotations
-    ("--ui" : ident : modeStr : termStr : rest) -> do
-      text <- getContents
-      case byId ident of
-        Nothing -> putStrLn "ERR_NO_NOTATION" >> exitFailure
-        Just n ->
-          case uiExpand n (if modeStr == "alter" then FsAlter else Fs)
-                        termStr (case rest of (p : _) -> p; _ -> "0") text of
-            Left msg -> putStrLn ("ERR:" ++ esc msg)
-            Right out -> putStrLn out
-    (ident : modeStr : termStr : rest) -> do
-      text <- getContents
-      let term = read termStr :: Int
-          param = case rest of
-            (p : _) -> read p :: Int
-            _ -> 0
-          mode = if modeStr == "alter" then FsAlter else Fs
-      case byId ident of
-        Nothing -> putStrLn "ERR_NO_NOTATION" >> exitFailure
-        Just n ->
-          case expandNotation n mode text term param of
-            Left err -> putStrLn ("ERR:" ++ err)
-            Right out -> putStrLn out
-    _ -> do
-      hPutStrLn stderr "usage: expander2-hs                                   (无参数 = 交互会话)"
-      hPutStrLn stderr "       expander2-hs -i | --interactive               (显式进交互会话)"
-      hPutStrLn stderr "       expander2-hs <id> <fs|alter> <term> [param]  (text on stdin)"
-      hPutStrLn stderr "       expander2-hs --ui <id> <fs|alter> <termRaw> [paramRaw]"
-      hPutStrLn stderr "       expander2-hs --list"
-      exitFailure
+  if null args || args `elem` [["-i"], ["--interactive"]]
+    then Shell.repl
+    else Banner.announceCli >> runCli args
+
+-- | 非交互路径（标语已由 'main' 打到 stderr）。
+runCli :: [String] -> IO ()
+runCli args = case args of
+  ["--license"] ->
+    putStr License.licenseText
+  ["--list"] ->
+    mapM_ (\n -> putStrLn (nId n ++ "\t" ++ nName n)) allNotations
+  ["--missing"] ->
+    mapM_ putStrLn missingIds
+  ["--params"] ->
+    mapM_ (\n -> putStrLn (nId n ++ "\t" ++ paramDesc (nParam n) ++ "\t" ++ capsDesc (nCaps n))) allNotations
+  ("--ui" : ident : modeStr : termStr : rest) -> do
+    text <- getContents
+    case byId ident of
+      Nothing -> putStrLn "ERR_NO_NOTATION" >> exitFailure
+      Just n ->
+        case uiExpand n (if modeStr == "alter" then FsAlter else Fs)
+                      termStr (case rest of (p : _) -> p; _ -> "0") text of
+          Left msg -> putStrLn ("ERR:" ++ esc msg)
+          Right out -> putStrLn out
+  (ident : modeStr : termStr : rest) -> do
+    text <- getContents
+    let term = read termStr :: Int
+        param = case rest of
+          (p : _) -> read p :: Int
+          _ -> 0
+        mode = if modeStr == "alter" then FsAlter else Fs
+    case byId ident of
+      Nothing -> putStrLn "ERR_NO_NOTATION" >> exitFailure
+      Just n ->
+        case expandNotation n mode text term param of
+          Left err -> putStrLn ("ERR:" ++ err)
+          Right out -> putStrLn out
+  _ -> do
+    hPutStrLn stderr "usage: expander2-hs                                   (无参数 = 交互会话)"
+    hPutStrLn stderr "       expander2-hs -i | --interactive               (显式进交互会话)"
+    hPutStrLn stderr "       expander2-hs <id> <fs|alter> <term> [param]  (text on stdin)"
+    hPutStrLn stderr "       expander2-hs --ui <id> <fs|alter> <termRaw> [paramRaw]"
+    hPutStrLn stderr "       expander2-hs --list"
+    hPutStrLn stderr "       expander2-hs --license                            (完整 GPLv3 文本)"
+    exitFailure
 
 
 -- | 与 refui 预言机同款转义：换行 -> 字面 "\n"，反斜杠 -> "\\"。

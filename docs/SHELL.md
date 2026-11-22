@@ -23,6 +23,25 @@ make shell                         # Unix：-> .build-shell/expander2-shell
 ./.build-shell/expander2-shell.exe repl
 ```
 
+### 启动横幅（标志文本 + 构建信息 + GPLv3）
+
+两个入口启动时都会经由 `OmegaY.Banner` 打印标志文本、构建元信息与版权、许可信息：
+
+```
+λλ=Haskell
+构建时间  2026-11-22 05:27:09 UTC+0
+时间戳    1795325230
+工具链    GHC 9.14.1 · x86_64-mingw32
+```
+
+- `构建时间` / `时间戳`：TemplateHaskell 在本模块编译时取一次 `getCurrentTime`，两者同一秒；增量构建没重编 `OmegaY.Banner` 时不会刷新，全量重建才更新；
+- `工具链`：编译期 `ghc --numeric-version`（拿不到则退回 `System.Info.compilerVersion`）+ `arch-os`；
+- REPL / `--help` / `--version`：完整横幅写 **stdout**（`--version` 直接包含完整横幅）；
+- 数据式 CLI（`list` / `show` / `run` / `batch`，以及 `app/Main.hs` 的
+  `<id> <fs|alter> <term>` 调用）：只写 6 行短许可声明到 **stderr**，
+  stdout 保持纯结果，对拍脚本不受影响；
+- 设 `EXPANDER2_NO_BANNER=1`（或 `on` / `true` / `yes`）可完全静音。
+
 ## CLI
 
 | 命令 | 说明 |
@@ -32,6 +51,7 @@ make shell                         # Unix：-> .build-shell/expander2-shell
 | `run <id> [表达式]` | 展开一段表达式；省略表达式则从 stdin 读整块 |
 | `batch <id> [文件]` | 逐行展开文件（省略则读 stdin），输出 `行号<TAB>输入<TAB>结果` |
 | `repl` | 进入交互模式 |
+| `license` | 打印完整 GPLv3 文本（编译期内嵌自 `LICENSE`；`show license`、`--license` 等价） |
 
 选项：
 
@@ -79,6 +99,7 @@ make shell                         # Unix：-> .build-shell/expander2-shell
 | 命令 | 说明 |
 |---|---|
 | `:help` / `:h` / `:?` | 命令帮助 |
+| `:license` / `:show license` | 打印完整 GPLv3 文本（编译期内嵌） |
 | `:list [过滤词]` | 列出记号，与 CLI `list` 同一张对齐表格（ID / 名称 / 标签 / 能力） |
 | `:show [id\|前缀]` | 记号元数据，缺省为当前记号 |
 | `:use <id\|前缀>` | 切换记号；唯一前缀可省略后半段（Tab 补全的替代） |
