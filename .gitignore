@@ -83,3 +83,5 @@ test/oracle/ref.exe
 expander2-hs/
 .layers.json
 commit-layers.bat
+/.tmp-err.txt
+/.tmp-out.txt
