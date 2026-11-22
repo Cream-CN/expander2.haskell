@@ -1,12 +1,12 @@
 # GMS 族移植回执
 
-## 1. 新增/修改文件（绝对路径）
+## 1. 新增/修改文件
 
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Gms/Common.hs` — FMat 列向量工具、错误串 kParseError、parseBmExpr。
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Gms/GmsCore.hs` — GMS 二维参数化内核（System × Proj）。
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Gms/LpmsCore.hs` — LPMS/LPTSS 提升引擎。
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Gms/Family.hs` — 注册全部 17 个 id。
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/test/corpus/gms.txt` — 67 行语料。
+- `src/OmegaY/Fam/Gms/Common.hs` — FMat 列向量工具、错误串 kParseError、parseBmExpr。
+- `src/OmegaY/Fam/Gms/GmsCore.hs` — GMS 二维参数化内核（System × Proj）。
+- `src/OmegaY/Fam/Gms/LpmsCore.hs` — LPMS/LPTSS 提升引擎。
+- `src/OmegaY/Fam/Gms/Family.hs` — 注册全部 17 个 id。
+- `test/corpus/gms.txt` — 67 行语料。
 
 未改动共享模块、app/Probe、test/ 脚本与其它族目录。
 

@@ -2,15 +2,15 @@
 
 移植目标：`tbm`、`tupms`、`btbm`、`btbm-weak`、`bbm` 共 5 个 id，C++ 参考逐字节对齐（含错误文本 `解析失败，请确认你没有使用全角括号，逗号`、FS 截断对本族为 no-op、空后缀、UB/崩溃输入按约定剔除）。
 
-## 1. 新增/修改文件（绝对路径）
+## 1. 新增/修改文件
 
 仅在 `src/OmegaY/Fam/Tree/` 下新增/填写，未触碰共享模块、app/、test/ 与其它族：
 
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Tree/Tbm.hs`
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Tree/Tupms.hs`
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Tree/Btbm.hs`
-- `/home/user/Doubao/chats/38453110731617282/expander2-hs/src/OmegaY/Fam/Tree/Family.hs`（注册 5 个 id）
-- 语料：`/home/user/Doubao/chats/38453110731617282/expander2-hs/test/corpus/tree.txt`
+- `src/OmegaY/Fam/Tree/Tbm.hs`
+- `src/OmegaY/Fam/Tree/Tupms.hs`
+- `src/OmegaY/Fam/Tree/Btbm.hs`
+- `src/OmegaY/Fam/Tree/Family.hs`（注册 5 个 id）
+- 语料：`test/corpus/tree.txt`
 
 ## 2. 每个 id 的模块与实现要点（1 行）
 

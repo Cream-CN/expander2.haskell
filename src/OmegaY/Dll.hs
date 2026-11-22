@@ -122,14 +122,19 @@ errSlot = unsafePerformIO (newIORef "")
 setErr :: String -> IO ()
 setErr = atomicWriteIORef errSlot
 
--- 深强制：把 Either 两侧的字符串整体求值，异常才会在这一层被 try 抓到
+-- 深强制：把字符串的脊和每个字符都逼出来，异常才会在这一层被 try 抓到。
+-- 注意只 evaluate 到 WHNF 是不够的：Either 的字段是惰性的，
+-- `evaluate (Right s)` 只压到构造子，真正的展开异常会留到 newUtf8 里才爆，
+-- 那时已经出了 try，会穿过 foreign export 变成 RTS 的 uncaught exception
+-- （实测 1-mn + "(0,0)(1,1)" 直接 abort 宿主进程）。
 forceStr :: String -> String
 forceStr [] = []
 forceStr (c : cs) = c `seq` c : forceStr cs
 
-forceEither :: Either String String -> Either String String
-forceEither (Left e) = Left (forceStr e)
-forceEither (Right s) = Right (forceStr s)
+-- | 求值到"脊 + 字符"全强制，返回值本身仍是原串。
+--   用 length 逼脊，用 forceStr 逼字符；顺序不能换，否则 length 只到脊。
+deepForce :: String -> String
+deepForce s = length (forceStr s) `seq` s
 
 -- 展开
 
@@ -142,15 +147,26 @@ expandWith ident mode cs term param = do
         case byId ident of
           Nothing -> Left ("未知记号：" ++ ident)
           Just n -> expandNotation n md text term param
-  r <- try (evaluate (forceEither compute)) :: IO (Either SomeException (Either String String))
+  -- 强制求值必须发生在 try 里，并且必须是深求值：两侧都要先钉死再返回。
+  r <-
+    try
+      ( case compute of
+          Left e -> do
+            _ <- evaluate (length (forceStr e))
+            pure (Left e)
+          Right s -> do
+            _ <- evaluate (length (forceStr s))
+            pure (Right s)
+      )
+      :: IO (Either SomeException (Either String String))
   case r of
     Left ex -> do
       setErr ("内部错误：" ++ show ex)
       pure nullPtr
     Right (Left err) -> do
-      setErr err
+      setErr (deepForce err)
       pure nullPtr
-    Right (Right out) -> newUtf8 out
+    Right (Right out) -> newUtf8 (deepForce out)
 
 -- 注册表自省
 

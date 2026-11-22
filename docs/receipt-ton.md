@@ -10,14 +10,10 @@
 ton-m, ton-i, ton-dr, ton-drc, ton-drp, ton-drpc, ton-ibp, ton-mc, ton-mpc
 
 ## 差分结果
-- 语料：27 条 × terms 0-3 × modes fs,alter = 1944 cases
-- ok=1940, mismatch=4
-- 7 个 id（ton-m, ton-dr, ton-drc, ton-drp, ton-drpc, ton-mc, ton-mpc）：mismatch=0
-- ton-i, ton-ibp：仅在 "Limit" term=3 有 1 字符差异（fs 和 alter 各 1 条）
-  - ref: `0ΩΩ0CC0ΩΩΩCCCCC`
-  - hs:  `0ΩΩ0CC0ΩΩ0CCCCC`
-  - 差异：第 10 字符 Ω(ref) vs 0(hs)，位于 walkSpine 对 c1.r=leaf(0) 的处理分支
 
-## 已知未覆盖
-- "0"（裸 leaf -1）term≥1：oracle segfault（UB），hs probe 会 hang，已从语料剔除
-- ton-i/ton-ibp "Limit" term=3：walkSpine 在 c1.r=leaf(0) 时的分支判定与 C++ 有 1 字符差异
+9 个 id（`ton-m`、`ton-i`、`ton-dr`、`ton-drc`、`ton-drp`、`ton-drpc`、`ton-ibp`、`ton-mc`、`ton-mpc`）
+全部 `bad=0`，逐 id 数据见 `coverage.json`。
+
+## 语料口径
+
+- `test/corpus/ton.txt` 已剔除会让 C++ 预言机 segfault 的输入（`"0"` 裸 leaf、term≥1）。

@@ -6,8 +6,8 @@
 
 - 把 `cream-cn/expander2` 的**计算层**（`Header/common`、`Header/core`、`Header/notation`）
   忠实移植为 Haskell；MFC UI（`Expander.cpp`、`.rc`、`.vcxproj`）**不在范围**。
-- 参考仓库：`/home/user/Doubao/chats/38453110731617282/expander2`（**只读，禁止修改**）。
-- Haskell 工程：`/home/user/Doubao/chats/38453110731617282/expander2-hs`。
+- 参考仓库：`cream-cn/expander2`（**只读，禁止修改**；原 C++ 工程不随本仓库分发）。
+- Haskell 工程：本仓库根目录。
 - 唯一验收标准：**与 C++ 原实现逐字节一致**（输出文本、FS 截断、后缀、错误文本、
   以及原实现自身的 quirk 全部照搬）。不要"改进"算法，不要"修正"看似 bug 的行为。
 
@@ -23,9 +23,14 @@
 ## 2. 构建与运行
 
 ```sh
-cd /home/user/Doubao/chats/38453110731617282/expander2-hs
 ./test/build_group.sh Mrss          # -> .build-mrss/probe
-printf '1,2,3' | .build-mrss/probe omega-y-sequence fs 2
+printf '1,2,3' | ./.build-mrss/probe omega-y-sequence fs 2
+```
+
+Windows 上产物是 `.build-<group>\probe.exe`；没有 sh 时直接用 GHC：
+
+```powershell
+ghc -O1 -isrc -iapp -outputdir .build-mrss -o .build-mrss\probe.exe app\ProbeMrss.hs
 ```
 
 探针命令行与 C++ 侧完全同构：
@@ -35,7 +40,7 @@ probe <id> <fs|alter> <term> [param]      # 表达式从 stdin 读
 probe --list                              # 输出 "<id>\t<display_name>"
 ```
 
-工具链：GHC 8.8.4；**仅**用随 GHC 分发的包（base/containers/text/array/process），
+工具链：GHC 9.14.1；**仅**用随 GHC 分发的包（base/containers/text/array/process/time），
 不得引入 vector / cabal 依赖 / 联网安装。
 
 ## 3. 差分预言机

@@ -84,6 +84,10 @@ int main(int argc, char ** argv) {
   `EXPANDER2_LAST_ERROR()` 也是返回 malloc 串（errno 风格：进程级槽位、每次读都给一份
   独立副本），同样用 `EXPANDER2_FREE()`。
 - 错误槽位是进程级的、**不是**线程局部的；同一轮里先用完再让别的线程追加。
+- **异常不外泄**：记号内部抛出的 Haskell 异常（`error`、负索引、`head []` 等）在
+  DLL 层被 `try` 拦下，返回 `NULL`，错误槽为 `内部错误：…`；不会以 RTS
+  uncaught exception 的形式终止宿主进程。回归用例见 §5。这类"内部错误"与
+  "解析失败"共用 NULL + 错误槽通道，宿主按错误文本前缀区分。
 
 ### 3.1 通用入口与自省
 
@@ -153,6 +157,10 @@ PATH 里若另有一套（例如 msys64 ucrt64 的 LLVM 23）不要显式指向�
 
 ```powershell
 .\build-dll.ps1 -Which normal -Example
+
+# 异常边界回归：抛出型输入必须返回 NULL + 错误槽，宿主进程不许被带崩
+python test\dll_robustness.py --dll=.build-dll\expander2.dll        --expect-backend=llvm
+python test\dll_robustness.py --dll=.build-dll-compat\expander2-compat.dll --expect-backend=ncg
 
 # DLL 与 CLI 逐字节对拍（每记号 6 个语料输入 × fs/alter × term 1,2 × param 取值）
 # 注意：两个变体要一次一个地跑，别并行——每个 id 起一个子进程加载 DLL，两档同时跑会撞
