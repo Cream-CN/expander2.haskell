@@ -37,10 +37,10 @@ programVersion :: String
 programVersion = "0.1.1"
 
 copyrightLine :: String
-copyrightLine = "Copyright (C) 2026 王强,Cream-CN,Wty250,Wtydsb,CCFdsb,YLC1145"
+copyrightLine = "Copyright (C) 2026 王强,Cream-CN,Wty250,Wtydsb,CCFdsb,YLC1145，部分代码修改自Smilelee等人的仓库"
 
 logoText :: [String]
-logoText = ["λλ=Haskell"]
+logoText = ["Haskell"]
 
 trim :: String -> String
 trim = dropWhileEndSpace . dropWhile isSpace
