@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3700" height="1460" viewBox="0 0 3700 1460" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif">
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 z" fill="#333"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<ellipse cx="140" cy="110" rx="100" ry="28.0" fill="#D5E8D4" stroke="#82B366" stroke-width="1.4"/>
+<text x="140" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Mn 实现函数被调用</text>
+<rect x="380" y="72.0" width="200" height="76" rx="6" fill="#FFFFFF" stroke="#666666" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="480" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">按骨架选实现</text>
+<rect x="720" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">parseExpr 解析 Expr 列</text>
+<polygon points="1160,64.0 1260,110 1160,156.0 1060,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1160" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">解析失败</text>
+<polygon points="1500,64.0 1600,110 1500,156.0 1400,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1500" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">表达式为空</text>
+<polygon points="1840,64.0 1940,110 1840,156.0 1740,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1840" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">isLimitExpr 判定</text>
+<rect x="2080" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fs 迭代 rfl 重写列</text>
+<polygon points="2520,64.0 2620,110 2520,156.0 2420,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="2520" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">strong 开关</text>
+<rect x="2760" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">e0mn 非强序 omit 比较</text>
+<rect x="2760" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">strong-e0mn 强序 omit</text>
+<rect x="3100" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3200" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">exprToPlain 序列化</text>
+<rect x="720" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fromDisplay 解析山形</text>
+<polygon points="1160,214.0 1260,260 1160,306.0 1060,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1160" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">解析失败</text>
+<polygon points="1500,214.0 1600,260 1500,306.0 1400,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1500" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">为空或末列为空</text>
+<polygon points="1840,214.0 1940,260 1840,306.0 1740,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1840" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">展开体选择</text>
+<rect x="2080" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">SmnShare.expand 补幽灵</text>
+<rect x="2080" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expandOmega 本地展开循环</text>
+<rect x="2420" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2520" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">mountainDisplay 序列化</text>
+<rect x="720" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fromDisplayPcf 解析 P</text>
+<polygon points="1160,364.0 1260,410 1160,456.0 1060,410" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1160" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">解析失败</text>
+<polygon points="1500,364.0 1600,410 1500,456.0 1400,410" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1500" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">为空或末列为空</text>
+<rect x="1740" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1840" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expandPcf 复制列</text>
+<rect x="2080" y="522.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">displayExpr 序列化</text>
+<rect x="720" y="522.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fromDisplayT 解析 T</text>
+<polygon points="1160,514.0 1260,560 1160,606.0 1060,560" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1160" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">解析失败</text>
+<polygon points="1500,514.0 1600,560 1500,606.0 1400,560" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1500" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">为空或非极限</text>
+<rect x="1740" y="522.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1840" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expand 递归展开分隔符</text>
+<rect x="2080" y="672.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="714.0" font-size="12" fill="#1a1a1a" text-anchor="middle">mountainDisplay&#x27; 序列化</text>
+<rect x="720" y="672.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="714.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fromDisplay 解析 SM</text>
+<polygon points="1160,664.0 1260,710 1160,756.0 1060,710" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1160" y="714.0" font-size="12" fill="#1a1a1a" text-anchor="middle">失败或编号越界</text>
+<polygon points="1500,664.0 1600,710 1500,756.0 1400,710" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1500" y="714.0" font-size="12" fill="#1a1a1a" text-anchor="middle">为空或末列为空</text>
+<polygon points="1840,664.0 1940,710 1840,756.0 1740,710" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1840" y="714.0" font-size="12" fill="#1a1a1a" text-anchor="middle">S 变体开关</text>
+<rect x="2080" y="822.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="864.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s-omega2 extend 迭代</text>
+<rect x="2080" y="972.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="1014.0" font-size="12" fill="#1a1a1a" text-anchor="middle">sa extend 迭代</text>
+<rect x="2080" y="1122.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="1164.0" font-size="12" fill="#1a1a1a" text-anchor="middle">pow extend 迭代</text>
+<rect x="2420" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2520" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">mountainDisplay 序列化</text>
+<ellipse cx="3540" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="3540" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">正常输出</text>
+<ellipse cx="1500" cy="860" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="1500" y="864.0" font-size="12" fill="#1a1a1a" text-anchor="middle">错误出口 errText</text>
+<ellipse cx="1840" cy="860" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="1840" y="864.0" font-size="12" fill="#1a1a1a" text-anchor="middle">空表达式输出空串</text>
+<ellipse cx="2180" cy="1310" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2180" y="1314.0" font-size="12" fill="#1a1a1a" text-anchor="middle">去末列后输出</text>
+<polyline points="240.0,110.0 310.0,110.0 310.0,110.0 380.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 600.4,110.0 600.4,110.0 720.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">序数 Expr 骨架</text>
+<polyline points="580.0,110.0 625.2,110.0 625.2,260.0 720.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">整数分隔 Mountain</text>
+<polyline points="580.0,110.0 650.0,110.0 650.0,410.0 720.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">PCF p:vertical</text>
+<polyline points="580.0,110.0 674.8,110.0 674.8,560.0 720.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="553.0" font-size="10.5" fill="#555" text-anchor="end">递归 TExpr</text>
+<polyline points="580.0,110.0 699.6,110.0 699.6,710.0 720.0,710.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="703.0" font-size="10.5" fill="#555" text-anchor="end">多维 Sep Mountain</text>
+<polyline points="920.0,110.0 940.4,110.0 940.4,110.0 1060.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,110.0 1311.4,110.0 1311.4,860.0 1400.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">失败</text>
+<polyline points="1260.0,110.0 1274.2,110.0 1274.2,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">成功</text>
+<polyline points="1600.0,110.0 1639.0,110.0 1639.0,860.0 1740.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">为空</text>
+<polyline points="1600.0,110.0 1612.4,110.0 1612.4,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">非空</text>
+<polyline points="1940.0,110.0 2023.8,110.0 2023.8,1310.0 2080.0,1310.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="1303.0" font-size="10.5" fill="#555" text-anchor="end">非极限</text>
+<polyline points="1940.0,110.0 1954.9,110.0 1954.9,110.0 2080.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">极限</text>
+<polyline points="2280.0,110.0 2295.8,110.0 2295.8,110.0 2420.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,110.0 2643.5,110.0 2643.5,110.0 2760.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2754.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">strong False 走 e0mn</text>
+<polyline points="2620.0,110.0 2674.5,110.0 2674.5,260.0 2760.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2754.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">strong True</text>
+<polyline points="2960.0,110.0 2999.0,110.0 2999.0,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,260.0 3061.0,260.0 3061.0,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3300.0,110.0 3370.0,110.0 3370.0,110.0 3440.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,260.0 965.2,260.0 965.2,260.0 1060.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,260.0 1323.8,260.0 1323.8,860.0 1400.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">失败</text>
+<polyline points="1260.0,260.0 1286.6,260.0 1286.6,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">成功</text>
+<polyline points="1600.0,260.0 1647.9,260.0 1647.9,860.0 1740.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">整体为空</text>
+<polyline points="1600.0,260.0 1692.1,260.0 1692.1,1310.0 2080.0,1310.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="1303.0" font-size="10.5" fill="#555" text-anchor="end">末列为空</text>
+<polyline points="1600.0,260.0 1621.3,260.0 1621.3,260.0 1740.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">非空</text>
+<polyline points="1940.0,260.0 1968.7,260.0 1968.7,260.0 2080.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">1/2/3-mn 共享 expand</text>
+<polyline points="1940.0,260.0 1982.4,260.0 1982.4,410.0 2080.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">omega-mn 本地循环</text>
+<polyline points="2280.0,260.0 2311.2,260.0 2311.2,260.0 2420.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2280.0,410.0 2326.8,410.0 2326.8,260.0 2420.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2705.5,260.0 2705.5,110.0 3440.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,410.0 990.0,410.0 990.0,410.0 1060.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,410.0 1348.6,410.0 1348.6,860.0 1400.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">失败</text>
+<polyline points="1260.0,410.0 1299.0,410.0 1299.0,410.0 1400.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">成功</text>
+<polyline points="1600.0,410.0 1665.6,410.0 1665.6,860.0 1740.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">整体为空</text>
+<polyline points="1600.0,410.0 1709.9,410.0 1709.9,1310.0 2080.0,1310.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="1303.0" font-size="10.5" fill="#555" text-anchor="end">末列为空</text>
+<polyline points="1600.0,410.0 1630.1,410.0 1630.1,410.0 1740.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">非空</text>
+<polyline points="1940.0,410.0 1996.2,410.0 1996.2,560.0 2080.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2280.0,560.0 2342.2,560.0 2342.2,110.0 3440.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,560.0 1014.8,560.0 1014.8,560.0 1060.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,560.0 1361.0,560.0 1361.0,860.0 1400.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">失败</text>
+<polyline points="1260.0,560.0 1336.2,560.0 1336.2,560.0 1400.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="553.0" font-size="10.5" fill="#555" text-anchor="end">成功</text>
+<polyline points="1600.0,560.0 1674.4,560.0 1674.4,860.0 1740.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">整体为空</text>
+<polyline points="1600.0,560.0 1718.7,560.0 1718.7,1310.0 2080.0,1310.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="1303.0" font-size="10.5" fill="#555" text-anchor="end">非极限</text>
+<polyline points="1600.0,560.0 1656.7,560.0 1656.7,560.0 1740.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="553.0" font-size="10.5" fill="#555" text-anchor="end">极限</text>
+<polyline points="1940.0,560.0 2010.0,560.0 2010.0,710.0 2080.0,710.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2280.0,710.0 2357.8,710.0 2357.8,110.0 3440.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,710.0 1039.6,710.0 1039.6,710.0 1060.0,710.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,710.0 1385.8,710.0 1385.8,860.0 1400.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">失败或越界</text>
+<polyline points="1260.0,710.0 1373.4,710.0 1373.4,710.0 1400.0,710.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="703.0" font-size="10.5" fill="#555" text-anchor="end">成功</text>
+<polyline points="1600.0,710.0 1701.0,710.0 1701.0,860.0 1740.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">整体为空</text>
+<polyline points="1600.0,710.0 1727.6,710.0 1727.6,1310.0 2080.0,1310.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="1303.0" font-size="10.5" fill="#555" text-anchor="end">末列为空</text>
+<polyline points="1600.0,710.0 1683.3,710.0 1683.3,710.0 1740.0,710.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="703.0" font-size="10.5" fill="#555" text-anchor="end">非空</text>
+<polyline points="1940.0,710.0 2037.6,710.0 2037.6,860.0 2080.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">s-omega2 基准</text>
+<polyline points="1940.0,710.0 2051.3,710.0 2051.3,1010.0 2080.0,1010.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="1003.0" font-size="10.5" fill="#555" text-anchor="end">sa 带 mark 变体</text>
+<polyline points="1940.0,710.0 2065.1,710.0 2065.1,1160.0 2080.0,1160.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="1153.0" font-size="10.5" fill="#555" text-anchor="end">pow 多维 sDefault</text>
+<polyline points="2280.0,860.0 2373.2,860.0 2373.2,410.0 2420.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2280.0,1010.0 2388.8,1010.0 2388.8,410.0 2420.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2280.0,1160.0 2404.2,1160.0 2404.2,410.0 2420.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,410.0 2736.5,410.0 2736.5,110.0 3440.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+</svg>

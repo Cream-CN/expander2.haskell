@@ -1,0 +1,35 @@
+source,target,label
+s1,d1,
+d1,g1,序列型
+d1,g2,文本型
+d1,g3,参数化
+g1,n_sb,SeqBasic
+g1,n_ym,YMagma
+g1,n_mr,Mrss
+g1,n_ys,Yseq
+g1,n_xy,Xy
+g2,n_bl,Bmlike
+g2,n_tr,Tree
+g2,n_tn,Ton
+g2,n_dn,Den
+g2,n_up,Upmn
+g2,n_aw,Aw2mn
+g2,n_g42,G11242
+n_sb,q1,
+n_ym,q1,
+n_mr,q1,
+n_ys,q1,
+n_xy,q1,
+n_bl,t1,
+n_tr,t1,
+n_tn,t1,
+n_dn,t1,
+n_up,t1,
+n_aw,t1,
+n_g42,t1,
+q1,e_out,
+t1,e_out,
+g3,e_out,见 M1ynss 图
+m1,n_ym,medium/strong
+m1,n_mr,omega-y-sequence
+m2,n_bl,复用到 Bmlike

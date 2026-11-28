@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6420" height="710" viewBox="0 0 6420 710" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif">
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 z" fill="#333"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<ellipse cx="140" cy="110" rx="100" ry="28.0" fill="#D5E8D4" stroke="#82B366" stroke-width="1.4"/>
+<text x="140" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Gms 实现函数被调用</text>
+<polygon points="480,64.0 580,110 480,156.0 380,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="480" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">注册入口是哪条</text>
+<rect x="720" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">runGms 十五个版本</text>
+<rect x="720" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">runLpms 两个版本</text>
+<rect x="1060" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">parseBmExpr 解析 BM</text>
+<polygon points="1500,64.0 1600,110 1500,156.0 1400,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1500" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">解析成功</text>
+<ellipse cx="1840" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="1840" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">kParseError 失败出口</text>
+<polygon points="1840,214.0 1940,260 1840,306.0 1740,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1840" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">矩阵列数为 0</text>
+<ellipse cx="2180" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2180" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">空串输出</text>
+<rect x="2080" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fromMatrix 转列向量表</text>
+<polygon points="2520,64.0 2620,110 2520,156.0 2420,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="2520" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">入口路径分流</text>
+<rect x="2760" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fs 按 term 取序号</text>
+<polygon points="3200,64.0 3300,110 3200,156.0 3100,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="3200" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">System 判据</text>
+<rect x="3440" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3540" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">buildGbmsD 造增量列</text>
+<rect x="3440" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3540" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">buildUpms 造 Y/v/D</text>
+<rect x="4460" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="4560" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">projectionRecurrence</text>
+<rect x="3780" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3880" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">buildLpms2X 造 X 列</text>
+<rect x="4120" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="4220" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">oldFiniteFs 递归下一轮</text>
+<polygon points="4900,64.0 5000,110 4900,156.0 4800,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="4900" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Proj 判据</text>
+<rect x="5140" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="5240" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">matCompare 标准列比较</text>
+<rect x="5480" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="5580" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">trimZeroRows 裁零行</text>
+<rect x="5140" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="5240" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">行数优先 compareFor</text>
+<rect x="5820" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="5920" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fmatToString 序列化</text>
+<ellipse cx="6260" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="6260" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">正常输出</text>
+<rect x="2760" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">legal 与末列全零预检</text>
+<polygon points="3200,214.0 3300,260 3200,306.0 3100,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="3200" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">预检通过</text>
+<rect x="3440" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3540" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">砍末列后标准化</text>
+<rect x="3440" y="522.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3540" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">lpmsFs 内部分发</text>
+<polygon points="3880,214.0 3980,260 3880,306.0 3780,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="3880" y="256.5" font-size="12" fill="#1a1a1a" text-anchor="middle">走 bmsFs 或</text>
+<text x="3880" y="271.5" font-size="12" fill="#1a1a1a" text-anchor="middle">lpmsSingle</text>
+<rect x="4120" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="4220" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">bmsFs 复制 B 部 n 次</text>
+<rect x="4120" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="4220" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">lpmsSingle 提升状态机</text>
+<rect x="4460" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="4560" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fmatToString 序列化</text>
+<polyline points="240.0,110.0 310.0,110.0 310.0,110.0 380.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 619.0,110.0 619.0,110.0 720.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">runGms 十五版本</text>
+<polyline points="580.0,110.0 681.0,110.0 681.0,260.0 720.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">runLpms 两版本</text>
+<polyline points="920.0,110.0 959.0,110.0 959.0,110.0 1060.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,260.0 1021.0,260.0 1021.0,110.0 1060.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,110.0 1330.0,110.0 1330.0,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1600.0,110.0 1639.0,110.0 1639.0,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">否</text>
+<polyline points="1600.0,110.0 1701.0,110.0 1701.0,260.0 1740.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">是</text>
+<polyline points="1940.0,260.0 1979.0,260.0 1979.0,110.0 2080.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">是</text>
+<polyline points="1940.0,260.0 2041.0,260.0 2041.0,260.0 2080.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">否</text>
+<polyline points="2280.0,260.0 2350.0,260.0 2350.0,110.0 2420.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,110.0 2659.0,110.0 2659.0,110.0 2760.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2754.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">runGms</text>
+<polyline points="2620.0,110.0 2721.0,110.0 2721.0,260.0 2760.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2754.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">runLpms</text>
+<polyline points="2960.0,110.0 2999.0,110.0 2999.0,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3300.0,110.0 3320.4,110.0 3320.4,110.0 3440.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="3434.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">SysGBMS</text>
+<polyline points="3300.0,110.0 3370.0,110.0 3370.0,260.0 3440.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="3434.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">SysUPMS</text>
+<polyline points="3300.0,110.0 3345.2,110.0 3345.2,110.0 3780.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="3774.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">SysLPMS2</text>
+<polyline points="3640.0,110.0 3660.4,110.0 3660.4,110.0 4460.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3640.0,260.0 3685.2,260.0 3685.2,110.0 4460.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3640.0,260.0 3710.0,260.0 3710.0,110.0 3780.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3980.0,110.0 4008.7,110.0 4008.7,110.0 4120.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="4320.0,110.0 4348.7,110.0 4348.7,110.0 4460.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="4454.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">递归返回</text>
+<polyline points="4660.0,110.0 4699.0,110.0 4699.0,110.0 4800.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="5000.0,110.0 5028.7,110.0 5028.7,110.0 5140.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="5134.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">标准三投影</text>
+<polyline points="5000.0,110.0 5070.0,110.0 5070.0,110.0 5480.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="5474.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">ProjFull</text>
+<polyline points="5000.0,110.0 5111.3,110.0 5111.3,260.0 5140.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="5134.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">ProjWeirdlyFull</text>
+<polyline points="5340.0,110.0 5379.0,110.0 5379.0,110.0 5820.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="5680.0,110.0 5750.0,110.0 5750.0,110.0 5820.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="5340.0,260.0 5441.0,260.0 5441.0,110.0 5480.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="6020.0,110.0 6090.0,110.0 6090.0,110.0 6160.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,260.0 3061.0,260.0 3061.0,260.0 3100.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3300.0,260.0 3394.8,260.0 3394.8,410.0 3440.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="3434.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">否</text>
+<polyline points="3300.0,260.0 3419.6,260.0 3419.6,560.0 3440.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="3434.0" y="553.0" font-size="10.5" fill="#555" text-anchor="end">是</text>
+<polyline points="3640.0,410.0 3734.8,410.0 3734.8,260.0 4460.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3640.0,560.0 3759.6,560.0 3759.6,260.0 3780.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3980.0,260.0 4050.0,260.0 4050.0,260.0 4120.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="4114.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">行数不足 3 或第三项 0</text>
+<polyline points="3980.0,260.0 4091.3,260.0 4091.3,410.0 4120.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="4114.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">否则递归</text>
+<polyline points="4320.0,260.0 4390.0,260.0 4390.0,260.0 4460.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="4320.0,410.0 4431.3,410.0 4431.3,260.0 4460.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="4660.0,260.0 4761.0,260.0 4761.0,110.0 6160.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+</svg>

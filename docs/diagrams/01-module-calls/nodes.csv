@@ -1,0 +1,20 @@
+id,label,type
+m0,app/Main.hs（唯一入口）,start
+r1,Registry 119 个 id,process
+b01,Notation.SeqBasic 9 id,process
+b02,Notation.YMagma 2 id,process
+b03,Fam.Bms 11 id,process
+b04,Fam.Bmlike 9 id,process
+b05,Fam.Gms 17 id,process
+b06,Fam.Tree 5 id,process
+b07,Fam.M1ynss 8 id,process
+b08,Fam.Den 3 id,process
+b09,Fam.Ton 9 id,process
+b10,Fam.Mn 11 id,process
+b11,Fam.Upmn 4 id,process
+b12,Fam.Dbms 15 id,process
+b13,Fam.Aw2mn 4 id,process
+b14,Fam.Mrss 2 id,process
+b15,Fam.Yseq 2 id,process
+b16,Fam.Xy 3 id,process
+b17,Fam.G11242 5 id,process

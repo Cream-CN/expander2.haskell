@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4380" height="2510" viewBox="0 0 4380 2510" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif">
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 z" fill="#333"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<ellipse cx="140" cy="110" rx="100" ry="28.0" fill="#D5E8D4" stroke="#82B366" stroke-width="1.4"/>
+<text x="140" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Dbms 实现函数被调用</text>
+<rect x="380" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="480" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">parse/fromDisplay 解析</text>
+<polygon points="820,64.0 920,110 820,156.0 720,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="820" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">解析成功？</text>
+<ellipse cx="1840" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="1840" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">errParse 解析失败</text>
+<polygon points="1160,64.0 1260,110 1160,156.0 1060,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1160" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">表达式为空？</text>
+<ellipse cx="1500" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="1500" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">输出空串</text>
+<polygon points="1500,214.0 1600,260 1500,306.0 1400,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1500" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">条目越界？</text>
+<polygon points="1840,214.0 1940,260 1840,306.0 1740,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1840" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">末列为空？</text>
+<rect x="2080" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">去末列后 display 输出</text>
+<ellipse cx="4220" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="4220" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">正常输出</text>
+<polygon points="2180,214.0 2280,260 2180,306.0 2080,260" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="2180" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">按版本族选重写规则</text>
+<rect x="2420" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2520" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">up：computeUp/upList</text>
+<rect x="2420" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2520" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s：computeNewH 重写</text>
+<rect x="2420" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2520" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">ts：fundamentalSeq</text>
+<rect x="2760" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">up1dbms：computeUp</text>
+<rect x="2760" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">up2dbms-v1 走 v1</text>
+<rect x="2760" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">v1b+ 用 mnComputeUp1</text>
+<rect x="2760" y="522.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">v1c：dbmsComputeUp2</text>
+<rect x="2760" y="672.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="714.0" font-size="12" fill="#1a1a1a" text-anchor="middle">up2dbms-v2 双高度</text>
+<rect x="2760" y="822.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="864.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s1dbms：colHeight</text>
+<rect x="2760" y="972.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="1014.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s2dbms：双高度对</text>
+<rect x="2760" y="1122.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="1164.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s-omega-dbms：整数表</text>
+<rect x="2760" y="1272.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="1314.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s-omega-dbms-v2：三态</text>
+<rect x="2760" y="1422.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="1464.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s-omega-dbms-v3：降级</text>
+<rect x="2760" y="1572.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="1614.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s-omega-p1-dbms：ω 位</text>
+<rect x="2760" y="1722.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="1764.0" font-size="12" fill="#1a1a1a" text-anchor="middle">s-omega2-dbms：ω 递减</text>
+<rect x="2760" y="1872.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="1914.0" font-size="12" fill="#1a1a1a" text-anchor="middle">square-dbms：双层位</text>
+<rect x="2760" y="2022.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="2064.0" font-size="12" fill="#1a1a1a" text-anchor="middle">ts-2-dbms：StepLimit</text>
+<rect x="2760" y="2172.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2860" y="2214.0" font-size="12" fill="#1a1a1a" text-anchor="middle">ts-omega-dbms：极限近似</text>
+<rect x="3100" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3200" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">mergeCol 拼新末列</text>
+<rect x="3440" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3540" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">addCopy 复制 term 轮</text>
+<rect x="3780" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="3880" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">display 序列化</text>
+<ellipse cx="2860" cy="2360" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2860" y="2364.0" font-size="12" fill="#1a1a1a" text-anchor="middle">errResource 超限</text>
+<polyline points="240.0,110.0 310.0,110.0 310.0,110.0 380.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 650.0,110.0 650.0,110.0 720.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,110.0 959.0,110.0 959.0,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">失败</text>
+<polyline points="920.0,110.0 1021.0,110.0 1021.0,110.0 1060.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">成功</text>
+<polyline points="1260.0,110.0 1299.0,110.0 1299.0,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">空</text>
+<polyline points="1260.0,110.0 1361.0,110.0 1361.0,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">非空</text>
+<polyline points="1600.0,260.0 1639.0,260.0 1639.0,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">越界</text>
+<polyline points="1600.0,260.0 1701.0,260.0 1701.0,260.0 1740.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">合法</text>
+<polyline points="1940.0,260.0 1979.0,260.0 1979.0,110.0 2080.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">末列空</text>
+<polyline points="2280.0,110.0 2303.5,110.0 2303.5,110.0 4120.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1940.0,260.0 2041.0,260.0 2041.0,260.0 2080.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2074.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">末列非空</text>
+<polyline points="2280.0,260.0 2334.5,260.0 2334.5,110.0 2420.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2414.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">上行 up</text>
+<polyline points="2280.0,260.0 2365.5,260.0 2365.5,260.0 2420.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2414.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">σ 版 s</text>
+<polyline points="2280.0,260.0 2396.5,260.0 2396.5,410.0 2420.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2414.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">ts 版</text>
+<polyline points="2620.0,110.0 2631.9,110.0 2631.9,110.0 2760.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,110.0 2639.6,110.0 2639.6,260.0 2760.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,110.0 2647.4,110.0 2647.4,410.0 2760.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,110.0 2655.1,110.0 2655.1,560.0 2760.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,110.0 2662.9,110.0 2662.9,710.0 2760.0,710.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2670.6,260.0 2670.6,860.0 2760.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2678.4,260.0 2678.4,1010.0 2760.0,1010.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2686.1,260.0 2686.1,1160.0 2760.0,1160.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2693.9,260.0 2693.9,1310.0 2760.0,1310.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2701.6,260.0 2701.6,1460.0 2760.0,1460.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2709.4,260.0 2709.4,1610.0 2760.0,1610.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2717.1,260.0 2717.1,1760.0 2760.0,1760.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,260.0 2724.9,260.0 2724.9,1910.0 2760.0,1910.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,410.0 2732.6,410.0 2732.6,2060.0 2760.0,2060.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,410.0 2740.4,410.0 2740.4,2210.0 2760.0,2210.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,110.0 2972.1,110.0 2972.1,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,260.0 2980.4,260.0 2980.4,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,410.0 2988.7,410.0 2988.7,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,560.0 2996.9,560.0 2996.9,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,710.0 3005.2,710.0 3005.2,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,860.0 3013.5,860.0 3013.5,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,1010.0 3021.7,1010.0 3021.7,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,1160.0 3030.0,1160.0 3030.0,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,1310.0 3038.3,1310.0 3038.3,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,1460.0 3046.5,1460.0 3046.5,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,1610.0 3054.8,1610.0 3054.8,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,1760.0 3063.1,1760.0 3063.1,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,1910.0 3071.3,1910.0 3071.3,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,2060.0 3079.6,2060.0 3079.6,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2960.0,2210.0 3087.9,2210.0 3087.9,110.0 3100.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3300.0,110.0 3370.0,110.0 3370.0,110.0 3440.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3640.0,110.0 3710.0,110.0 3710.0,110.0 3780.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="3980.0,110.0 4050.0,110.0 4050.0,110.0 4120.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,410.0 2748.1,410.0 2748.1,2360.0 2760.0,2360.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="2754.0" y="2353.0" font-size="10.5" fill="#555" text-anchor="end">内部 Left 超限</text>
+</svg>

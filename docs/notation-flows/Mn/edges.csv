@@ -1,0 +1,60 @@
+source,target,label
+n1,n2,
+n2,a1,序数 Expr 骨架
+n2,b1,整数分隔 Mountain
+n2,c1,PCF p:vertical
+n2,d1,递归 TExpr
+n2,s1,多维 Sep Mountain
+a1,a2,
+a2,e_err,失败
+a2,a3,成功
+a3,e_empty,为空
+a3,a4,非空
+a4,e_init,非极限
+a4,a6,极限
+a6,a7,
+a7,a8a,strong False 走 e0mn
+a7,a8b,strong True
+a8a,a8,
+a8b,a8,
+a8,e_out,
+b1,b2,
+b2,e_err,失败
+b2,b3,成功
+b3,e_empty,整体为空
+b3,e_init,末列为空
+b3,b4,非空
+b4,b5,1/2/3-mn 共享 expand
+b4,b6,omega-mn 本地循环
+b5,b7,
+b6,b7,
+b7,e_out,
+c1,c2,
+c2,e_err,失败
+c2,c3,成功
+c3,e_empty,整体为空
+c3,e_init,末列为空
+c3,c4,非空
+c4,c5,
+c5,e_out,
+d1,d2,
+d2,e_err,失败
+d2,d3,成功
+d3,e_empty,整体为空
+d3,e_init,非极限
+d3,d4,极限
+d4,d5,
+d5,e_out,
+s1,s2,
+s2,e_err,失败或越界
+s2,s3,成功
+s3,e_empty,整体为空
+s3,e_init,末列为空
+s3,s4,非空
+s4,s5a,s-omega2 基准
+s4,s5b,sa 带 mark 变体
+s4,s5c,pow 多维 sDefault
+s5a,s6,
+s5b,s6,
+s5c,s6,
+s6,e_out,

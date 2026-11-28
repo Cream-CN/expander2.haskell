@@ -1,0 +1,23 @@
+id,label,type
+s1,M1ynss 实现函数被调用,start
+d1,参数 n 在区间内,decision
+e1,参数越界 ERR,end
+p1,PP 手写递归下降解析,process
+d2,解析是否成功,decision
+e2,解析失败 kParseError,end
+p2,按骨架选实现入口,sub
+m1,Flat.expand 平面列,process
+m2,Tm1.expandTm1 嵌套,process
+m3,Bt.expandBt Bt1,process
+m4,Bt.expandBt Bt2,process
+m5,Bt3.expandBt3Alter,process
+m6,Btl.expandBtl,process
+m7,Bm1.expandAbs,process
+m8,Bm1.expandRel,process
+d3,极限或子树可下钻,decision
+p3,递归子树或特判复制,process
+p4,非极限无根砍末列,process
+p5,父表定位根与提升向量,process
+p6,复制波 ascendReplace 提升,process
+e3,正常输出括号串,end
+e4,运行时异常兜底出口,end

@@ -1,0 +1,41 @@
+id,label,type
+n1,Mn 实现函数被调用,start
+n2,按骨架选实现,sub
+a1,parseExpr 解析 Expr 列,process
+a2,解析失败,decision
+a3,表达式为空,decision
+a4,isLimitExpr 判定,decision
+a6,fs 迭代 rfl 重写列,process
+a7,strong 开关,decision
+a8a,e0mn 非强序 omit 比较,process
+a8b,strong-e0mn 强序 omit,process
+a8,exprToPlain 序列化,process
+b1,fromDisplay 解析山形,process
+b2,解析失败,decision
+b3,为空或末列为空,decision
+b4,展开体选择,decision
+b5,SmnShare.expand 补幽灵,process
+b6,expandOmega 本地展开循环,process
+b7,mountainDisplay 序列化,process
+c1,fromDisplayPcf 解析 P,process
+c2,解析失败,decision
+c3,为空或末列为空,decision
+c4,expandPcf 复制列,process
+c5,displayExpr 序列化,process
+d1,fromDisplayT 解析 T,process
+d2,解析失败,decision
+d3,为空或非极限,decision
+d4,expand 递归展开分隔符,process
+d5,mountainDisplay' 序列化,process
+s1,fromDisplay 解析 SM,process
+s2,失败或编号越界,decision
+s3,为空或末列为空,decision
+s4,S 变体开关,decision
+s5a,s-omega2 extend 迭代,process
+s5b,sa extend 迭代,process
+s5c,pow extend 迭代,process
+s6,mountainDisplay 序列化,process
+e_out,正常输出,end
+e_err,错误出口 errText,end
+e_empty,空表达式输出空串,end
+e_init,去末列后输出,end

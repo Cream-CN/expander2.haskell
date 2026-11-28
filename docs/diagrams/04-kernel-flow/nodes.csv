@@ -1,0 +1,32 @@
+id,label,type
+k1,输入表达式文本与 term,start
+k2,分派：矩阵／ω-Y／X-Y／序数／序列,sub
+m1,parseMatrix 切列补零,process
+y1,EntryGraph 建节点池,process
+x1,Xy World 分配 E 条目,process
+o1,parseCol 解析 Expr 列,process
+q1,parseSequence 切分整数列,process
+m2,矩阵非空且标准？,decision
+y2,fromSequence 挂父链,process
+x2,toSequenceV12 建树,process
+o2,cmpOrd 比较序数条目,process
+q2,findBadRoot 定位坏根,process
+m4,getBadSequence 取坏序列,process
+y3,findLower 定位坏根,process
+x3,getReferenceChain 主维,process
+o3,predecessor 求前驱,process
+q3,replaceLast 复制提升,process
+m3,返回解析失败或非标准,end
+m5,copyBadSequence 复制尾部,process
+y4,collectWeak 提升项收集,process
+x4,expandImpl 记忆化展开,process
+o4,remapCol 重写列,process
+q4,按 term 迭代展开,process
+m6,bmsExpand 迭代 term 次,process
+y5,copySingleEdge 复制,process
+x5,toSequence 输出数列,end
+o5,拼接输出 suspend,end
+q5,seqToString 输出数列,end
+m7,matrixToString 收尾,end
+y6,sortCol 与 rewire,process
+y7,toSequence 输出数列,end

@@ -1,0 +1,23 @@
+id,label,type
+s1,小族速览 55 个 id,start
+d1,Caps 型分派,decision
+g1,序列型 5 族,sub
+g2,文本型 7 族,sub
+g3,参数化 8 个见 M1ynss,note
+n_sb,SeqBasic 坏根复制,process
+n_ym,expandOmegaY 图展开,process
+n_mr,mrssExpandText 树展开,process
+n_ys,expandEpsilonY/GY,process
+n_xy,expandXyV1/V2/V3,process
+n_bl,parseBm 坏列复制,process
+n_tr,Tbm/Btbm 超限,process
+n_tn,tonExpandText 状态机,process
+n_dn,Den1/Blp/Iblp 行表,process
+n_up,computeUp 提升位,process
+n_aw,subtract1 V2/V3,process
+n_g42,expandSrd/Ipd 图,process
+q1,seqToString+后缀,process
+t1,文本直出+后缀,process
+m1,EntryGraph 节点池,data
+m2,Share.parseBm 复用,data
+e_out,输出文本串,end

@@ -1,0 +1,39 @@
+id,label,type
+s1,Bms 实现函数被调用,start
+r1,按注册入口分流,decision
+b1,bmsExpandTextWith 外壳,process
+b2,parseMatrix 切列补零,process
+b3,matEmpty 矩阵为空,decision
+e1,kParseError 解析失败,end
+b4,bmsIsStandard 标准形,process
+b5,标准形 chkStd == 0,decision
+e2,kNonStandard 非标准,end
+b6,bmsExpand 取 term,process
+b7,delta0 零数组 c1 置 1,process
+g1,getBadSequence 分流,decision
+h1,bs100 取坏序列,process
+h2,bs210 取坏序列,process
+g1b,verCode 等于 220,decision
+h3,bs220 取坏序列,process
+h4,bsGeneric 扫描坏列,process
+c1,postProcess 选 C 标记,process
+g3,copyBadSequence 回写,decision
+k1,loopS 加 delta 回写,process
+k2,loopM 按 C 加权回写,process
+k3,loopK 条件加 delta,process
+b8,bad 非正,decision
+e3,matResizeCols 截末列,end
+b9,matResizeCols 扩容回写,process
+b10,matrixToString 序列化,process
+e4,正常输出矩阵文本,end
+u1,upmsExpandText 外壳,process
+u2,parseUpmsText 逐字符扫描,process
+u3,matEmpty 矩阵为空,decision
+u4,upmsExpand 守卫,process
+u5,末列全零后继形 init cols0,process
+u6,findBadRoot 取坏根,process
+u7,坏根 Nothing,decision
+e5,kUpmsEmpty 空矩阵,end
+u8,computeDelta/Vr 差量,process
+u9,generateBh 复制 h 次,process
+u10,formatUpmsText 裁零,process

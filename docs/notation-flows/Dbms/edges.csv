@@ -1,0 +1,49 @@
+source,target,label
+s0,p1,
+p1,d1,
+d1,e1,失败
+d1,d2,成功
+d2,e2,空
+d2,d3,非空
+d3,e1,越界
+d3,d4,合法
+d4,p2,末列空
+p2,e3,
+d4,d5,末列非空
+d5,g1,上行 up
+d5,g2,σ 版 s
+d5,g3,ts 版
+g1,v-up1,
+g1,v-up2v1,
+g1,v-up2b,
+g1,v-up2c,
+g1,v-up2v2,
+g2,v-s1,
+g2,v-s2,
+g2,v-so1,
+g2,v-so2,
+g2,v-so3,
+g2,v-sp1,
+g2,v-so2o,
+g2,v-ssq,
+g3,v-ts2,
+g3,v-tsw,
+v-up1,q1,
+v-up2v1,q1,
+v-up2b,q1,
+v-up2c,q1,
+v-up2v2,q1,
+v-s1,q1,
+v-s2,q1,
+v-so1,q1,
+v-so2,q1,
+v-so3,q1,
+v-sp1,q1,
+v-so2o,q1,
+v-ssq,q1,
+v-ts2,q1,
+v-tsw,q1,
+q1,q2,
+q2,q3,
+q3,e3,
+g3,e4,内部 Left 超限

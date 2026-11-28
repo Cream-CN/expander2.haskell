@@ -2,7 +2,8 @@
 
 原版是 MFC 程序：**先由界面校验输入，再调用展开**。不合法输入不会进入展开，
 而是弹 `MessageBoxW` 显示固定文案。Haskell 侧把这层逻辑单独实现为
-`OmegaY.Notation.Types.uiExpand`，CLI 用 `--ui` 走这条路径。
+`OmegaY.Notation.Types.uiExpand`，只作为库函数保留；现在的 CLI 只有一个入口，
+走的是 `expandNotation`（不做界面层校验），没有 `--ui` 开关。
 
 ## 1. 界面层的三条分支（按记号能力分派）
 
@@ -36,21 +37,23 @@
 
 ## 3. 对拍方式
 
-`test/oracle/refui.cpp` 是新增的 **UI 级预言机**：完全复刻上面的三条分支
+`test/oracle/refui.cpp` 是 **UI 级预言机**：完全复刻上面的三条分支
 （含 `MessageBoxW` 文案与判定顺序），再调用 `INotation::expand`。
 错误文本里的换行统一转义成字面 `\n`，便于单行逐字节比较。
 
 ```sh
 sh test/build_oracle.sh                      # 同时产出 ref 与 refui
-python3 test/diff_ui.py --bin .build/expander2-hs --terms 1,0,abc,-1 --params 0,26
-./.build/expander2-hs --ui bms-v4 fs 0      # 界面语义：项数非法 → ERR:项数必须为正整数…
+printf '(0,0)(1,1)' | test/oracle/refui bms-v4 0   # 界面语义：项数非法 → 固定文案
 ```
 
-`test/diff_ui.py` 的比较口径：C++ 侧非 0 退出码记为 `skipped_ub`（原实现 UB）。
+本仓库的 CLI 已不再暴露这条路径，`test/diff_ui.py` 也随之移除；界面层校验只以
+`uiExpand` 的形式留在库里，需要时自己写调用方即可。
 
 ## 4. 当前对拍结果
 
-114 个记号全部接入，`coverage.json` 逐记号 `bad=0`（口径即 §1–§3 的界面分支 + 各记号内部规则）。
+119 个记号全部接入，`coverage.json` 逐记号 `bad=0`（口径即 §1–§3 的界面分支 + 各记号内部规则）。
+11242 家族（`srd` / `rpd` / `ard` / `ard2` / `ipd`）为文本型分支；其中 `ipd` 内部还有
+自己的 `A0` / `A1[3]` / 完整列列表文法与预算错误文案。
 原版 C++ 自身越界 / 崩溃的输入记为 `skipped_ub`，没有参考输出，不参与比较。
 批量筛选用例见下一节。
 
@@ -60,6 +63,9 @@ python3 test/diff_ui.py --bin .build/expander2-hs --terms 1,0,abc,-1 --params 0,
 2. **UPMS 逐字符扫描**：`((1),(2))` 是单列 `[1,2]`，不是两列；`(1,*)` 是 `[1]`，不是 `[1,0]`。
 
 ## 用语料过滤脚本批量筛掉不合法输入
+
+> 统一的 CLI 不再暴露界面层校验，`test/filter_legal.py` / `test/filter_all.sh` 已随入口一起移除。
+> 下面这节只记录第一轮做过的过滤口径，留着给需要复现的人参考（调用 `refui` 即可，不必依赖 Haskell 侧）。
 
 `test/filter_legal.py` 把上面的判定批量应用到语料文件：Haskell `--ui` 输出 `ERR:` 即不合法；
 `test/oracle/refui` 非零退出或超时视为原实现 UB，同样筛掉。**Haskell 展开慢不是不合法**，
@@ -87,3 +93,4 @@ TERMS=1,2 TIMEOUT=6 ./test/filter_all.sh Ton Dbms
 
 CLI 另加 `--params`：输出 `id<TAB>参数范围/默认值<TAB>seq|text|text_n`，过滤脚本据此给
 参数化记号（如 `bt1ynss` 要求 1–25）选择合法默认参数，避免把合法输入误判成"参数越界"。
+（该开关也随入口一起移除了；参数范围现在只能从 `src/OmegaY/Fam/*` 的元数据里查。）

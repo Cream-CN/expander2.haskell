@@ -1,0 +1,23 @@
+id,label,type
+a1,启动 expander2-hs,start
+a2,getArgs 读取命令行,process
+a3,collect 解析参数？,decision
+a5,--help 还是 --list,decision
+a4,打印用法并退出码 1,end
+a8,给了 --id 吗？,decision
+a6,打印三行用法,end
+a7,列出全部 id 与显示名,end
+a10,读表达式 --file 或 stdin,data
+a9,报错 缺少 --id 并退出 1,end
+a11,byId 查 poolMap,process
+a12,id 已注册吗？,decision
+a14,读记号的 Caps 类型,process
+a13,ERR_NO_NOTATION 退出 1,end
+a15,Caps 属于哪一类？,decision
+a16,文本型展开并打印,end
+a17,ParamCaps 的 param 越界吗？,decision
+a20,SeqCaps 的 term 与序列合法吗？,decision
+a18,打印 ERR 参数越界,end
+a19,带 param 展开并打印,end
+a21,打印 ERR 项数或空序列,end
+a22,切分展开后打印数列,end

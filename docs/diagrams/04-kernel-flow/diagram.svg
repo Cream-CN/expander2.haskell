@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3020" height="758" viewBox="0 0 3020 758" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif">
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 z" fill="#333"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<ellipse cx="140" cy="110" rx="100" ry="28.0" fill="#D5E8D4" stroke="#82B366" stroke-width="1.4"/>
+<text x="140" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">输入表达式文本与 term</text>
+<rect x="380" y="72.0" width="200" height="76" rx="6" fill="#FFFFFF" stroke="#666666" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="480" y="106.5" font-size="12" fill="#1a1a1a" text-anchor="middle">分派：矩阵／ω-Y／X-Y／序数</text>
+<text x="480" y="121.5" font-size="12" fill="#1a1a1a" text-anchor="middle">／序列</text>
+<rect x="720" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">parseMatrix 切列补零</text>
+<rect x="720" y="180.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="222.0" font-size="12" fill="#1a1a1a" text-anchor="middle">EntryGraph 建节点池</text>
+<rect x="720" y="288.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="330.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Xy World 分配 E 条目</text>
+<rect x="720" y="396.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="438.0" font-size="12" fill="#1a1a1a" text-anchor="middle">parseCol 解析 Expr 列</text>
+<rect x="720" y="504.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="820" y="546.0" font-size="12" fill="#1a1a1a" text-anchor="middle">parseSequence 切分整数列</text>
+<polygon points="1160,64.0 1260,110 1160,156.0 1060,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="1160" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">矩阵非空且标准？</text>
+<rect x="1060" y="180.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="222.0" font-size="12" fill="#1a1a1a" text-anchor="middle">fromSequence 挂父链</text>
+<rect x="1060" y="288.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="330.0" font-size="12" fill="#1a1a1a" text-anchor="middle">toSequenceV12 建树</text>
+<rect x="1060" y="396.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="438.0" font-size="12" fill="#1a1a1a" text-anchor="middle">cmpOrd 比较序数条目</text>
+<rect x="1060" y="504.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="546.0" font-size="12" fill="#1a1a1a" text-anchor="middle">findBadRoot 定位坏根</text>
+<rect x="1400" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1500" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">getBadSequence 取坏序列</text>
+<rect x="1400" y="180.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1500" y="222.0" font-size="12" fill="#1a1a1a" text-anchor="middle">findLower 定位坏根</text>
+<rect x="1400" y="288.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1500" y="330.0" font-size="12" fill="#1a1a1a" text-anchor="middle">getReferenceChain 主维</text>
+<rect x="1400" y="396.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1500" y="438.0" font-size="12" fill="#1a1a1a" text-anchor="middle">predecessor 求前驱</text>
+<rect x="1400" y="504.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1500" y="546.0" font-size="12" fill="#1a1a1a" text-anchor="middle">replaceLast 复制提升</text>
+<ellipse cx="1500" cy="650" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="1500" y="654.0" font-size="12" fill="#1a1a1a" text-anchor="middle">返回解析失败或非标准</text>
+<rect x="1740" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1840" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">copyBadSequence 复制尾部</text>
+<rect x="1740" y="180.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1840" y="222.0" font-size="12" fill="#1a1a1a" text-anchor="middle">collectWeak 提升项收集</text>
+<rect x="1740" y="288.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1840" y="330.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expandImpl 记忆化展开</text>
+<rect x="1740" y="396.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1840" y="438.0" font-size="12" fill="#1a1a1a" text-anchor="middle">remapCol 重写列</text>
+<rect x="1740" y="504.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1840" y="546.0" font-size="12" fill="#1a1a1a" text-anchor="middle">按 term 迭代展开</text>
+<rect x="2080" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">bmsExpand 迭代 term 次</text>
+<rect x="2080" y="180.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2180" y="222.0" font-size="12" fill="#1a1a1a" text-anchor="middle">copySingleEdge 复制</text>
+<ellipse cx="2180" cy="326" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2180" y="330.0" font-size="12" fill="#1a1a1a" text-anchor="middle">toSequence 输出数列</text>
+<ellipse cx="2180" cy="434" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2180" y="438.0" font-size="12" fill="#1a1a1a" text-anchor="middle">拼接输出 suspend</text>
+<ellipse cx="2180" cy="542" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2180" y="546.0" font-size="12" fill="#1a1a1a" text-anchor="middle">seqToString 输出数列</text>
+<ellipse cx="2520" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2520" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">matrixToString 收尾</text>
+<rect x="2420" y="180.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="2520" y="222.0" font-size="12" fill="#1a1a1a" text-anchor="middle">sortCol 与 rewire</text>
+<ellipse cx="2860" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="2860" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">toSequence 输出数列</text>
+<polyline points="240.0,110.0 310.0,110.0 310.0,110.0 380.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 600.4,110.0 600.4,110.0 720.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 625.2,110.0 625.2,218.0 720.0,218.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 650.0,110.0 650.0,326.0 720.0,326.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 674.8,110.0 674.8,434.0 720.0,434.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 699.6,110.0 699.6,542.0 720.0,542.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,110.0 940.4,110.0 940.4,110.0 1060.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,110.0 1278.3,110.0 1278.3,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">是</text>
+<polyline points="1260.0,110.0 1340.3,110.0 1340.3,650.0 1400.0,650.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1394.0" y="643.0" font-size="10.5" fill="#555" text-anchor="end">否</text>
+<polyline points="1600.0,110.0 1620.4,110.0 1620.4,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1940.0,110.0 1960.4,110.0 1960.4,110.0 2080.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2280.0,110.0 2319.0,110.0 2319.0,110.0 2420.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,218.0 965.2,218.0 965.2,218.0 1060.0,218.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,218.0 1299.0,218.0 1299.0,218.0 1400.0,218.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1600.0,218.0 1645.2,218.0 1645.2,218.0 1740.0,218.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1940.0,218.0 1985.2,218.0 1985.2,218.0 2080.0,218.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2280.0,218.0 2381.0,218.0 2381.0,218.0 2420.0,218.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="2620.0,218.0 2690.0,218.0 2690.0,110.0 2760.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,326.0 990.0,326.0 990.0,326.0 1060.0,326.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,326.0 1319.7,326.0 1319.7,326.0 1400.0,326.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1600.0,326.0 1670.0,326.0 1670.0,326.0 1740.0,326.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1940.0,326.0 2010.0,326.0 2010.0,326.0 2080.0,326.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,434.0 1014.8,434.0 1014.8,434.0 1060.0,434.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,434.0 1361.0,434.0 1361.0,434.0 1400.0,434.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1600.0,434.0 1694.8,434.0 1694.8,434.0 1740.0,434.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1940.0,434.0 2034.8,434.0 2034.8,434.0 2080.0,434.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,542.0 1039.6,542.0 1039.6,542.0 1060.0,542.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,542.0 1381.7,542.0 1381.7,542.0 1400.0,542.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1600.0,542.0 1719.6,542.0 1719.6,542.0 1740.0,542.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1940.0,542.0 2059.6,542.0 2059.6,542.0 2080.0,542.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+</svg>

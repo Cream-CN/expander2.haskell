@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1910" viewBox="0 0 2000 1910" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif">
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 z" fill="#333"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<ellipse cx="140" cy="110" rx="100" ry="28.0" fill="#D5E8D4" stroke="#82B366" stroke-width="1.4"/>
+<text x="140" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">小族速览 55 个 id</text>
+<polygon points="480,64.0 580,110 480,156.0 380,110" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.4"/>
+<text x="480" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Caps 型分派</text>
+<rect x="720" y="72.0" width="200" height="76" rx="6" fill="#FFFFFF" stroke="#666666" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="820" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">序列型 5 族</text>
+<rect x="720" y="222.0" width="200" height="76" rx="6" fill="#FFFFFF" stroke="#666666" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="820" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">文本型 7 族</text>
+<rect x="720" y="379.0" width="200" height="62" rx="6" fill="#FFF9C4" stroke="#C0C0C0" stroke-width="1.4"/>
+<text x="820" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">参数化 8 个见 M1ynss</text>
+<rect x="1060" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">SeqBasic 坏根复制</text>
+<rect x="1060" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expandOmegaY 图展开</text>
+<rect x="1060" y="372.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">mrssExpandText 树展开</text>
+<rect x="1060" y="522.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="564.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expandEpsilonY/GY</text>
+<rect x="1060" y="672.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="714.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expandXyV1/V2/V3</text>
+<rect x="1060" y="822.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="864.0" font-size="12" fill="#1a1a1a" text-anchor="middle">parseBm 坏列复制</text>
+<rect x="1060" y="972.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="1014.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Tbm/Btbm 超限</text>
+<rect x="1060" y="1122.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="1164.0" font-size="12" fill="#1a1a1a" text-anchor="middle">tonExpandText 状态机</text>
+<rect x="1060" y="1272.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="1314.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Den1/Blp/Iblp 行表</text>
+<rect x="1060" y="1422.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="1464.0" font-size="12" fill="#1a1a1a" text-anchor="middle">computeUp 提升位</text>
+<rect x="1060" y="1572.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="1614.0" font-size="12" fill="#1a1a1a" text-anchor="middle">subtract1 V2/V3</text>
+<rect x="1060" y="1722.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1160" y="1764.0" font-size="12" fill="#1a1a1a" text-anchor="middle">expandSrd/Ipd 图</text>
+<rect x="1400" y="72.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1500" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">seqToString+后缀</text>
+<rect x="1400" y="222.0" width="200" height="76" rx="6" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.4"/>
+<text x="1500" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">文本直出+后缀</text>
+<polygon points="56.72,222.0 240,222.0 223.28,298.0 40,298.0" fill="#E1D5E7" stroke="#9673A6" stroke-width="1.4"/>
+<text x="140" y="264.0" font-size="12" fill="#1a1a1a" text-anchor="middle">EntryGraph 节点池</text>
+<polygon points="56.72,372.0 240,372.0 223.28,448.0 40,448.0" fill="#E1D5E7" stroke="#9673A6" stroke-width="1.4"/>
+<text x="140" y="414.0" font-size="12" fill="#1a1a1a" text-anchor="middle">Share.parseBm 复用</text>
+<ellipse cx="1840" cy="110" rx="100" ry="28.0" fill="#F8CECC" stroke="#B85450" stroke-width="1.4"/>
+<text x="1840" y="114.0" font-size="12" fill="#1a1a1a" text-anchor="middle">输出文本串</text>
+<polyline points="240.0,110.0 263.5,110.0 263.5,110.0 380.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="580.0,110.0 608.7,110.0 608.7,110.0 720.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">序列型</text>
+<polyline points="580.0,110.0 650.0,110.0 650.0,260.0 720.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">文本型</text>
+<polyline points="580.0,110.0 691.3,110.0 691.3,410.0 720.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="714.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">参数化</text>
+<polyline points="920.0,110.0 932.8,110.0 932.8,110.0 1060.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">SeqBasic</text>
+<polyline points="920.0,110.0 942.3,110.0 942.3,260.0 1060.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">YMagma</text>
+<polyline points="920.0,110.0 951.8,110.0 951.8,410.0 1060.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">Mrss</text>
+<polyline points="920.0,110.0 970.9,110.0 970.9,560.0 1060.0,560.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="553.0" font-size="10.5" fill="#555" text-anchor="end">Yseq</text>
+<polyline points="920.0,110.0 980.5,110.0 980.5,710.0 1060.0,710.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="703.0" font-size="10.5" fill="#555" text-anchor="end">Xy</text>
+<polyline points="920.0,260.0 990.0,260.0 990.0,860.0 1060.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">Bmlike</text>
+<polyline points="920.0,260.0 999.5,260.0 999.5,1010.0 1060.0,1010.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="1003.0" font-size="10.5" fill="#555" text-anchor="end">Tree</text>
+<polyline points="920.0,260.0 1009.1,260.0 1009.1,1160.0 1060.0,1160.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="1153.0" font-size="10.5" fill="#555" text-anchor="end">Ton</text>
+<polyline points="920.0,260.0 1018.6,260.0 1018.6,1310.0 1060.0,1310.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="1303.0" font-size="10.5" fill="#555" text-anchor="end">Den</text>
+<polyline points="920.0,260.0 1028.2,260.0 1028.2,1460.0 1060.0,1460.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="1453.0" font-size="10.5" fill="#555" text-anchor="end">Upmn</text>
+<polyline points="920.0,260.0 1037.7,260.0 1037.7,1610.0 1060.0,1610.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="1603.0" font-size="10.5" fill="#555" text-anchor="end">Aw2mn</text>
+<polyline points="920.0,260.0 1047.2,260.0 1047.2,1760.0 1060.0,1760.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="1753.0" font-size="10.5" fill="#555" text-anchor="end">G11242</text>
+<polyline points="1260.0,110.0 1273.2,110.0 1273.2,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,260.0 1283.5,260.0 1283.5,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,410.0 1293.8,410.0 1293.8,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,560.0 1304.2,560.0 1304.2,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,710.0 1314.5,710.0 1314.5,110.0 1400.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,860.0 1324.8,860.0 1324.8,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,1010.0 1335.2,1010.0 1335.2,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,1160.0 1345.5,1160.0 1345.5,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,1310.0 1355.8,1310.0 1355.8,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,1460.0 1366.2,1460.0 1366.2,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,1610.0 1376.5,1610.0 1376.5,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1260.0,1760.0 1386.8,1760.0 1386.8,260.0 1400.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1600.0,110.0 1639.0,110.0 1639.0,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="1600.0,260.0 1701.0,260.0 1701.0,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<polyline points="920.0,410.0 961.4,410.0 961.4,110.0 1740.0,110.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1734.0" y="103.0" font-size="10.5" fill="#555" text-anchor="end">见 M1ynss 图</text>
+<polyline points="240.0,260.0 294.5,260.0 294.5,260.0 1060.0,260.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="253.0" font-size="10.5" fill="#555" text-anchor="end">medium/strong</text>
+<polyline points="240.0,260.0 325.5,260.0 325.5,410.0 1060.0,410.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="403.0" font-size="10.5" fill="#555" text-anchor="end">omega-y-sequence</text>
+<polyline points="240.0,410.0 356.5,410.0 356.5,860.0 1060.0,860.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#ar)"/>
+<text x="1054.0" y="853.0" font-size="10.5" fill="#555" text-anchor="end">复用到 Bmlike</text>
+</svg>

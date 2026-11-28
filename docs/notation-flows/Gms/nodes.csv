@@ -1,0 +1,33 @@
+id,label,type
+n0,Gms 实现函数被调用,start
+n1,注册入口是哪条,decision
+n2,runGms 十五个版本,process
+n3,runLpms 两个版本,process
+n4,parseBmExpr 解析 BM,process
+n5,解析成功,decision
+e1,kParseError 失败出口,end
+n6,矩阵列数为 0,decision
+e2,空串输出,end
+n7,fromMatrix 转列向量表,process
+n8,入口路径分流,decision
+n9,fs 按 term 取序号,process
+n10,System 判据,decision
+n11,buildGbmsD 造增量列,process
+n12,buildUpms 造 Y/v/D,process
+n13,projectionRecurrence,process
+n14,buildLpms2X 造 X 列,process
+n15,oldFiniteFs 递归下一轮,process
+n16,Proj 判据,decision
+n17,matCompare 标准列比较,process
+n18,trimZeroRows 裁零行,process
+n19,行数优先 compareFor,process
+n20,fmatToString 序列化,process
+e3,正常输出,end
+n21,legal 与末列全零预检,process
+n22,预检通过,decision
+n23,砍末列后标准化,process
+n24,lpmsFs 内部分发,process
+n25,走 bmsFs 或 lpmsSingle,decision
+n26,bmsFs 复制 B 部 n 次,process
+n27,lpmsSingle 提升状态机,process
+n28,fmatToString 序列化,process
