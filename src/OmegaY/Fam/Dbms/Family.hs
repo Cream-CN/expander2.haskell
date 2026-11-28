@@ -47,7 +47,7 @@ familyNotations =
       SΩSq.expandText SΩSq.expandAlter ""
   , textAlterNotation "ts-2-dbms" "TS2DBMS" ["MN","DBMS","文本"]
       Ts2.expandText Ts2.expandAlter ""
-  , textAlterNotation "ts-omega-dbms" "TSΩDBMS" ["MN","DBMS","文本"]
+  , textAlterNotation "ts-omega-dbms" "TSωDBMS" ["MN","DBMS","文本"]
       TsΩ.expandText TsΩ.expandAlter ""
   -- ts-omega-dbms 暂未纳入：Height=[HeightEntry{anchor,position}] 的 CNF 互转在
   -- cnfToTsOmega(omega) 路径上与 C++ 存在差异（parseOrdinal "w" 后 convert_matrix

@@ -1,4 +1,4 @@
--- | 唯一注册表：114 个记号，顺序与 C++ 侧 kMetaArray 一致。
+-- | 唯一注册表：119 个记号，顺序与 C++ 侧 kMetaArray 一致。
 module OmegaY.Registry
   ( allNotations
   , byId
@@ -17,6 +17,7 @@ import qualified OmegaY.Fam.Bmlike.Family as Bmlike
 import qualified OmegaY.Fam.Bms.Family as Bms
 import qualified OmegaY.Fam.Dbms.Family as Dbms
 import qualified OmegaY.Fam.Den.Family as Den
+import qualified OmegaY.Fam.G11242.Family as G11242
 import qualified OmegaY.Fam.Gms.Family as Gms
 import qualified OmegaY.Fam.M1ynss.Family as M1ynss
 import qualified OmegaY.Fam.Mn.Family as Mn
@@ -54,8 +55,9 @@ notationPool =
     ++ Aw2mn.familyNotations
     ++ Yseq.familyNotations
     ++ Xy.familyNotations
+    ++ G11242.familyNotations
 
--- | C++ @kMetaArray@ 的 id 顺序（114 项，逐字照抄）。
+-- | C++ @kMetaArray@ 的 id 顺序（119 项，逐字照抄）。
 idOrder :: [String]
 idOrder =
   [ "empty"
@@ -172,6 +174,11 @@ idOrder =
   , "weak-a-omega2-mn-2"
   , "a-omega2-mn-3"
   , "weak-a-omega2-mn-3"
+  , "srd"
+  , "rpd"
+  , "ard"
+  , "ard2"
+  , "ipd"
   ]
 
 poolMap :: M.Map String Notation

@@ -144,18 +144,18 @@ parents (Expr mcols) v = allRows
  where
   n = length mcols
   allRows = [buildCol i | i <- [0 .. n - 1]]
-  buildCol i = goEntries 0 []
+  buildCol i = reverse (goEntries 0 [])
    where
     col = mcols !! i
-    goEntries j pi
-      | j >= length col = pi
+    goEntries j acc
+      | j >= length col = acc
       | otherwise =
         let value = eValue (col !! j)
             pos = if j /= 0 then v !! i !! (j - 1) else []
-            p0 = if j == 0 then i - 1 else fst (last pi)
+            p0 = if j == 0 then i - 1 else fst (head acc)
         in case walk p0 j pos value of
-             Nothing -> pi
-             Just pair -> goEntries (j + 1) (pi ++ [pair])
+             Nothing -> acc
+             Just pair -> goEntries (j + 1) (pair : acc)
     walk p j pos value
       | p < 0 = Nothing
       | otherwise =

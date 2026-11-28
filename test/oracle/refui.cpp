@@ -1,5 +1,5 @@
-// UI 级预言机：复刻 Expander.cpp 中 IDM_FS / IDM_FSALTER 三个分支的
-// 输入校验（文本型 / 参数化 / 序列型），再做展开。
+// UI 级预言机：复刻 Expander.cpp 中三条输入校验分支
+// （文本型 / 参数化 / 序列型），再做展开。
 //
 // 与 ref.cpp 的差别：term / param 以**原始字符串**传入，用来复刻
 // std::stoi 失败时的「项数必须是整数」提示；校验顺序与 MessageBox 分支
@@ -41,20 +41,16 @@ int main(int argc, char** argv) {
                       << "\n";
         return 0;
     }
-    if (argc < 4) {
-        std::cerr << "usage: refui <id> <fs|alter> <termRaw> [paramRaw]\n";
+    if (argc < 3) {
+        std::cerr << "usage: refui <id> <termRaw> [paramRaw]\n";
         return 2;
     }
 
     const std::string ident = argv[1];
-    const std::string modeStr = argv[2];
-    const std::string termRaw = argv[3];
-    const std::string paramRaw = (argc > 4) ? argv[4] : "0";
+    const std::string termRaw = argv[2];
+    const std::string paramRaw = (argc > 3) ? argv[3] : "0";
     const std::string text{std::istreambuf_iterator<char>(std::cin),
                            std::istreambuf_iterator<char>()};
-
-    const ExpandMode mode =
-        (modeStr == "alter") ? ExpandMode::FsAlter : ExpandMode::Fs;
 
     for (auto& n : registered_notations()) {
         if (std::string(n->id()) != ident) continue;
@@ -77,7 +73,7 @@ int main(int argc, char** argv) {
                 std::cout << "ERR:" << esc("序列不能为空") << "\n";
                 return 0;
             }
-            return finish(n->expand(mode, text, term, 0));
+            return finish(n->expand(text, term, 0));
         }
 
         // ---- 分支二：参数化记号 ----
@@ -107,7 +103,7 @@ int main(int argc, char** argv) {
                 std::cout << "ERR:" << esc("序列不能为空") << "\n";
                 return 0;
             }
-            return finish(n->expand(mode, text, term, param));
+            return finish(n->expand(text, term, param));
         }
 
         // ---- 分支三：序列型记号（readSeqAndTerm）----
@@ -126,7 +122,7 @@ int main(int argc, char** argv) {
             std::cout << "ERR:" << esc("序列不能为空") << "\n";
             return 0;
         }
-        return finish(n->expand(mode, text, term, 0));
+        return finish(n->expand(text, term, 0));
     }
 
     std::cout << "ERR_NO_NOTATION\n";

@@ -3,12 +3,19 @@
 module OmegaY.Fam.Xy.XyV3
   ( xyV3Notation
   , expandXyV3
+  , expandXyV3Count
   ) where
 
 import Control.Monad (forM_, when)
 import Control.Monad.ST (ST, runST)
-import Data.IntMap.Strict (IntMap)
-import qualified Data.IntMap.Strict as IM
+import Data.Array.MArray
+  ( newArray
+  , readArray
+  , writeArray
+  )
+import Data.Array.ST
+  ( STArray
+  )
 import Data.STRef
   ( STRef
   , modifySTRef'
@@ -19,6 +26,16 @@ import Data.STRef
 import OmegaY.Notation.Types (Notation, seqNotation)
 
 -- Entry 与 Arena
+--
+-- 原来的 arena 是 @IntMap V3@：节点只增不删，每次 alloc/mod 都要复制一条
+-- IntMap 路径（O(log n) 个内部节点），并且 getN 走一次树查找。一个 60 节点的
+-- 小展开就要多分配上千个 map 节点，全部留给 GC 去扫。
+--
+-- 现在换成定长可增长的 @STArray s Int V3@（槽位数组）：
+--   · getN 直接返回槽位里已有的记录，不再新建 View（零分配）；
+--   · alloc/modN 只写一个槽位，O(1)，没有路径复制；
+--   · 容量翻倍时整体搬运。
+-- 语义（getN 越界返回 makeRoot、modN 越界无操作）与 IntMap 版一致。
 data V3 = V3
   { vValue :: Int
   , vRow :: [Int]
@@ -30,37 +47,82 @@ data V3 = V3
   , vHead :: Maybe Int
   , vFoot :: Maybe Int
   , vRef :: Maybe Int
-  , vOffset :: [[Int]]
   }
 
+initialCap :: Int
+initialCap = 32
+
 data World s = World
-  { wAr :: STRef s (IntMap V3)
+  { wA :: STRef s (STArray s Int V3)
+  , wCap :: STRef s Int
   , wNext :: STRef s Int
   }
 
 newWorld :: ST s (World s)
 newWorld = do
-  ar <- newSTRef IM.empty
+  a <- newArray (0, initialCap - 1) makeRoot
+  aRef <- newSTRef a
+  capRef <- newSTRef initialCap
   nx <- newSTRef 0
-  pure (World ar nx)
+  pure (World aRef capRef nx)
+
+-- | 保证至少放得下 n 个节点；容量翻倍并搬运旧内容。
+ensureCap :: World s -> Int -> ST s ()
+ensureCap w need = do
+  cap <- readSTRef (wCap w)
+  when (need > cap) $ do
+    let cap' = max need (cap * 2)
+    old <- readSTRef (wA w)
+    a' <- newArray (0, cap' - 1) makeRoot
+    let copy k
+          | k >= cap = pure ()
+          | otherwise = do
+              x <- readArray old k
+              writeArray a' k x
+              copy (k + 1)
+    copy 0
+    writeSTRef (wA w) a'
+    writeSTRef (wCap w) cap'
 
 alloc :: World s -> V3 -> ST s Int
 alloc w e = do
   i <- readSTRef (wNext w)
+  ensureCap w (i + 1)
   writeSTRef (wNext w) (i + 1)
-  modifySTRef' (wAr w) (IM.insert i e)
+  a <- readSTRef (wA w)
+  writeArray a i e
   pure i
 
 getN :: World s -> Int -> ST s V3
 getN w i = do
-  m <- readSTRef (wAr w)
-  pure (IM.findWithDefault (V3 0 [0] (-1) 0 0 0 Nothing Nothing Nothing Nothing []) i m)
+  n <- readSTRef (wNext w)
+  if i < 0 || i >= n
+    then pure makeRoot
+    else do
+      a <- readSTRef (wA w)
+      readArray a i
 
 modN :: World s -> Int -> (V3 -> V3) -> ST s ()
-modN w i f = modifySTRef' (wAr w) (IM.adjust f i)
+modN w i f = do
+  n <- readSTRef (wNext w)
+  when (i >= 0 && i < n) $ do
+    a <- readSTRef (wA w)
+    e <- readArray a i
+    writeArray a i (f e)
+
+-- | 记录当前水位。用于把"只服务于一次查询、返回后立刻死掉"的临时节点
+--   （例如 getBootIndex 自己画的那座山）整体还给 arena，而不是让它一直
+--   挂在槽位数组里直到整个展开结束。
+markArena :: World s -> ST s Int
+markArena w = readSTRef (wNext w)
+
+-- | 把分配水位回退到 mark。调用方必须保证 mark 之后分配的节点的 id
+--   不会再被任何存活结构引用，否则槽位会被后来的 alloc 覆盖。
+releaseTo :: World s -> Int -> ST s ()
+releaseTo w k = writeSTRef (wNext w) k
 
 makeRoot :: V3
-makeRoot = V3 0 [1] (-1) 0 0 0 Nothing Nothing Nothing Nothing []
+makeRoot = V3 0 [1] (-1) 0 0 0 Nothing Nothing Nothing Nothing
 
 -- 行运算（v3 版）
 atI :: [Int] -> Int -> Int
@@ -243,17 +305,17 @@ toSequenceV3 w s = go 0 []
         if vi <= 1
           then do
             root <- alloc w makeRoot
-            e <- alloc w (V3 vi [] i 0 0 0 (Just root) Nothing Nothing Nothing [])
+            e <- alloc w (V3 vi [] i 0 0 0 (Just root) Nothing Nothing Nothing)
             go (i + 1) (e : acc)
           else do
             let smaller = [j | j <- [i - 1, i - 2 .. 0], atI s j < vi]
             case smaller of
               (j : _) -> do
-                e <- alloc w (V3 vi [] i 0 0 0 (Just (acc !! (i - 1 - j))) Nothing Nothing Nothing [])
+                e <- alloc w (V3 vi [] i 0 0 0 (Just (acc !! (i - 1 - j))) Nothing Nothing Nothing)
                 go (i + 1) (e : acc)
               [] -> do
                 root <- alloc w makeRoot
-                e <- alloc w (V3 vi [] i 0 0 0 (Just root) Nothing Nothing Nothing [])
+                e <- alloc w (V3 vi [] i 0 0 0 (Just root) Nothing Nothing Nothing)
                 go (i + 1) (e : acc)
 
 drawMountain :: World s -> [Int] -> [Int] -> ST s (STRef s [[Int]])
@@ -270,7 +332,7 @@ drawMountain w s d = do
             pure (head (m !! vCloumn pe))
           else alloc w makeRoot
       Nothing -> alloc w makeRoot
-    first <- alloc w (V3 (vValue e) [1] i 0 0 0 (Just parent) Nothing Nothing Nothing [])
+    first <- alloc w (V3 (vValue e) [1] i 0 0 0 (Just parent) Nothing Nothing Nothing)
     modifySTRef' mRef (++ [[first]])
   m0 <- readSTRef mRef
   let climb i = do
@@ -283,7 +345,7 @@ drawMountain w s d = do
                     footVal = vValue it - pv
                 when (footVal < vValue it) $ do
                   let fr = getFootRowV3 (vRow <$> mp) (vRow it) d
-                  foot <- alloc w (V3 footVal fr i (vIdx it + 1) 0 0 Nothing (Just itId) Nothing Nothing [])
+                  foot <- alloc w (V3 footVal fr i (vIdx it + 1) 0 0 Nothing (Just itId) Nothing Nothing)
                   modifySTRef' mRef (\xs -> take i xs ++ [xs !! i ++ [foot]] ++ drop (i + 1) xs)
                   p1 <- case vParent it of
                     Nothing -> pure Nothing
@@ -320,7 +382,7 @@ getOds w m = go m []
           pe <- getN w p
           if vCloumn pe >= 0 then pure (acc !! vCloumn pe) else alloc w makeRoot
         Nothing -> alloc w makeRoot
-    e <- alloc w (V3 (vValue le) [1] (vCloumn fe) 0 0 0 (Just parent) Nothing Nothing Nothing [])
+    e <- alloc w (V3 (vValue le) [1] (vCloumn fe) 0 0 0 (Just parent) Nothing Nothing Nothing)
     go rest (acc ++ [e])
 
 getMds :: World s -> [[Int]] -> ST s [Int]
@@ -407,7 +469,7 @@ copyElement w mRef mb _tId itId d = do
         let lastCol = last m
             newCl = length m - 1
         eid <- alloc w (V3 (vValue it) row newCl (length lastCol) (vNo it) (vId it)
-                        Nothing Nothing Nothing Nothing [])
+                        Nothing Nothing Nothing Nothing)
         modifySTRef' mRef (\xs -> init xs ++ [last xs ++ [eid]])
         when (not (null lastCol)) $ do
           let prev = last lastCol
@@ -473,7 +535,10 @@ expandDimensionSequnece w mRef bId tId n d = do
     let dd = if length d == 3 && d !! 0 == 1 && d !! 1 == 0 && d !! 2 == 1 then d else [0, 1]
     m <- readSTRef mRef
     s <- getMds w m
+    -- s 是后续复制要用的活节点，不能回退；只回退 getBootIndex 自己画的临时山。
+    ck <- markArena w
     c <- fst <$> getBootIndex w s dd
+    releaseTo w ck
     bu <- getN w bId
     let tCol = vCloumn t
         go i
@@ -504,21 +569,15 @@ expandDimensionSequnece w mRef bId tId n d = do
                     if compareDimensionV3 diffRow (vRow bu) <= 0
                       then next
                       else do
-                        ne <- alloc w (V3 val0 [] (c + 1) 0 0 0 (Just (s !! c)) Nothing Nothing Nothing [])
+                        ne <- alloc w (V3 val0 [] (c + 1) 0 0 0 (Just (s !! c)) Nothing Nothing Nothing)
                         let ds0 = take (c + 1) s ++ [ne] ++ drop (c + 1) s
                         (ds1, pos) <- upchain w bu itId ds0 1
                         forM_ (zip [0 ..] ds1) $ \(k, eid) -> do
                           modN w eid (\x -> x {vCloumn = k})
                           fixParentUp w eid
-                        modN w itId (\x -> x {vOffset = []})
-                        let len0 = length ds1 - 1 - c
-                        ex <- expand_impl w ds1 n dd False
-                        let offsets =
-                              [ [1, if idx >= 0 && idx < length ex then ex !! idx else 0]
-                              | ii <- [0 .. n - 1]
-                              , let idx = c + len0 * (ii + 1) + pos
-                              ]
-                        modN w itId (\x -> x {vOffset = offsets})
+                        -- 原来这里会构造一份没有任何读取方的 offsets 列表（[[1,x]] × n），
+                        -- 纯属给 GC 制造垃圾；C++ 侧该字段也不参与后续计算，直接不做。
+                        _ex <- expand_impl w ds1 n dd False
                         next
     go (vCloumn b + 1)
 
@@ -540,7 +599,7 @@ upchain w bu itId ds pos = do
             else do
               let c = vCloumn bu
                   val = if length dr < 2 then 1 else dr !! 1
-              ne <- alloc w (V3 val [] (c + 1) 0 0 0 (Just (ds !! c)) Nothing Nothing Nothing [])
+              ne <- alloc w (V3 val [] (c + 1) 0 0 0 (Just (ds !! c)) Nothing Nothing Nothing)
               let ds1 = take (c + 1) ds ++ [ne] ++ drop (c + 1) ds
               when (c + 2 < length ds1) $
                 modN w (ds1 !! (c + 2)) (\x -> x {vParent = Just (ds1 !! (c + 1))})
@@ -569,7 +628,11 @@ expand_impl w s n d f = do
       if vValue le <= 1
         then mapM (fmap vValue . getN w) (init s)
         else do
+          -- getBootIndex 只为拿到 (bi,bj)，它自己画的那座山返回后即死；
+          -- 先把水位记下来，拿完 (bi,bj) 立刻回退，后面重新画山时复用这些槽位。
+          ck0 <- markArena w
           (bi, bj) <- getBootIndex w s d
+          releaseTo w ck0
           mRef <- drawMountain w s d
           m0 <- readSTRef mRef
           let bId = (m0 !! bi) !! bj
@@ -617,7 +680,7 @@ expand_impl w s n d f = do
               let headId = last (last m3)
               eid <- alloc w
                 (V3 (vValue src) (vRow src) tCol (tIdx + 1) (vNo src) (vNo src)
-                   (vParent src) (Just headId) Nothing (Just ((m2 !! bCol) !! i)) [])
+                   (vParent src) (Just headId) Nothing (Just ((m2 !! bCol) !! i)))
               modifySTRef' mRef (\xs -> init xs ++ [last xs ++ [eid]])
               m4 <- readSTRef mRef
               when (length (m4 !! tCol) >= 2) $ do
@@ -644,6 +707,18 @@ expandXyV3 seqv term
       let term' = if term > 10 then 10 else term
       s <- toSequenceV3 w seqv
       expand_impl w s term' dXY False
+
+-- | 调试用：与 expandXyV3 同路径，额外返回 arena 里累计分配过的节点数。
+expandXyV3Count :: [Int] -> Int -> ([Int], Int)
+expandXyV3Count seqv term
+  | term < 1 || null seqv = (seqv, 0)
+  | otherwise = runST $ do
+      w <- newWorld
+      let term' = if term > 10 then 10 else term
+      s <- toSequenceV3 w seqv
+      r <- expand_impl w s term' dXY False
+      n <- readSTRef (wNext w)
+      pure (r, n)
 
 xyV3Notation :: Notation
 xyV3Notation =

@@ -13,7 +13,7 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REF = os.path.join(HERE, "oracle", "ref")
+REF = os.environ.get("REF", os.path.join(HERE, "oracle", "ref"))
 CORP = os.path.join(HERE, "corpus")
 
 # 各族的语料文件；缺失时回退到通用池
@@ -30,10 +30,21 @@ FAMILY_CORPUS = {
 GENERIC = ["1,2", "1,2,3", "1,1,2", "2,3", "(1)(2)", "[[0,1]]", "0(1,2)", "1"]
 
 
-def run(binary, ident, mode, term, text, timeout=5):
-    """返回 (stdout, returncode)。负 rc = 被信号杀死（原实现 UB）。"""
+def run(binary, ident, term, text, timeout=5):
+    """C++ 预言机（ref <id> <term> [param]）。返回 (stdout, returncode)。负 rc = 被信号杀死（原实现 UB）。"""
     try:
-        p = subprocess.run([binary, ident, mode, str(term)],
+        p = subprocess.run([binary, ident, str(term)],
+                           input=text.encode(), stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, timeout=timeout)
+        return p.stdout.decode("utf-8", "replace"), p.returncode
+    except subprocess.TimeoutExpired:
+        return "<TIMEOUT>", 124
+
+
+def run_hs(binary, ident, term, text, timeout=5):
+    """Haskell CLI（具名参数，表达式走 stdin）。"""
+    try:
+        p = subprocess.run([binary, "--id", ident, "--term", str(term)],
                            input=text.encode(), stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE, timeout=timeout)
         return p.stdout.decode("utf-8", "replace"), p.returncode
@@ -75,20 +86,19 @@ def main():
         ok = bad = skipped = 0
         first = None
         for text in pool[: a.per_id]:
-            for mode in ("fs", "alter"):
-                for term in (1, 2):
-                    r, rc = run(REF, ident, mode, term, text)
-                    if rc != 0:
-                        # 预言机自身崩溃/不终止 → 原实现 UB，不可比，跳过
-                        skipped += 1
-                        continue
-                    h, _ = run(a.bin, ident, mode, term, text)
-                    if r == h:
-                        ok += 1
-                    else:
-                        bad += 1
-                        if first is None:
-                            first = (mode, term, text, r, h)
+            for term in (1, 2):
+                r, rc = run(REF, ident, term, text)
+                if rc != 0:
+                    # 预言机自身崩溃/不终止 → 原实现 UB，不可比，跳过
+                    skipped += 1
+                    continue
+                h, _ = run_hs(a.bin, ident, term, text)
+                if r == h:
+                    ok += 1
+                else:
+                    bad += 1
+                    if first is None:
+                        first = (term, text, r, h)
         result[ident] = {"ok": ok, "bad": bad, "skipped_ub": skipped}
         if bad:
             print("BAD %-28s ok=%d bad=%d  first=%r" % (ident, ok, bad, first))

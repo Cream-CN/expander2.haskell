@@ -130,7 +130,7 @@ getReferenceChain :: World s -> Int -> ST s [Int]
 getReferenceChain w itId = go itId []
  where
   go curId acc
-    | curId < 0 = pure (reverse acc)
+    | curId < 0 = pure acc
     | otherwise = do
         cur <- getE w curId
         let acc' = curId : acc
@@ -147,27 +147,24 @@ getReferenceChain w itId = go itId []
                     else headBranch cur acc'
               else headBranch cur acc'
         if stop
-          then pure (reverse acc')
+          then pure acc'
           else do
             next <- nextNode cur
             case next of
-              Nothing -> pure (reverse acc')
+              Nothing -> pure acc'
               Just nxt -> go nxt acc'
    where
-    headBranch cur acc' = do
+    -- C++ 的停链条件只有两种：head 为空，或 head->parent 为空。
+    -- head->parent->foot 是否存在、row 与它的大小关系都只影响“下一步选谁”，
+    -- 不构成终止条件（否则会把参考链截短）。
+    headBranch cur _acc' = do
       case e_head cur of
         Nothing -> pure True
         Just h -> do
           he <- getE w h
           case e_parent he of
             Nothing -> pure True
-            Just hp -> do
-              hpe <- getE w hp
-              case e_foot hpe of
-                Nothing -> pure True
-                Just hpf -> do
-                  hpfe <- getE w hpf
-                  pure (compareRow (e_row cur) (e_row hpfe) < 0)
+            Just _ -> pure False
     nextNode cur = do
       case e_parent cur of
         Just p -> do
@@ -428,13 +425,16 @@ calcMaxRow w m bE srcE i len =
             goBase baseCol diff
       else pure (e_row srcE)
  where
-  goBase baseCol diff = case [cc | cc <- [length baseCol - 1, length baseCol - 2 .. 0]] of
-    [] -> pure (e_row srcE)
-    (cc : _) -> do
-      be <- getE w (baseCol !! cc)
-      if e_no be > e_no srcE
-        then pure (e_row srcE)
-        else pure (rowAddition (e_row be) diff)
+  -- C++ 从 base_col 末尾向前找第一个 no <= src.no 的元素；找不到时保留 src.row
+  goBase baseCol diff = goIdx (length baseCol - 1)
+   where
+    goIdx cc
+      | cc < 0 = pure (e_row srcE)
+      | otherwise = do
+          be <- getE w (baseCol !! cc)
+          if e_no be > e_no srcE
+            then goIdx (cc - 1)
+            else pure (rowAddition (e_row be) diff)
 
 fixParentV2 :: World s -> Int -> ST s ()
 fixParentV2 w headId = go headId
@@ -595,11 +595,13 @@ expandImpl w s0 n d memo = do
                 Nothing -> mapM (valOf w) (init s0)
                 Just bId0 -> do
                   bE0 <- getE w bId0
-                  let len = e_cloumn tE - e_cloumn bE0
                   bId <-
                     if c < e_cloumn bE0 && c >= 0 && c < length m
                       then pure (last (m !! c))
                       else pure bId0
+                  -- C++ 在 b 可能被上移到 c 列之后才计算 len
+                  bENow <- getE w bId
+                  let len = e_cloumn tE - e_cloumn bENow
                   setElementNo w mref bId
                   -- chain / dim seq
                   if length d > 2
@@ -689,7 +691,9 @@ expandImpl w s0 n d memo = do
                       mapM_ (\i -> do
                         let src = bcolCol !! i
                         srcE <- getE w src
-                        head <- allocE w (E (e_value srcE) (e_row srcE) tcol (e_no srcE) (e_parent srcE) (Just (last (m5 !! tcol))) Nothing [] [])
+                        mcur <- readSTRef mref
+                        let prev = last (mcur !! tcol)
+                        head <- allocE w (E (e_value srcE) (e_row srcE) tcol (e_no srcE) (e_parent srcE) (Just prev) Nothing [] [])
                         modifySTRef' mref (\mm -> take tcol mm ++ [(mm !! tcol) ++ [head]])
                         m6 <- readSTRef mref
                         when (length (m6 !! tcol) >= 2) $
@@ -698,8 +702,7 @@ expandImpl w s0 n d memo = do
                   -- 复制循环
                   bE2 <- getE w bId'
                   tE5 <- getE w t'
-                  m7 <- readSTRef mref
-                  mapM_ (\i -> do
+                  mapM_ (\i ->
                     mapM_ (\j -> copyCloumn w mref bId' t' j i len ex) [e_cloumn bE2 + 1 .. e_cloumn tE5]) [0 .. n - 1]
                   mFinal <- readSTRef mref
                   mapM (valOf w . head) mFinal

@@ -137,20 +137,23 @@ expand input fsTerm =
                       (pc2, memo1, v) = asc pc1 memo r p y
                    in (pc2, Map.insert (x, y) v memo1, v)
 
-        ascBool x y =
-          let (_, _, v) = asc (PCache m1 Map.empty) Map.empty br x y
-           in v
-
-        offsetAscVal x y = y < lnz0 && ascBool x y
-
-        -- added 列：n=1..fsTerm, col=br..endcol-1
-        added =
-          [ [ let base = colAt m1 col y
-                  inc = if offsetAscVal col y then offset !! y * n else 0
-               in base + inc
-            | y <- [0 .. rows - 1] ]
-          | n <- [1 .. fsTerm]
-          , col <- [br .. endcol - 1] ]
+        -- added 列：n=1..fsTerm, col=br..endcol-1。
+        -- 父项缓存（PCache）与上升判定 memo 在整轮构造中持久复用，
+        -- 对齐 C++ 的 asc_pc / asc_cache；memo 只是纯缓存，不改变判定结果。
+        pairs = [ (n, col) | n <- [1 .. fsTerm], col <- [br .. endcol - 1] ]
+        ((_ascPc, _ascMemo), added) =
+          foldl step ((m1pc, Map.empty), []) pairs
+         where
+          step ((pc, memo), cols) (n, col) =
+            let (pc', memo', colVals) = buildCol pc memo n col
+             in ((pc', memo'), cols ++ [colVals])
+          buildCol pc memo n col =
+            foldl stepY (pc, memo, []) [0 .. rows - 1]
+           where
+            stepY (pc', memo', ys) y =
+              let (pc2, memo2, v) = asc pc' memo' br col y
+                  inc = if y < lnz0 && v then offset !! y * n else 0
+               in (pc2, memo2, ys ++ [colAt m1 col y + inc])
 
         m2 = m2Prefix0 ++ added
 

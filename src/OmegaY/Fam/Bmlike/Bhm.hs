@@ -45,24 +45,24 @@ packColumns cols =
            [ take rows (c ++ repeat 0) | c <- cols ])
 
 ascensionThresholds :: [[Int]] -> Int -> [Int] -> Int -> [Int]
-ascensionThresholds pTab r roots b = [ result i | i <- [0 .. nc - 1] ]
+ascensionThresholds pTab r roots b = result
  where
   nc = length pTab
-  result i
+  -- 按列号递增前向填充：父列 pp < i，其阈值已在 result 中算出
+  -- （对齐 C++ result[pp]）；不再每次整表递归重算。
+  result = [ res i | i <- [0 .. nc - 1] ]
+  res i
     | i == r = b
     | i `elem` roots = b
-    | otherwise =
-        let threshold = go 0
-         in threshold
+    | otherwise = go 0
    where
     go t
       | t < length (pTab !! i) && t < b =
           let pp = parentAtOf pTab i t
-           in if pp < 0 || t >= resultAt pp
+           in if pp < 0 || t >= (result !! pp)
                 then t
                 else go (t + 1)
       | otherwise = t
-    resultAt pp = ascensionThresholds pTab r roots b !! pp  -- 递归（同 C++ result[pp]）
 
 ascensionVector :: Matrix -> Int -> Int -> [Int]
 ascensionVector m r b =

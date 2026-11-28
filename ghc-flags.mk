@@ -3,10 +3,9 @@
 #
 #   * Makefile        : include 本文件，直接使用下面的变量
 #   * build.ps1       : 用正则解析 DEFAULT_PROFILE / GHC_HOME / PROFILE_*
-#   * CMakeLists.txt  : 用正则解析 DEFAULT_PROFILE / GHC_HOME / PROFILE_*
 #
-# 改这里 -> 三套构建入口（PowerShell / make / cmake）同时生效。
-# 不要在任何入口脚本里另抄一份参数，否则三方迟早对不上。
+# 改这里 -> 两套构建入口（PowerShell / make）同时生效。
+# 不要在任何入口脚本里另抄一份参数，否则两方迟早对不上。
 #
 # 约定（GHC 9.14.1 上已逐条实测可用）：
 #   * GHC 没有 -O3，最高标准优化等级是 -O2（-O 等价 -O1，-O0 关优化）；

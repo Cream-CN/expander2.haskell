@@ -12,8 +12,7 @@ bmsNotation ident name tags ver =
     , nName = name
     , nTags = tags
     , nParam = Nothing
-    , nCaps = TextCaps (BT.bmsExpandTextWith ver) Nothing ""
-    , nTruncate = BT.bmsTruncateFs
+    , nCaps = TextCaps (BT.bmsExpandTextWith ver) ""
     }
 
 upmsNotation :: Notation
@@ -23,8 +22,7 @@ upmsNotation =
     , nName = "UPMS"
     , nTags = ["UPMS", "矩阵", "文本"]
     , nParam = Nothing
-    , nCaps = TextCaps BT.upmsExpandText Nothing ""
-    , nTruncate = BT.upmsTruncateFs
+    , nCaps = TextCaps BT.upmsExpandText ""
     }
 
 -- | 该族的记号清单（id 与 C++ kMetaArray 一致）。

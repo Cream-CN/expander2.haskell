@@ -9,6 +9,8 @@
 abs-bm1ynss	AbsB(n+1)SS 绝对分支负一 Y 序列系统
 a-omega2-mn-2	Aω2MN2
 a-omega2-mn-3	Aω2MN3
+ard	ARD
+ard2	ARD2
 bms-v1	BMS v1.0
 bms-v2	BMS v2.0
 bms-v21	BMS v2.1
@@ -47,6 +49,7 @@ gms-lpms2-qss	GMS LPMS2 QSS
 gms-lpms2-full	GMS LPMS2 Full
 gms-lpms2-weird	GMS LPMS2 Weirdly Full
 g-y	G-Y
+ipd	IPD
 lpms	LPMS
 lptss	LPTSS
 mrss121	MrSS1.2.1
@@ -55,6 +58,7 @@ pps	PPS
 pps4	PPS4
 pcf-omega-mn	PCF's ωMN
 rel-bm1ynss	RelB(n+1)SS 相对分支负一 Y 序列系统
+rpd	RPD
 spps4	Second PPS4
 s-omega2-mn	Sω2MN
 sa-omega2-mn	SAω2MN
@@ -67,6 +71,7 @@ s-omega-dbms-v3	SωDBMS v3
 s-omega-p1-dbms	Sω+1DBMS
 s-omega2-dbms	Sω2DBMS
 s-omega-square-dbms	Sω^2DBMS
+srd	SRD
 tpps4	Third PPS4
 tbm	TBM 超限巴斯丘矩阵
 tupms	TUPMS 超限 UPMS

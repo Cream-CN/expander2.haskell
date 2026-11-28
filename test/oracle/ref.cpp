@@ -10,15 +10,14 @@ int main(int argc, char** argv) {
             std::cout << n->id() << "\t" << n->meta().display_name << "\n";
         return 0;
     }
-    if (argc < 4) { std::cerr << "usage: ref <id> <fs|alter> <term> [param]\n"; return 2; }
+    if (argc < 3) { std::cerr << "usage: ref <id> <term> [param]\n"; return 2; }
     std::string ident = argv[1];
-    std::string mode = argv[2];
-    int term = std::stoi(argv[3]);
-    int param = (argc > 4) ? std::stoi(argv[4]) : 0;
+    int term = std::stoi(argv[2]);
+    int param = (argc > 3) ? std::stoi(argv[3]) : 0;
     std::string text{std::istreambuf_iterator<char>(std::cin), std::istreambuf_iterator<char>()};
     for (auto& n : registered_notations()) {
         if (std::string(n->id()) == ident) {
-            auto r = n->expand(mode == "alter" ? ExpandMode::FsAlter : ExpandMode::Fs, text, term, param);
+            auto r = n->expand(text, term, param);
             if (!r.ok) std::cout << "ERR:" << r.err << "\n";
             else std::cout << r.text << "\n";
             return 0;

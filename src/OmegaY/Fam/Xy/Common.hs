@@ -17,16 +17,11 @@ module OmegaY.Fam.Xy.Common
   , atM
   ) where
 
+import Control.Monad (when)
 import Control.Monad.ST (ST)
-import Data.IntMap.Strict (IntMap)
-import qualified Data.IntMap.Strict as IM
-import Data.STRef
-  ( STRef
-  , modifySTRef'
-  , newSTRef
-  , readSTRef
-  , writeSTRef
-  )
+import Data.Array.MArray (newArray, readArray, writeArray)
+import Data.Array.ST (STArray)
+import Data.STRef (STRef, newSTRef, readSTRef, writeSTRef)
 
 data E = E
   { e_value :: Int
@@ -47,35 +42,70 @@ atM xs i = if i >= 0 && i < length xs then xs !! i else 0
 makeRootV12 :: E
 makeRootV12 = E 0 [1] (-1) 0 Nothing Nothing Nothing [] []
 
--- | Arena 世界：条目表 + 下一分配 id。对应 C++ deque Arena。
+-- | Arena 世界：条目槽位数组 + 分配水位。对应 C++ deque Arena。
+--   原来是 @STRef s (IntMap E)@：每分配/修改一次都要整表读取 + O(log n) 路径复制，
+--   旧表版本随即变垃圾；连续 id 用槽位数组后读写都是 O(1)。
 data World s = World
-  { wAr :: STRef s (IntMap E)
+  { wAr :: STRef s (STArray s Int E)
+  , wCap :: STRef s Int
   , wNext :: STRef s Int
   }
 
 newWorld :: ST s (World s)
 newWorld = do
-  ar <- newSTRef IM.empty
+  arr0 <- newArray (0, 63) makeRootV12
+  arr <- newSTRef arr0
+  cap <- newSTRef 64
   nx <- newSTRef 0
-  pure (World ar nx)
+  pure (World arr cap nx)
+
+ensureCapE :: World s -> Int -> ST s ()
+ensureCapE w need = do
+  cap <- readSTRef (wCap w)
+  when (need >= cap) $ do
+    let cap' = max (need + 1) (cap * 2)
+    old <- readSTRef (wAr w)
+    arr' <- newArray (0, cap' - 1) makeRootV12
+    let copy i
+          | i >= cap = pure ()
+          | otherwise = readArray old i >>= writeArray arr' i >> copy (i + 1)
+    copy (0 :: Int)
+    writeSTRef (wAr w) arr'
+    writeSTRef (wCap w) cap'
 
 allocE :: World s -> E -> ST s Int
 allocE w e = do
   i <- readSTRef (wNext w)
+  ensureCapE w i
+  arr <- readSTRef (wAr w)
+  writeArray arr i e
   writeSTRef (wNext w) (i + 1)
-  modifySTRef' (wAr w) (IM.insert i e)
   pure i
 
 getE :: World s -> Int -> ST s E
 getE w i = do
-  m <- readSTRef (wAr w)
-  pure (IM.findWithDefault makeRootV12 i m)
+  nx <- readSTRef (wNext w)
+  if i < 0 || i >= nx
+    then pure makeRootV12
+    else do
+      arr <- readSTRef (wAr w)
+      readArray arr i
 
 modE :: World s -> Int -> (E -> E) -> ST s ()
-modE w i f = modifySTRef' (wAr w) (IM.adjust f i)
+modE w i f = do
+  nx <- readSTRef (wNext w)
+  when (i >= 0 && i < nx) $ do
+    arr <- readSTRef (wAr w)
+    e <- readArray arr i
+    writeArray arr i (f e)
 
 setE :: World s -> Int -> E -> ST s ()
-setE w i e = modifySTRef' (wAr w) (IM.insert i e)
+setE w i e = do
+  ensureCapE w i
+  arr <- readSTRef (wAr w)
+  writeArray arr i e
+  nx <- readSTRef (wNext w)
+  when (i >= nx) (writeSTRef (wNext w) (i + 1))
 
 compareRow :: [Int] -> [Int] -> Int
 compareRow r1 r2

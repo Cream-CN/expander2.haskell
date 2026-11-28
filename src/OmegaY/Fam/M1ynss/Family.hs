@@ -42,21 +42,21 @@ familyNotations =
       ""
   , paramNotation
       "bt1ynss"
-      "BT*(n+1)SS v1"
+      "BT*(n+1)SS v1 超限星负一 Y 序列系统"
       ["Minus1", "BT", "参数化", "文本"]
       (1, 25, 1, "n (1-25):")
       (Bt.expandBt Bt.Bt1)
       ""
   , paramNotation
       "bt2ynss"
-      "strong BT*(n+1)SS v2"
+      "strong BT*(n+1)SS v2 超限星负一 Y 序列系统"
       ["Minus1", "BT", "参数化", "文本"]
       (1, 25, 1, "n (1-25):")
       (Bt.expandBt Bt.Bt2)
       ""
   , paramAlterNotation
       "bt3ynss"
-      "weak BT*(n+1)SS v3"
+      "weak BT*(n+1)SS v3 超限星负一 Y 序列系统"
       ["Minus1", "BT", "参数化", "文本"]
       (1, 25, 1, "n (1-25):")
       Bt3.expandBt3
@@ -64,7 +64,7 @@ familyNotations =
       ""
   , paramNotation
       "btlynss"
-      "BTL(n+1)SS 带标记"
+      "BTL(n+1)SS 带标记超限星负一 Y 序列系统"
       ["Minus1", "BT", "参数化", "文本"]
       (1, 25, 1, "n (1-25):")
       Btl.expandBtl

@@ -61,7 +61,7 @@ yOf :: EntryG -> [Int]
 yOf = egY
 
 upLs :: EntryG -> [Int]
-upLs = egUpL
+upLs = upLsOf
 
 upR, downR, downL :: EntryG -> Int
 upR = fromMaybe (-1) . egUpR

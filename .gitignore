@@ -8,6 +8,7 @@ Debug/
 Release/
 dist-newstyle/
 .stack-work/
+.bench/
 
 # ---- GHC intermediates ----
 *.hi
